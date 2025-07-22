@@ -149,3 +149,46 @@ export const requiredSkills = [
             ]
         }
     ];
+
+export const internPositions = [
+  {
+            id: 1,
+            position: 'Frontend Developer Intern',
+            department: 'Engineering',
+            location: 'San Francisco, CA',
+            duration: '3 months',
+            salary: '$4,000/month',
+            jobOverview: 'Join our dynamic engineering team to build cutting-edge web applications.',
+            keyResponsibilities: ['Develop responsive web applications', 'Collaborate with design team'],
+            requiredQualifications: ['Strong foundation in HTML, CSS, JavaScript', 'Understanding of responsive design'],
+            requiredSkills: ['HTML/CSS', 'JavaScript', 'React'],
+            niceToHaveSkills: ['TypeScript', 'Node.js']
+        },
+        {
+            id: 2,
+            position: 'Data Science Intern',
+            department: 'Analytics',
+            location: 'New York, NY',
+            duration: '6 months',
+            salary: '$4,500/month',
+            jobOverview: 'Work with our data team to analyze user behavior and business metrics.',
+            keyResponsibilities: ['Analyze large datasets', 'Create data visualizations'],
+            requiredQualifications: ['Knowledge of statistics', 'Experience with Python'],
+            requiredSkills: ['Python', 'SQL', 'Pandas'],
+            niceToHaveSkills: ['Machine Learning', 'R', 'Tableau']
+        },
+        {
+            id: 3,
+            position: 'UX Design Intern',
+            department: 'Design',
+            location: 'Remote',
+            duration: '4 months',
+            salary: '$3,500/month',
+            jobOverview: 'Create intuitive user experiences for our digital products.',
+            keyResponsibilities: ['Design user interfaces', 'Conduct user research'],
+            requiredQualifications: ['Portfolio of design work', 'Understanding of design principles'],
+            requiredSkills: ['Figma', 'Sketch', 'Prototyping'],
+            niceToHaveSkills: ['Adobe Creative Suite', 'HTML/CSS', 'User Research']
+        }
+];
+

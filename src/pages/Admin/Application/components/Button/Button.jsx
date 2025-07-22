@@ -1,13 +1,14 @@
 import React from 'react'
 
-const Button = ({ type }) => {
+const Button = ({ type, onClick}) => {
+     
     return (
         <div className="relative">
             {
                 type === 'Intern' ? (
                     <button
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 !rounded-button whitespace-nowrap cursor-pointer flex items-center"
-
+                        onClick={() => { onClick()}}
                     >
                         <i className="fas fa-plus mr-2"></i>
                         Add Internship

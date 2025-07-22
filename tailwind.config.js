@@ -38,6 +38,6 @@ export default {
         'fade-in-up': 'fadeInUp 0.3s ease-out',
       },
     },
-  },
+  },  
   plugins: [],
 }

@@ -15,6 +15,7 @@ import ContactUs from "./pages/User/Contact/ContactUs";
 import Apply from "./pages/User/Apply/Apply";
 import AdminApplication from "./pages/Admin/Application/Applications";
 import Internship from "./pages/Admin/Internship/Internship";
+import UI from "./pages/Admin/Internship/UI";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/Apply" element={<Apply/>} />
         <Route path="/admin/Internship" element={<Internship/>} />
         <Route path="/admin/Application" element={<AdminApplication/>} />
+        <Route path="/admin/UI" element={<UI/>} />
         {/* <Route path="/Internship" element={<Internship/>}></Route> */}
 
         {/* <Route path="/Login" element={<Login/>} /> */}

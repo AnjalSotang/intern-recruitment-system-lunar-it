@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from './Button/Button'
 
-const Header = ({ type, filteredApplications }) => {
+const Header = ({ type, filteredApplications, handleOpenModal }) => {
     return (
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
@@ -19,7 +19,7 @@ const Header = ({ type, filteredApplications }) => {
                 }
 
             </div>
-            <Button type={type} />
+            <Button type={type} onClick={handleOpenModal} />
         </div>
 
     )
