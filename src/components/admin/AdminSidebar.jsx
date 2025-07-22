@@ -25,6 +25,15 @@ const AdminSidebar = () => {
               Dashboard
             </Link>
           </li>
+            <li>
+            <Link
+              to="/admin/Internship"
+              className={`${baseClass} ${isActive('/admin/Internship') ? activeClass : inactiveClass}`}
+            >
+              <i className="fas fa-users w-5 h-5 mr-3"></i>
+             Internship Positions
+            </Link>
+          </li>
           <li>
             <Link
               to="/admin/Application"
@@ -34,13 +43,14 @@ const AdminSidebar = () => {
               Applications
             </Link>
           </li>
-          <li>
+        
+           <li>
             <Link
-              to="/admin/Internship"
-              className={`${baseClass} ${isActive('/admin/Internship') ? activeClass : inactiveClass}`}
+              to="/admin/Interviews"
+              className={`${baseClass} ${isActive('/admin/Interviews') ? activeClass : inactiveClass}`}
             >
               <i className="fas fa-users w-5 h-5 mr-3"></i>
-              Positions
+           Interviews
             </Link>
           </li>
           <li>

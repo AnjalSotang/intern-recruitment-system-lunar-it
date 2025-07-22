@@ -2,12 +2,12 @@
 import React from 'react';
 
 const InternshipModal = ({ show, onClose, type, handleInputChange, handleArrayChange
-, addArrayItem, removeArrayItem, addSkill, removeSkill, formData,
+  , addArrayItem, removeArrayItem, addSkill, removeSkill, formData,
   newSkill, setNewSkill, newNiceToHaveSkill, setNewNiceToHaveSkill, handleSubmit
- }) => {
+}) => {
   if (!show) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -264,7 +264,7 @@ const InternshipModal = ({ show, onClose, type, handleInputChange, handleArrayCh
           </div>
 
 
-          
+
 
 
 

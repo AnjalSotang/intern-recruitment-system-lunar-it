@@ -16,6 +16,8 @@ import Apply from "./pages/User/Apply/Apply";
 import AdminApplication from "./pages/Admin/Application/Applications";
 import Internship from "./pages/Admin/Internship/Internship";
 import UI from "./pages/Admin/Internship/UI";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";  
+import Interview from "./pages/Admin/Interviews/Interview";
 
 
 function App() {
@@ -33,6 +35,9 @@ function App() {
         <Route path="/admin/Internship" element={<Internship/>} />
         <Route path="/admin/Application" element={<AdminApplication/>} />
         <Route path="/admin/UI" element={<UI/>} />
+        <Route path="/admin/Dashboard" element={<Dashboard/>} />
+        <Route path="/admin/Interviews" element={<Interview/>} />
+
         {/* <Route path="/Internship" element={<Internship/>}></Route> */}
 
         {/* <Route path="/Login" element={<Login/>} /> */}

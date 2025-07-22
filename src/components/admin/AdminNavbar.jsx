@@ -11,6 +11,7 @@ const AdminNavbar = () => {
                     <i className="fas fa-bell text-gray-400"></i>
                     <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
                 </div>
+                
             </div>
         </nav>
     )

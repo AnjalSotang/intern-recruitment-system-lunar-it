@@ -13,7 +13,6 @@ import DeleteModal from './components/DeleteModal';
 const Internship = () => {
     const [showModal, setShowModal] = useState(false);
 
-
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [positionToDelete, setPositionToDelete] = useState(null);
 
@@ -33,7 +32,6 @@ const Internship = () => {
     });
     const [newSkill, setNewSkill] = useState('');
     const [newNiceToHaveSkill, setNewNiceToHaveSkill] = useState('');
-
 
 
     // const [selectedApplication, setSelectedApplication] = useState(null);
