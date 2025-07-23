@@ -6,8 +6,7 @@ const Interview = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <AdminLayout>
-
-                <Heading />
+                    <Heading />
             </AdminLayout>
         </div>
 

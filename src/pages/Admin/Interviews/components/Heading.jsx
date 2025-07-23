@@ -1,10 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Plus } from 'lucide-react'
 import L_Card from './L_Card'
+import InterviewTable from './InterviewTable'
+import { InterviewDetailsModal } from './InterviewDetailModal'
 
 
 const Heading = ({ setShowModal, setSelectedApplication }) => {
+    const [showScheduleModal, setShowScheduleModal] = useState(false)
+    const [showDetailsModal, setShowDetailsModal] = useState(false)
+    const [selectedInterview, setSelectedInterview] = useState(null)
+
+    const handleViewInterview = (interview) => {
+        setSelectedInterview(interview)
+        setShowDetailsModal(true)
+    }
+    
+    // const handleDeleteInterview = (id) => {
+    //     setInterviews(interviews.filter((interview) => interview.id !== id))
+    //     toast({
+    //         title: "Interview deleted",
+    //         description: "The interview has been successfully deleted.",
+    //     })
+    // }
+
+
+
     return (
         <div className='min-h-screen bg-gray-50 px-4 py-6 space-y-6'>
             {/* Header */}
@@ -18,8 +39,12 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
                     Schedule Interview
                 </Button>
             </div>
+            <L_Card />
             
-            <L_Card/>
+            <InterviewTable handleViewInterview={handleViewInterview} />
+
+
+            <InterviewDetailsModal open={showDetailsModal} onOpenChange={setShowDetailsModal} interview={selectedInterview} />
 
 
         </div>
