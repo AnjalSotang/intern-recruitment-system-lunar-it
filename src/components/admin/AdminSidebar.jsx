@@ -1,71 +1,87 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+} from "@/components/ui/sidebar"
+import { LayoutDashboard, Briefcase, FileText, Calendar, Users, Settings, Building2 } from "lucide-react"
+import { Link } from "react-router-dom"
+import { useLocation } from "react-router-dom"
+
+const menuItems = [
+  {
+    title: "Dashboard",
+    url: "/admin/dashboards",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Internship Positions",
+    url: "/admin/positions",
+    icon: Briefcase,
+  },
+  {
+    title: "Applications",
+    url: "/admin/applications",
+    icon: FileText,
+  },
+  {
+    title: "Interviews",
+    url: "/admin/interviews",
+    icon: Calendar,
+  },
+  // {
+  //   title: "Users",
+  //   url: "/users",
+  //   icon: Users,
+  // },
+  {
+    title: "Settings",
+    url: "/admin/settings",
+    icon: Settings,
+  },
+]
 
 const AdminSidebar = () => {
-  const location = useLocation()
-
-  // Helper function to check if link is active
-  const isActive = (path) => location.pathname === path
-
-  // Common classes
-  const baseClass = 'flex items-center px-4 py-2 rounded-lg cursor-pointer'
-  const activeClass = 'text-blue-600 bg-blue-50 font-semibold'
-  const inactiveClass = 'text-gray-700 hover:bg-gray-100'
+  const { pathname } = useLocation()
 
   return (
-    <aside className="w-64 h-screen fixed top-13 left-0 bg-white border-r border-gray-200">
-      <nav className="p-6 overflow-y-auto h-full">
-        <ul className="space-y-4">
-          <li>
-            <Link
-              to="/admin/dashboard"
-              className={`${baseClass} ${isActive('/admin/dashboard') ? activeClass : inactiveClass}`}
-            >
-              <i className="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
-              Dashboard
-            </Link>
-          </li>
-            <li>
-            <Link
-              to="/admin/Internship"
-              className={`${baseClass} ${isActive('/admin/Internship') ? activeClass : inactiveClass}`}
-            >
-              <i className="fas fa-users w-5 h-5 mr-3"></i>
-             Internship Positions
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/Application"
-              className={`${baseClass} ${isActive('/admin/Application') ? activeClass : inactiveClass}`}
-            >
-              <i className="fas fa-file-alt w-5 h-5 mr-3"></i>
-              Applications
-            </Link>
-          </li>
-        
-           <li>
-            <Link
-              to="/admin/Interviews"
-              className={`${baseClass} ${isActive('/admin/Interviews') ? activeClass : inactiveClass}`}
-            >
-              <i className="fas fa-users w-5 h-5 mr-3"></i>
-           Interviews
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/settings"
-              className={`${baseClass} ${isActive('/admin/settings') ? activeClass : inactiveClass}`}
-            >
-              <i className="fas fa-cog w-5 h-5 mr-3"></i>
-              Settings
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </aside>
+    <Sidebar className="mt-16">
+      {/* <SidebarHeader className="border-b border-sidebar-border">
+        <div className="flex items-center gap-2 px-4 py-2">
+          <Building2 className="h-6 w-6 text-primary" />
+          <span className="font-semibold text-lg">InternRecruit</span>
+        </div>
+      </SidebarHeader> */}
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border">
+        <div className="p-4 text-xs text-muted-foreground">© 2024 InternRecruit System</div>
+      </SidebarFooter>
+    </Sidebar>
   )
 }
 
-export default AdminSidebar
+export default AdminSidebar;

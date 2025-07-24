@@ -27,7 +27,7 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
 
 
     return (
-        <div className='min-h-screen bg-gray-50 px-4 py-6 space-y-6'>
+      <>
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -47,7 +47,7 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
             <InterviewDetailsModal open={showDetailsModal} onOpenChange={setShowDetailsModal} interview={selectedInterview} />
 
 
-        </div>
+        </>
     )
 }
 

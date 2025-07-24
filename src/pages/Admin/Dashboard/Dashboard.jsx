@@ -85,12 +85,17 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+
       <AdminLayout>
-        <Intro
+        <div className='space-y-6'>
+             <Intro
           setShowModal={setShowModal}
           setSelectedApplication={setSelectedApplication}
         />
+        </div>
+     
+
       </AdminLayout>
 
       {/* Internship Modal */}
@@ -118,7 +123,9 @@ const Dashboard = () => {
           setSelectedApplication={setSelectedApplication}
         />
       )}
-    </div>
+    </>
+
+
 
   )
 }

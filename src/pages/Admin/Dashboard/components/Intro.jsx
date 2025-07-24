@@ -6,11 +6,11 @@ import ApplicationTable from './ApplicationTable'
 
 const Intro = ({ setShowModal, setSelectedApplication }) => {
   return (
-    <div className='min-h-screen bg-gray-50 px-4 py-6 space-y-6'>
+    <>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back! Here's what's happening with your internship program.</p>
         </div>
         <Button onClick={() => setShowModal(true)}>
@@ -25,7 +25,9 @@ const Intro = ({ setShowModal, setSelectedApplication }) => {
         <h2 className="text-2xl font-semibold tracking-tight">Recent Applications</h2>
         <ApplicationTable applicationDetail={setSelectedApplication} />
       </div>
-    </div>
+    </>
+
+
   )
 }
 

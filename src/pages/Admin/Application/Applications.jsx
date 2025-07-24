@@ -65,11 +65,10 @@ const Internship = () => {
 
 
     return (
-        <div className="min-h-screen bg-gray-50">
+
 
 
             <AdminLayout>
-                <div className="min-h-screen bg-gray-50 px-4 py-6">
                     {/* Header */}
                     <Header filteredApplications={filteredApplications} />
 
@@ -104,11 +103,9 @@ const Internship = () => {
                             setSelectedApplication={setSelectedApplication}
                         />
                     )}
-                </div>
+                
             </AdminLayout>
 
-
-        </div>
     );
 };
 export default Internship

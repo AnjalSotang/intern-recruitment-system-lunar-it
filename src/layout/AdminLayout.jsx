@@ -1,22 +1,25 @@
-import React, { Children } from 'react'
+import React, { Children, useState } from 'react'
 import AdminNavbar from '../components/admin/AdminNavbar'
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import AdminSidebar from '../components/admin/AdminSidebar'
 
 const AdminLayout = ({ children }) => {
-    return (
-        <>
-            <AdminNavbar />
-            <div className="flex">
+    const [darkMode, setDarkMode] = useState(false)
 
+    return (
+        <div className={darkMode ? "dark" : ""}>
+            <SidebarProvider>
                 <AdminSidebar />
-                <main className="flex-1 p-6 ml-64 ">
-                    {children}
-                </main>
-            </div>
-            {/* oiajdsioa
-            odjoia
-            aj */}
-        </>
+                <SidebarInset>
+                    <AdminNavbar darkMode={darkMode} setDarkMode={setDarkMode} />
+                    <main className="flex-1 px-6 pb-6 pt-16 mt-6">
+                        {children}
+                    </main>
+                </SidebarInset>
+            </SidebarProvider>
+        </div>
+
+
     )
 }
 

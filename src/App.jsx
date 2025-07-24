@@ -21,6 +21,8 @@ import UI from "./pages/Admin/Internship/UI";
 import Dashboard from "./pages/Admin/Dashboard/Dashboard";
 import Interview from "./pages/Admin/Interviews/Interview";
 import Settings from "./pages/Admin/Settings/Settings"
+import Position from "./pages/Admin/Position/Position";
+import { DarkModeProvider } from "../contexts/DarkModeContext";
 
 
 
@@ -29,26 +31,31 @@ function App() {
 
 
   return (
-    <BrowserRouter>
-      <Toaster />
+    <DarkModeProvider>
 
-      <Routes>
-        <Route path="/landing" element={<HomePage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/Details/:id" element={<ViewDetails />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/Apply" element={<Apply />} />
-        <Route path="/admin/Internship" element={<Internship />} />
-        <Route path="/admin/Application" element={<AdminApplication />} />
-        <Route path="/admin/UI" element={<UI />} />
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/Interviews" element={<Interview />} />
-        <Route path="/admin/settings" element={<Settings />} />
-        {/* <Route path="/Internship" element={<Internship/>}></Route> */}
+      <BrowserRouter>
+        <Toaster />
 
-        {/* <Route path="/Login" element={<Login/>} /> */}
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/Details/:id" element={<ViewDetails />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/Apply" element={<Apply />} />
+          <Route path="/admin/internship" element={<Internship />} />
+          <Route path="/admin/applications" element={<AdminApplication />} />
+          <Route path="/admin/UI" element={<UI />} />
+          <Route path="/admin/dashboards" element={<Dashboard />} />
+          <Route path="/admin/interviews" element={<Interview />} />
+          <Route path="/admin/settings" element={<Settings />} />
+          <Route path="/admin/positions" element={<Position />} />
+          {/* <Route path="/Internship" element={<Internship/>}></Route> */}
+
+          {/* <Route path="/Login" element={<Login/>} /> */}
+        </Routes>
+      </BrowserRouter>
+    </DarkModeProvider>
+
   );
 }
 

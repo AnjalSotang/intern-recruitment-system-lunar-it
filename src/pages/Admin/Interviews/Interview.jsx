@@ -4,12 +4,11 @@ import Heading from './components/Heading'
 
 const Interview = () => {
     return (
-        <div className="min-h-screen bg-gray-50">
             <AdminLayout>
-                    <Heading />
+                <div className='space-y-6'>
+                         <Heading />
+                </div>
             </AdminLayout>
-        </div>
-
     )
 }
 
