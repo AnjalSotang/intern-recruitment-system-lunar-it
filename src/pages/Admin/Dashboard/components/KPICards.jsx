@@ -1,15 +1,12 @@
-import React from 'react'
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, Briefcase, UserCheck, Calendar } from "lucide-react"
 
-const Kpi_cards = () => {
-  const kpiData = [
+const kpiData = [
   {
     title: "Total Applications",
     value: "1,234",
     change: "+12%",
-    changeType: "positive" ,
+    changeType: "positive",
     icon: FileText,
   },
   {
@@ -35,6 +32,7 @@ const Kpi_cards = () => {
   },
 ]
 
+const KPICards = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {kpiData.map((kpi) => (
@@ -56,4 +54,4 @@ const Kpi_cards = () => {
   )
 }
 
-export default Kpi_cards
+export default KPICards;

@@ -9,7 +9,7 @@ const AdminLayout = ({ children }) => {
     return (
         <div className={darkMode ? "dark" : ""}>
             <SidebarProvider>
-                <AdminSidebar />
+                <AdminSidebar/>
                 <SidebarInset>
                     <AdminNavbar darkMode={darkMode} setDarkMode={setDarkMode} />
                     <main className="flex-1 px-6 pb-6 pt-16 mt-6">

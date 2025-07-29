@@ -7,22 +7,66 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, Edit, Trash2, MoreHorizontal, ArrowUpDown } from "lucide-react"
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
-import { applications } from '../../../../constants';
-import ApplicationDetail from "../../Application/components/DetaailModal"
+const mockApplications = [
+  {
+    id: "1",
+    candidateName: "Alice Johnson",
+    email: "alice@email.com",
+    position: "Frontend Developer Intern",
+    status: "reviewing",
+    appliedDate: "2024-01-15",
+    experience: "2 years",
+  },
+  {
+    id: "2",
+    candidateName: "Bob Smith",
+    email: "bob@email.com",
+    position: "Backend Developer Intern",
+    status: "pending",
+    appliedDate: "2024-01-14",
+    experience: "1 year",
+  },
+  {
+    id: "3",
+    candidateName: "Carol Davis",
+    email: "carol@email.com",
+    position: "UI/UX Designer Intern",
+    status: "accepted",
+    appliedDate: "2024-01-13",
+    experience: "3 years",
+  },
+  {
+    id: "4",
+    candidateName: "David Wilson",
+    email: "david@email.com",
+    position: "Data Science Intern",
+    status: "rejected",
+    appliedDate: "2024-01-12",
+    experience: "1.5 years",
+  },
+  {
+    id: "5",
+    candidateName: "Eva Brown",
+    email: "eva@email.com",
+    position: "DevOps Intern",
+    status: "reviewing",
+    appliedDate: "2024-01-11",
+    experience: "2.5 years",
+  },
+]
 
 
-
-const ApplicationTable = ({applicationDetail}) => {
-  const [application, setApplication] = useState(applications);
-  const [searchTerm, setSearchTerm] = useState("");
+export function ApplicationsTable({ onViewApplication }) {
+  const [applications, setApplications] = useState(mockApplications)
+  const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortField, setSortField] = useState("appliedDate")
   const [sortDirection, setSortDirection] = useState("desc")
+  const { toast } = useToast()
 
   const getStatusBadge = (status) => {
-
     const variants = {
       pending: "secondary",
       reviewing: "default",
@@ -54,17 +98,17 @@ const ApplicationTable = ({applicationDetail}) => {
   }
 
   const handleDelete = (id) => {
-    setApplication(application.filter((app) => app.id !== id))
-    // toast({
-    //   title: "Application deleted",
-    //   description: "The application has been successfully deleted.",
-    // })       
+    setApplications(applications.filter((app) => app.id !== id))
+    toast({
+      title: "Application deleted",
+      description: "The application has been successfully deleted.",
+    })
   }
 
-  const filteredAndSortedApplications = application
+  const filteredAndSortedApplications = applications
     .filter((app) => {
       const matchesSearch =
-        app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.candidateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.position.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === "all" || app.status === statusFilter
@@ -80,24 +124,17 @@ const ApplicationTable = ({applicationDetail}) => {
       return 0
     })
 
-  // const onViewApplication = (application) => {
-  //   applicationDetail(application)
-  // }
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Applications</CardTitle>
         <div className="flex gap-4 items-center">
-
           <Input
             placeholder="Search applications..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
           />
-
-
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by status" />
@@ -110,13 +147,8 @@ const ApplicationTable = ({applicationDetail}) => {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
-
-
         </div>
       </CardHeader>
-
-
-
       <CardContent>
         <Table>
           <TableHeader>
@@ -157,7 +189,7 @@ const ApplicationTable = ({applicationDetail}) => {
           <TableBody>
             {filteredAndSortedApplications.map((application) => (
               <TableRow key={application.id}>
-                <TableCell className="font-medium">{application.name}</TableCell>
+                <TableCell className="font-medium">{application.candidateName}</TableCell>
                 <TableCell>{application.email}</TableCell>
                 <TableCell>{application.position}</TableCell>
                 <TableCell>{getStatusBadge(application.status)}</TableCell>
@@ -171,9 +203,13 @@ const ApplicationTable = ({applicationDetail}) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={()=> applicationDetail(application)}>
+                      <DropdownMenuItem onClick={() => onViewApplication(application)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDelete(application.id)} className="text-red-600">
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -187,9 +223,6 @@ const ApplicationTable = ({applicationDetail}) => {
           </TableBody>
         </Table>
       </CardContent>
-
     </Card>
   )
 }
-
-export default ApplicationTable

@@ -51,36 +51,34 @@ const AdminSidebar = () => {
   const { pathname } = useLocation()
 
   return (
-    <Sidebar className="mt-16">
-      {/* <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-4 py-2">
-          <Building2 className="h-6 w-6 text-primary" />
-          <span className="font-semibold text-lg">InternRecruit</span>
-        </div>
-      </SidebarHeader> */}
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border">
-        <div className="p-4 text-xs text-muted-foreground">© 2024 InternRecruit System</div>
-      </SidebarFooter>
-    </Sidebar>
+<Sidebar className="mt-16 flex flex-col h-[calc(100vh-4rem)]">
+  <SidebarContent className="flex-1 overflow-y-auto">
+    <SidebarGroup>
+      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild isActive={pathname === item.url}>
+                <Link to={item.url}>
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  </SidebarContent>
+
+  <SidebarFooter className="border-t border-sidebar-border">
+    <div className="p-4 text-xs text-muted-foreground">
+      © 2024 InternRecruit System
+    </div>
+  </SidebarFooter>
+</Sidebar>
+
   )
 }
 

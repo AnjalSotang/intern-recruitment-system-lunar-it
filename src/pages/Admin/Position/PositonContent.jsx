@@ -4,10 +4,10 @@ import CreatePositionModal from './components/dialog/CreatePositionModal'
 import StatsCard from './components/StatsCard'
 import PositionTable from './components/PositionTable'
 import { Badge } from "@/components/ui/badge"
+import PositionDetailsModal from './components/dialog/PositionDetailModal'
+import EditPositionModal from './components/dialog/EditPositionModal'
+import DeleteConfirmationModal from './components/dialog/DeleteConfirmationModal'
 // import { toast } from "@/components/ui/toast";
-
-
-
 const mockPositions = [
     {
         id: "1",
@@ -206,8 +206,8 @@ const PositonContent = () => {
     const [showEditModal, setShowEditModal] = useState(false)
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
-    const [selectedPosition, setSelectedPosition] = useState (null)
-    const [editingPosition, setEditingPosition] = useState (null)
+    const [selectedPosition, setSelectedPosition] = useState(null)
+    const [editingPosition, setEditingPosition] = useState(null)
     const [deletingPosition, setDeletingPosition] = useState(null)
     // const { toast } = useToast()
 
@@ -322,9 +322,6 @@ const PositonContent = () => {
         })
     }
 
-
-
-
     const handleCreatePosition = (positionData) => {
         const newPosition = {
             id: Date.now().toString(),
@@ -402,11 +399,6 @@ const PositonContent = () => {
         return positions.filter((pos) => pos.status === status).length
     }
 
-
-
-
-
-
     return (
         <div className='space-y-6'>
             <Header setShowCreateModal={setShowCreateModal} />
@@ -417,19 +409,36 @@ const PositonContent = () => {
                 statusFilter={statusFilter} setStatusFilter={setStatusFilter}
                 departmentFilter={departmentFilter} setDepartmentFilter={setDepartmentFilter}
                 typeFilter={typeFilter} setTypeFilter={setTypeFilter}
-                handleSort= {handleSort} filteredPositions= {filteredPositions}
+                handleSort={handleSort} filteredPositions={filteredPositions}
 
                 getTypeBadge={getTypeBadge} getStatusBadge={getStatusBadge}
-                getPriorityBadge={getPriorityBadge} 
+                getPriorityBadge={getPriorityBadge}
                 handleViewPosition={handleViewPosition}
                 handleEditPosition={handleEditPosition}
                 handleDuplicatePosition={handleDuplicatePosition}
                 handleDeletePosition={handleDeletePosition}
+            />
+            <PositionDetailsModal open={showDetailsModal} onOpenChange={setShowDetailsModal} position={selectedPosition} />
+            <EditPositionModal
+                open={showEditModal}
+                onOpenChange={setShowEditModal}
+                position={editingPosition}
+                onSubmit={handleUpdatePosition}
+            />
+
+            <DeleteConfirmationModal
+                open={showDeleteModal}
+                onOpenChange={setShowDeleteModal}
+                onConfirm={confirmDeletePosition}
+                title="Delete Position"
+                itemName={deletingPosition?.title}
+                description="Are you sure you want to delete this position? This will also remove all associated applications."
             />
         </div>
 
 
     )
 }
+
 
 export default PositonContent
