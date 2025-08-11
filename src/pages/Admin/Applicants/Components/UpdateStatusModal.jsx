@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { User, Briefcase, Clock, CheckCircle, XCircle, Calendar } from "lucide-react"
+import { User, Briefcase, Clock, CheckCircle, XCircle, Calendar, SplinePointerIcon, Loader } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 const statusOptions = [
@@ -54,8 +54,12 @@ const statusOptions = [
     color: "bg-red-100 text-red-800",
   },
 ]
+import { useApplicationStore } from '../../../../store/AppliactionStore'
+import { Loader2 } from "lucide-react"; // lucide spinner icon
+
 
 const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) => {
+  const loading = useApplicationStore(state => state.loading);
   const [selectedStatus, setSelectedStatus] = useState("")
   const [notes, setNotes] = useState("")
   const [sendNotification, setSendNotification] = useState(true)
@@ -64,8 +68,9 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+
     if (!selectedStatus || !application) {
-      toast({
+      toast.error({
         title: "Status required",
         description: "Please select a status to update the application.",
         variant: "destructive",
@@ -73,20 +78,17 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
       return
     }
 
-    onStatusUpdate(application.id, selectedStatus, notes)
+    onStatusUpdate(application._id, selectedStatus, sendNotification, notes)
 
-    const statusLabel = statusOptions.find((option) => option.value === selectedStatus)?.label || selectedStatus
 
-    toast({
-      title: "Status updated",
-      description: `${application.candidateName}'s application status has been updated to ${statusLabel}.`,
-    })
+    // if (loading === true ) {
+    //   // Reset form and close modal
+    //   setSelectedStatus("")
+    //   setNotes("")
+    //   setSendNotification(true)
+    //   onOpenChange(false)
+    // }
 
-    // Reset form and close modal
-    setSelectedStatus("")
-    setNotes("")
-    setSendNotification(true)
-    onOpenChange(false)
   }
 
   const getCurrentStatusInfo = () => {
@@ -106,13 +108,21 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
+        {/* Overlay Loading Spinner */}
+        {/* {loading && (
+          <div className="absolute inset-0 bg-white bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg">
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            <span className="ml-3 text-primary font-semibold">Updating status...</span>
+          </div>
+        )} */}
+
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
             Update Application Status
           </DialogTitle>
           <DialogDescription>
-            Update the status for {application.candidateName}'s application to {application.position}.
+            Update the status for {application.firstName}'s application to {application.positionTitle}.
           </DialogDescription>
         </DialogHeader>
 
@@ -123,14 +133,14 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
               <User className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">{application.candidateName}</h3>
+              <h3 className="font-semibold">{application.firstName}</h3>
               <p className="text-sm text-muted-foreground">{application.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mt-2">
             <Briefcase className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm">
-              {application.position} • {application.department}
+              {application.positionTitle} • {application.department}
             </span>
           </div>
           {currentStatus && (
@@ -188,6 +198,7 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any notes about this status change (optional)..."
               rows={3}
+              disabled={loading}
             />
           </div>
 
@@ -198,6 +209,8 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
               checked={sendNotification}
               onChange={(e) => setSendNotification(e.target.checked)}
               className="rounded"
+              disabled={loading}
+
             />
             <Label htmlFor="sendNotification" className="text-sm">
               Send email notification to candidate about status change
@@ -223,11 +236,21 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
           )}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!selectedStatus}>
+            {/* <Button type="submit" disabled={!selectedStatus || loading}>
               Update Status
+            </Button> */}
+            <Button type="submit" disabled={loading || !selectedStatus}>
+              {loading ? (
+                <span className="flex items-center space-x-2">
+      <Loader className="animate-spin h-4 w-4" />
+                  <span>Updating...</span>
+                </span>
+              ) : (
+                "Update Status"
+              )}
             </Button>
           </DialogFooter>
         </form>

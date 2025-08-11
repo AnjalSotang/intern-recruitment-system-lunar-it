@@ -34,8 +34,10 @@ const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
     }
   }, [position])
 
+  // console.log(formData)
+
   const validateForm = () => {
-    const newError = {}
+    const newErrors = {}
 
     if (!formData.title?.trim()) newErrors.title = "Position title is required"
     if (!formData.department?.trim()) newErrors.department = "Department is required"
@@ -60,22 +62,22 @@ const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
     }
   }
 
-  const handleInputChange = (field) => {
+  const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
     }
   }
 
-const addListItem = (field, value, setValue) => {
-  if (value.trim() && !formData[field]?.includes(value.trim())) {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: [...(prev[field] || []), value.trim()],
-    }));
-    setValue("");
-  }
-};
+  const addListItem = (field, value, setValue) => {
+    if (value.trim() && !formData[field]?.includes(value.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: [...(prev[field] || []), value.trim()],
+      }));
+      setValue("");
+    }
+  };
 
 
   const removeListItem = (
@@ -167,17 +169,17 @@ const addListItem = (field, value, setValue) => {
               <div className="space-y-2">
                 <Label htmlFor="type">Position Type</Label>
                 <Select
-                  value={formData.type || "full-time"}
+                  value={formData.type || "Full-time"}
                   onValueChange={(value) => handleInputChange("type", value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="full-time">Full-time</SelectItem>
-                    <SelectItem value="part-time">Part-time</SelectItem>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Remote">Remote</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -410,8 +412,11 @@ const addListItem = (field, value, setValue) => {
                 <Input
                   id="startDate"
                   type="date"
-                  value={formData.startDate || ""}
-                  onChange={(e) => handleInputChange("startDate", e.target.value)}
+                  value={
+                    formData.startDate
+                      ? new Date(formData.startDate).toISOString().split("T")[0] // "1994-04-27"
+                      : ""
+                  } onChange={(e) => handleInputChange("startDate", e.target.value)}
                   className={errors.startDate ? "border-red-500" : ""}
                 />
                 {errors.startDate && <p className="text-sm text-red-500">{errors.startDate}</p>}
@@ -422,7 +427,11 @@ const addListItem = (field, value, setValue) => {
                 <Input
                   id="endDate"
                   type="date"
-                  value={formData.endDate || ""}
+                  value={
+                    formData.endDate
+                      ? new Date(formData.endDate).toISOString().split("T")[0] // "1994-04-27"
+                      : ""
+                  }
                   onChange={(e) => handleInputChange("endDate", e.target.value)}
                   className={errors.endDate ? "border-red-500" : ""}
                 />
@@ -434,8 +443,11 @@ const addListItem = (field, value, setValue) => {
                 <Input
                   id="applicationDeadline"
                   type="date"
-                  value={formData.applicationDeadline || ""}
-                  onChange={(e) => handleInputChange("applicationDeadline", e.target.value)}
+                  value={
+                    formData.applicationDeadline
+                      ? new Date(formData.applicationDeadline).toISOString().split("T")[0] // "1994-04-27"
+                      : ""
+                  } onChange={(e) => handleInputChange("applicationDeadline", e.target.value)}
                   className={errors.applicationDeadline ? "border-red-500" : ""}
                 />
                 {errors.applicationDeadline && <p className="text-sm text-red-500">{errors.applicationDeadline}</p>}

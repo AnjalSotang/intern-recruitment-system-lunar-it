@@ -61,7 +61,7 @@ const Faq = () => {
                   <span className="text-lg font-medium text-gray-900">
                     {item.question}
                   </span>
-                  <div className="w-6 h-6 flex items-center justify-center text-primary transform transition-transform duration-200">
+                  <div className="w-6 h-6 flex items-center justify-center text-black transform transition-transform duration-500">
                     <i className={`fas ${openItems[item.id] ? 'fa-chevron-up' : 'fa-chevron-down'} text-lg`}></i>
                   </div>
                 </button>

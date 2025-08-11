@@ -128,7 +128,7 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
         const messageData = {
             id: Date.now().toString(),
             applicationId: application.id,
-            candidateName: application.candidateName,
+            candidateName: application.firstName,
             candidateEmail: application.email,
             subject,
             message,
@@ -173,7 +173,7 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
                         <Mail className="h-5 w-5" />
                         Send Message
                     </DialogTitle>
-                    <DialogDescription>Send an email message to {application.candidateName}.</DialogDescription>
+                    <DialogDescription>Send an email message to {application.firstName}.</DialogDescription>
                 </DialogHeader>
 
                 {/* Candidate Info Card */}
@@ -183,14 +183,14 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
                             <User className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                            <h3 className="font-semibold">{application.candidateName}</h3>
+                            <h3 className="font-semibold">{application.firstName}</h3>
                             <p className="text-sm text-muted-foreground">{application.email}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                         <Briefcase className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm">
-                            {application.position} • {application.department}
+                            {application.positionTitle} • {application.department}
                         </span>
                     </div>
                 </div>

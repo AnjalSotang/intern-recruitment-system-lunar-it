@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -32,7 +32,7 @@ import { useToast } from "@/hooks/use-toast"
 import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
 import BulkActionsModal from "./Components/BulkActionsModal"
 import { CreateApplicationModal } from "./Components/CreateApplicationModal"
-import EditApplicationModal from "./Components/EditApplicationModal"
+// import EditApplicationModal from "./Components/EditApplicationModal"
 import DeleteConfirmationModal from "./Components/DeleteConfirmationModal"
 import ScheduleInterviewFromApplicationModal from "./Components/ScheduleInterviewFromApplicationModal"
 import UpdateStatusModal from "./Components/UpdateStatusModal"
@@ -46,7 +46,7 @@ import SendMessageModal from "./Components/SendMessageModal"
 
 // interface Application {
 //   id: string
-//   candidateName: string
+//   firstName: string
 //   email: string
 //   phone: string
 //   position: string
@@ -66,11 +66,14 @@ import SendMessageModal from "./Components/SendMessageModal"
 //   lastActivity: string
 //   source: "website" | "linkedin" | "referral" | "job-board"
 // }
+import { useApplicationStore } from '../../../store/AppliactionStore'
+import { toast } from "react-toastify"
+import { Skeleton } from "@/components/ui/skeleton" // ShadCN skeleton
 
 const mockApplications = [
     {
         id: "1",
-        candidateName: "Alice Johnson",
+        firstName: "Alice Johnson",
         email: "alice@email.com",
         phone: "+1 (555) 123-4567",
         position: "Frontend Developer Intern",
@@ -87,12 +90,11 @@ const mockApplications = [
         skills: ["React", "TypeScript", "Node.js", "CSS"],
         rating: 4,
         notes: "Strong technical background, excellent portfolio",
-        lastActivity: "2024-01-16",
-        source: "website",
+        lastActivity: "2024-01-16"
     },
     {
         id: "2",
-        candidateName: "Bob Smith",
+        firstName: "Bob Smith",
         email: "bob@email.com",
         phone: "+1 (555) 234-5678",
         position: "Backend Developer Intern",
@@ -106,12 +108,11 @@ const mockApplications = [
         resumeUrl: "resume_bob_smith.pdf",
         skills: ["Python", "Django", "PostgreSQL", "AWS"],
         rating: 3,
-        lastActivity: "2024-01-14",
-        source: "linkedin",
+        lastActivity: "2024-01-14"
     },
     {
         id: "3",
-        candidateName: "Carol Davis",
+        firstName: "Carol Davis",
         email: "carol@email.com",
         phone: "+1 (555) 345-6789",
         position: "UI/UX Designer Intern",
@@ -127,12 +128,11 @@ const mockApplications = [
         skills: ["Figma", "Adobe Creative Suite", "Prototyping", "User Research"],
         rating: 5,
         notes: "Exceptional design skills, great cultural fit",
-        lastActivity: "2024-01-17",
-        source: "referral",
+        lastActivity: "2024-01-17"
     },
     {
         id: "4",
-        candidateName: "David Wilson",
+        firstName: "David Wilson",
         email: "david@email.com",
         phone: "+1 (555) 456-7890",
         position: "Data Science Intern",
@@ -148,11 +148,11 @@ const mockApplications = [
         rating: 2,
         notes: "Limited practical experience",
         lastActivity: "2024-01-15",
-        source: "job-board",
+
     },
     {
         id: "5",
-        candidateName: "Eva Brown",
+        firstName: "Eva Brown",
         email: "eva@email.com",
         phone: "+1 (555) 567-8901",
         position: "DevOps Intern",
@@ -168,11 +168,11 @@ const mockApplications = [
         rating: 4,
         notes: "Strong infrastructure background",
         lastActivity: "2024-01-18",
-        source: "website",
+
     },
     {
         id: "6",
-        candidateName: "Frank Miller",
+        firstName: "Frank Miller",
         email: "frank@email.com",
         phone: "+1 (555) 678-9012",
         position: "Marketing Intern",
@@ -187,7 +187,6 @@ const mockApplications = [
         skills: ["Digital Marketing", "Analytics", "Content Creation", "SEO"],
         rating: 3,
         lastActivity: "2024-01-16",
-        source: "linkedin",
     },
 ]
 
@@ -223,7 +222,7 @@ const applicationStats = [
 ]
 
 const ApplicationContents = () => {
-    const [applications, setApplications] = useState(mockApplications)
+    // const [applications, setApplications] = useState(mockApplications)
     const [selectedApplications, setSelectedApplications] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -235,7 +234,6 @@ const ApplicationContents = () => {
     const [showBulkModal, setShowBulkModal] = useState(false)
     const [selectedApplication, setSelectedApplication] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
-    const { toast } = useToast()
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
     const [editingApplication, setEditingApplication] = useState(null)
@@ -245,6 +243,40 @@ const ApplicationContents = () => {
     const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false)
     const [showSendMessageModal, setShowSendMessageModal] = useState(false)
     const [selectedApplicationForAction, setSelectedApplicationForAction] = useState(null)
+
+
+    const applications = useApplicationStore(state => state.applications);
+    const fetchApplications = useApplicationStore(state => state.fetchApplications);
+    const updateApplication = useApplicationStore(state => state.updateApplication)
+    const loading = useApplicationStore(state => state.loading);
+    const error = useApplicationStore(state => state.error);
+    const status = useApplicationStore(state => state.status);
+    const message = useApplicationStore(state => state.message)
+
+
+    // Fetch on mount
+    useEffect(() => {
+        fetchApplications();
+    }, []);
+
+    // Watch backend store updates for toast messages
+    useEffect(() => {
+        if (status && message) {
+            if (status >= 200 && status < 300) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        }
+    }, [status, message]);
+
+    // Show toast if error from store
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
+
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -280,20 +312,7 @@ const ApplicationContents = () => {
         )
     }
 
-    const getSourceIcon = (source) => {
-        switch (source) {
-            case "website":
-                return "🌐"
-            case "linkedin":
-                return "💼"
-            case "referral":
-                return "👥"
-            case "job-board":
-                return "📋"
-            default:
-                return "📄"
-        }
-    }
+
 
     const handleViewApplication = (application) => {
         setSelectedApplication(application)
@@ -349,58 +368,58 @@ const ApplicationContents = () => {
         }
     }
 
-    const handleCreateApplication = (applicationData) => {
-        const newApplication = {
-            id: Date.now().toString(),
-            candidateName: applicationData.candidateName || "",
-            email: applicationData.email || "",
-            phone: applicationData.phone || "",
-            position: applicationData.position || "",
-            department: applicationData.department || "",
-            status: "pending",
-            priority: applicationData.priority || "medium",
-            appliedDate: new Date().toISOString().split("T")[0],
-            experience: applicationData.experience || "",
-            education: applicationData.education || "",
-            location: applicationData.location || "",
-            resumeUrl: applicationData.resumeUrl || "",
-            coverLetterUrl: applicationData.coverLetterUrl,
-            portfolioUrl: applicationData.portfolioUrl,
-            skills: applicationData.skills || [],
-            rating: applicationData.rating,
-            notes: applicationData.notes,
-            lastActivity: new Date().toISOString().split("T")[0],
-            source: applicationData.source || "website",
-        }
+    // const handleCreateApplication = (applicationData) => {
+    //     const newApplication = {
+    //         id: Date.now().toString(),
+    //         firstName: applicationData.firstName || "",
+    //         email: applicationData.email || "",
+    //         phone: applicationData.phone || "",
+    //         position: applicationData.position || "",
+    //         department: applicationData.department || "",
+    //         status: "pending",
+    //         priority: applicationData.priority || "medium",
+    //         appliedDate: new Date().toISOString().split("T")[0],
+    //         experience: applicationData.experience || "",
+    //         education: applicationData.education || "",
+    //         location: applicationData.location || "",
+    //         resumeUrl: applicationData.resumeUrl || "",
+    //         coverLetterUrl: applicationData.coverLetterUrl,
+    //         portfolioUrl: applicationData.portfolioUrl,
+    //         skills: applicationData.skills || [],
+    //         rating: applicationData.rating,
+    //         notes: applicationData.notes,
+    //         lastActivity: new Date().toISOString().split("T")[0],
+    //         source: applicationData.source || "website",
+    //     }
 
-        setApplications([newApplication, ...applications])
-        toast({
-            title: "Application created",
-            description: "New application has been successfully created.",
-        })
-    }
+    //     setApplications([newApplication, ...applications])
+    //     toast({
+    //         title: "Application created",
+    //         description: "New application has been successfully created.",
+    //     })
+    // }
 
-    const handleEditApplication = (application) => {
-        setEditingApplication(application)
-        setShowEditModal(true)
-    }
+    // const handleEditApplication = (application) => {
+    //     setEditingApplication(application)
+    //     setShowEditModal(true)
+    // }
 
-    const handleUpdateApplication = (updatedData) => {
-        if (!editingApplication) return
+    // const handleUpdateApplication = (updatedData) => {
+    //     if (!editingApplication) return
 
-        const updatedApplications = applications.map((app) =>
-            app.id === editingApplication.id
-                ? { ...app, ...updatedData, lastActivity: new Date().toISOString().split("T")[0] }
-                : app,
-        )
+    //     const updatedApplications = applications.map((app) =>
+    //         app.id === editingApplication.id
+    //             ? { ...app, ...updatedData, lastActivity: new Date().toISOString().split("T")[0] }
+    //             : app,
+    //     )
 
-        setApplications(updatedApplications)
-        setEditingApplication(null)
-        toast({
-            title: "Application updated",
-            description: "Application has been successfully updated.",
-        })
-    }
+    //     setApplications(updatedApplications)
+    //     setEditingApplication(null)
+    //     toast({
+    //         title: "Application updated",
+    //         description: "Application has been successfully updated.",
+    //     })
+    // }
 
     const handleScheduleInterview = (application) => {
         setSelectedApplicationForAction(application)
@@ -424,21 +443,11 @@ const ApplicationContents = () => {
                 ? { ...app, status: "interview-scheduled", lastActivity: new Date().toISOString().split("T")[0] }
                 : app,
         )
-        setApplications(updatedApplications)
+        // setApplications(updatedApplications)
     }
 
-    const handleStatusUpdated = (applicationId, newStatus, notes) => {
-        const updatedApplications = applications.map((app) =>
-            app.id === applicationId
-                ? {
-                    ...app,
-                    status: newStatus,
-                    notes: notes ? `${app.notes ? app.notes + "\n\n" : ""}Status Update: ${notes}` : app.notes,
-                    lastActivity: new Date().toISOString().split("T")[0],
-                }
-                : app,
-        )
-        setApplications(updatedApplications)
+    const handleStatusUpdated = (id, status, sendNotification) => {
+        updateApplication(id, status, sendNotification)
     }
 
     const handleMessageSent = (messageData) => {
@@ -449,9 +458,9 @@ const ApplicationContents = () => {
     const filteredApplications = applications
         .filter((app) => {
             const matchesSearch =
-                app.candidateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                app.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                app.positionTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 app.skills.some((skill) => skill.toLowerCase().includes(searchTerm.toLowerCase()))
 
             const matchesStatus = statusFilter === "all" || app.status === statusFilter
@@ -476,6 +485,8 @@ const ApplicationContents = () => {
         return applications.filter((app) => app.status === status).length
     }
 
+
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -485,21 +496,21 @@ const ApplicationContents = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <Button onClick={() => setShowCreateModal(true)}>
+                    {/* <Button onClick={() => setShowCreateModal(true)}>
                         <Plus className="mr-2 h-4 w-4" />
                         Add Application
-                    </Button>
+                    </Button> */}
 
 
                     {selectedApplications.length > 0 && (
-                        <Button variant="outline" onClick={() => handleBulkAction("bulk")}>
+                        <Button onClick={() => handleBulkAction("bulk")}>
                             <Users className="mr-2 h-4 w-4" />
                             Bulk Actions ({selectedApplications.length})
                         </Button>
                     )}
 
 
-                    <Button variant="outline">
+                    <Button>
                         <Download className="mr-2 h-4 w-4" />
                         Export
                     </Button>
@@ -616,7 +627,7 @@ const ApplicationContents = () => {
                                 <TableHead>
                                     <Button
                                         variant="ghost"
-                                        onClick={() => handleSort("candidateName")}
+                                        onClick={() => handleSort("firstName")}
                                         className="h-auto p-0 font-semibold"
                                     >
                                         Candidate
@@ -642,8 +653,6 @@ const ApplicationContents = () => {
                                         <ArrowUpDown className="ml-2 h-4 w-4" />
                                     </Button>
                                 </TableHead>
-                                {/* <TableHead>Rating</TableHead> */}
-                                {/* <TableHead>Source</TableHead> */}
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -652,14 +661,14 @@ const ApplicationContents = () => {
                         <TableBody>
                             {filteredApplications.map((application) => (
                                 <TableRow
-                                    key={application.id}
-                                    className={selectedApplications.includes(application.id) ? "bg-muted/50" : ""}
+                                    key={application._id}
+                                    className={selectedApplications.includes(application._id) ? "bg-muted/50" : ""}
                                 >
                                     <TableCell>
                                         <input
                                             type="checkbox"
-                                            checked={selectedApplications.includes(application.id)}
-                                            onChange={() => handleSelectApplication(application.id)}
+                                            checked={selectedApplications.includes(application._id)}
+                                            onChange={() => handleSelectApplication(application._id)}
                                             className="rounded"
                                         />
                                     </TableCell>
@@ -667,50 +676,25 @@ const ApplicationContents = () => {
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage
-                                                    src={`/placeholder.svg?height=32&width=32&text=${application.candidateName.charAt(0)}`}
+                                                    src={`/placeholder.svg?height=32&width=32&text=${application.firstName.charAt(0)}`}
                                                 />
                                                 <AvatarFallback>
-                                                    {application.candidateName
-                                                        .split(" ")
-                                                        .map((n) => n[0])
-                                                        .join("")}
+                                                    {application.firstName?.charAt(0) || 'N/A'}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div>
-                                                <p className="font-medium">{application.candidateName}</p>
+                                                <p className="font-medium">{application.firstName}</p>
                                                 <p className="text-sm text-muted-foreground">{application.email}</p>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell>{application.position}</TableCell>
+                                    <TableCell>{application.positionTitle}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline">{application.department}</Badge>
                                     </TableCell>
                                     <TableCell>{getStatusBadge(application.status)}</TableCell>
                                     <TableCell>{getPriorityBadge(application.priority)}</TableCell>
                                     <TableCell>{new Date(application.appliedDate).toLocaleDateString()}</TableCell>
-                                    {/* <TableCell>
-                                        {application.rating ? (
-                                            <div className="flex items-center gap-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        className={`h-4 w-4 ${i < application.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-                                                            }`}
-                                                    />
-                                                ))}
-                                            </div>
-
-                                        ) : (
-                                            <span className="text-muted-foreground">-</span>
-                                        )}
-                                    </TableCell> */}
-                                    {/* <TableCell>
-                                        <div className="flex items-center gap-1">
-                                            <span>{getSourceIcon(application.source)}</span>
-                                            <span className="text-sm capitalize">{application.source}</span>
-                                        </div>
-                                    </TableCell> */}
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -735,10 +719,10 @@ const ApplicationContents = () => {
                                                     <Edit className="mr-2 h-4 w-4" />
                                                     Update Status
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleEditApplication(application)}>
+                                                {/* <DropdownMenuItem onClick={() => handleEditApplication(application)}>
                                                     <Edit className="mr-2 h-4 w-4" />
                                                     Edit Application
-                                                </DropdownMenuItem>
+                                                </DropdownMenuItem> */}
                                                 <DropdownMenuItem onClick={() => handleDeleteApplication(application)} className="text-red-600">
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     Delete
@@ -753,7 +737,7 @@ const ApplicationContents = () => {
                 </CardContent>
             </Card>
 
-             <ApplicationDetailsModal
+            <ApplicationDetailsModal
                 open={showDetailsModal}
                 onOpenChange={setShowDetailsModal}
                 application={selectedApplication}
@@ -774,24 +758,24 @@ const ApplicationContents = () => {
                 }}
             />
 
-            <CreateApplicationModal
+            {/* <CreateApplicationModal
                 open={showCreateModal}
                 onOpenChange={setShowCreateModal}
                 onSubmit={handleCreateApplication}
-            />
+            /> */}
 
-            <EditApplicationModal
+            {/* <EditApplicationModal
                 open={showEditModal}
                 onOpenChange={setShowEditModal}
                 application={editingApplication}
                 onSubmit={handleUpdateApplication}
-            />
+            /> */}
 
             <DeleteConfirmationModal
                 open={showDeleteModal}
                 onOpenChange={setShowDeleteModal}
                 onConfirm={confirmDeleteApplication}
-                itemName={deletingApplication?.candidateName}
+                itemName={deletingApplication?.firstName}
             />
 
             <ScheduleInterviewFromApplicationModal
@@ -813,7 +797,7 @@ const ApplicationContents = () => {
                 onOpenChange={setShowSendMessageModal}
                 application={selectedApplicationForAction}
                 onMessageSent={handleMessageSent}
-            /> 
+            />
         </div>
     )
 }

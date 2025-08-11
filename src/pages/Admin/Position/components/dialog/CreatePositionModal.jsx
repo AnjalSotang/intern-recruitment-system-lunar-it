@@ -17,39 +17,47 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { X, Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { usePositionStore } from "../../../../../store/PositionStore"
+import { useNavigate } from "react-router-dom"
+
+const  CreatePositionModal = ({ open, onOpenChange }) => {
+  const navigate = useNavigate()
+  // const {createPositions, fetchPositions, deletePosition, loading, error } = usePositionStore();
+    const createPosition = usePositionStore(state => state.createPosition);
 
 
-
-const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
   const [formData, setFormData] = useState({
     title: "",
     department: "",
     location: "",
-    type: "full-time",
+    type: "",
     description: "",
     requirements: [],
     responsibilities: [],
     qualifications: [],
-    benefits: [],
+    optional: [],
     salary: "",
     duration: "",
     startDate: "",
     endDate: "",
     applicationDeadline: "",
-    maxApplications: undefined,
+    maxApplications: 0,
     tags: [],
-    priority: "medium",
-    remote: false,
+    priority: "high",
     experienceLevel: "entry",
   })
+
+
+
   const [newRequirement, setNewRequirement] = useState("")
   const [newResponsibility, setNewResponsibility] = useState("")
   const [newQualification, setNewQualification] = useState("")
-  const [newBenefit, setNewBenefit] = useState("")
+  const [newOptional, setNewOptional] = useState("")
   const [newTag, setNewTag] = useState("")
   const [errors, setErrors] = useState({})
   const { toast } = useToast()
 
+  
   const validateForm = () => {
     const newErrors = {}
 
@@ -66,40 +74,47 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (validateForm()) {
-      onSubmit(formData)
 
-      // Reset form
+      // console.log(formData)
+      await createPosition(formData)
+      // await fetchPositions()           // ✅ Refresh list from backend
+
+
       setFormData({
         title: "",
         department: "",
         location: "",
-        type: "full-time",
+        type: "",
         description: "",
         requirements: [],
         responsibilities: [],
         qualifications: [],
-        benefits: [],
+        optional: [],
         salary: "",
         duration: "",
         startDate: "",
         endDate: "",
         applicationDeadline: "",
-        maxApplications: undefined,
+        maxApplications: 0,
         tags: [],
-        priority: "medium",
-        remote: false,
+        priority: "high",
         experienceLevel: "entry",
       })
       setErrors({})
       onOpenChange(false)
     }
+    
   }
 
-  const handleInputChange = (field) => {
+
+
+
+  const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
@@ -120,6 +135,9 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
     }
   }
 
+
+
+
   const removeListItem = (
     field,
     itemToRemove,
@@ -129,6 +147,8 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
       [field]: prev[field]?.filter((item) => item !== itemToRemove) || [],
     }))
   }
+
+
 
   const handleKeyPress = (
     e,
@@ -207,17 +227,17 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
               <div className="space-y-2">
                 <Label htmlFor="type">Position Type</Label>
                 <Select
-                  value={formData.type || "full-time"}
+                  value={formData.type || "Full-time"}
                   onValueChange={(value) => handleInputChange("type", value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="full-time">Full-time</SelectItem>
-                    <SelectItem value="part-time">Part-time</SelectItem>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Remote">Remote</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -227,7 +247,7 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
               <div className="space-y-2">
                 <Label htmlFor="priority">Priority</Label>
                 <Select
-                  value={formData.priority || "medium"}
+                  value={formData.priority || "high"}
                   onValueChange={(value) => handleInputChange("priority", value)}
                 >
                   <SelectTrigger>
@@ -374,30 +394,36 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
             </div>
           </div>
 
-          {/* Benefits */}
+
+
+          {/* Optional */}
           <div className="space-y-2">
-            <Label>Benefits & Perks</Label>
+            <Label>Nice To Have Skills</Label>
             <div className="flex gap-2">
               <Input
-                value={newBenefit}
-                onChange={(e) => setNewBenefit(e.target.value)}
-                onKeyPress={(e) => handleKeyPress(e, "benefits", newBenefit, setNewBenefit)}
-                placeholder="Add a benefit and press Enter"
+                value={newOptional}
+                onChange={(e) => setNewOptional(e.target.value)}
+                onKeyPress={(e) => handleKeyPress(e, "optional", newOptional, setNewOptional)}
+                placeholder="Add a Nice to have Skills"
                 className="flex-1"
               />
-              <Button type="button" onClick={() => addListItem("benefits", newBenefit, setNewBenefit)} size="sm">
+              <Button type="button" onClick={() => addListItem("optional", newOptional, setNewOptional)} size="sm">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {formData.benefits?.map((benefit) => (
-                <Badge key={benefit} variant="secondary" className="flex items-center gap-1">
-                  {benefit}
-                  <X className="h-3 w-3 cursor-pointer" onClick={() => removeListItem("benefits", benefit)} />
+              {formData.optional?.map((opt) => (
+                <Badge key={opt} variant="secondary" className="flex items-center gap-1">
+                  {opt}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => removeListItem("optional", opt)} />
                 </Badge>
               ))}
             </div>
           </div>
+
+
+
+
 
           {/* Compensation & Duration */}
           <div className="space-y-4">
@@ -465,6 +491,10 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
             </div>
           </div>
 
+
+
+
+
           {/* Tags */}
           <div className="space-y-2">
             <Label>Tags</Label>
@@ -489,6 +519,9 @@ const CreatePositionModal = ({ open, onOpenChange, onSubmit }) => {
               ))}
             </div>
           </div>
+
+
+
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

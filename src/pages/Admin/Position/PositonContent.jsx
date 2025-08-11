@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Header from './components/Header'
 import CreatePositionModal from './components/dialog/CreatePositionModal'
 import StatsCard from './components/StatsCard'
@@ -7,194 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import PositionDetailsModal from './components/dialog/PositionDetailModal'
 import EditPositionModal from './components/dialog/EditPositionModal'
 import DeleteConfirmationModal from './components/dialog/DeleteConfirmationModal'
-// import { toast } from "@/components/ui/toast";
-const mockPositions = [
-    {
-        id: "1",
-        title: "Frontend Developer Intern",
-        department: "Engineering",
-        location: "San Francisco, CA",
-        type: "full-time",
-        status: "active",
-        description: "Join our frontend team to build amazing user experiences using React and TypeScript.",
-        requirements: ["React", "TypeScript", "CSS", "Git"],
-        responsibilities: [
-            "Develop user-facing features",
-            "Collaborate with design team",
-            "Write clean, maintainable code",
-            "Participate in code reviews",
-        ],
-        qualifications: [
-            "Currently pursuing Computer Science degree",
-            "2+ years of React experience",
-            "Strong problem-solving skills",
-        ],
-        benefits: ["Health insurance", "Flexible hours", "Learning budget", "Mentorship program"],
-        salary: "$4,000 - $6,000/month",
-        duration: "3 months",
-        startDate: "2024-06-01",
-        endDate: "2024-08-31",
-        applicationDeadline: "2024-05-15",
-        maxApplications: 100,
-        currentApplications: 45,
-        acceptedCandidates: 2,
-        createdDate: "2024-01-15",
-        lastModified: "2024-01-20",
-        createdBy: "John Smith",
-        tags: ["React", "Frontend", "JavaScript"],
-        priority: "high",
-        remote: false,
-        experienceLevel: "mid",
-    },
-    {
-        id: "2",
-        title: "Backend Developer Intern",
-        department: "Engineering",
-        location: "Remote",
-        type: "remote",
-        status: "active",
-        description: "Work on scalable backend systems using Node.js and Python.",
-        requirements: ["Node.js", "Python", "SQL", "REST APIs"],
-        responsibilities: [
-            "Build and maintain APIs",
-            "Database design and optimization",
-            "Write unit tests",
-            "Monitor system performance",
-        ],
-        qualifications: [
-            "Computer Science or related field",
-            "Experience with backend technologies",
-            "Understanding of databases",
-        ],
-        benefits: ["Remote work", "Health insurance", "Professional development", "Stock options"],
-        salary: "$3,500 - $5,500/month",
-        duration: "6 months",
-        startDate: "2024-07-01",
-        endDate: "2024-12-31",
-        applicationDeadline: "2024-06-01",
-        maxApplications: 75,
-        currentApplications: 28,
-        acceptedCandidates: 1,
-        createdDate: "2024-01-10",
-        lastModified: "2024-01-18",
-        createdBy: "Sarah Davis",
-        tags: ["Backend", "Node.js", "Python"],
-        priority: "high",
-        remote: true,
-        experienceLevel: "mid",
-    },
-    {
-        id: "3",
-        title: "UI/UX Designer Intern",
-        department: "Design",
-        location: "New York, NY",
-        type: "hybrid",
-        status: "active",
-        description: "Create beautiful and intuitive user interfaces for our products.",
-        requirements: ["Figma", "Adobe Creative Suite", "Prototyping", "User Research"],
-        responsibilities: [
-            "Design user interfaces",
-            "Create prototypes",
-            "Conduct user research",
-            "Collaborate with developers",
-        ],
-        qualifications: [
-            "Design degree or equivalent experience",
-            "Portfolio of design work",
-            "Understanding of UX principles",
-        ],
-        benefits: ["Hybrid work", "Design tools budget", "Conference attendance", "Mentorship"],
-        salary: "$3,000 - $4,500/month",
-        duration: "4 months",
-        startDate: "2024-05-15",
-        endDate: "2024-09-15",
-        applicationDeadline: "2024-04-30",
-        maxApplications: 50,
-        currentApplications: 32,
-        acceptedCandidates: 1,
-        createdDate: "2024-01-08",
-        lastModified: "2024-01-22",
-        createdBy: "Mike Johnson",
-        tags: ["Design", "UI", "UX", "Figma"],
-        priority: "medium",
-        remote: false,
-        experienceLevel: "entry",
-    },
-    {
-        id: "4",
-        title: "Data Science Intern",
-        department: "Analytics",
-        location: "Boston, MA",
-        type: "full-time",
-        status: "paused",
-        description: "Analyze data to drive business insights and build machine learning models.",
-        requirements: ["Python", "R", "SQL", "Machine Learning", "Statistics"],
-        responsibilities: [
-            "Analyze large datasets",
-            "Build predictive models",
-            "Create data visualizations",
-            "Present findings to stakeholders",
-        ],
-        qualifications: ["Statistics or Data Science background", "Experience with Python/R", "Strong analytical skills"],
-        benefits: ["Learning opportunities", "Health insurance", "Flexible schedule", "Research budget"],
-        salary: "$4,500 - $6,500/month",
-        duration: "6 months",
-        startDate: "2024-08-01",
-        endDate: "2024-01-31",
-        applicationDeadline: "2024-07-01",
-        maxApplications: 30,
-        currentApplications: 15,
-        acceptedCandidates: 0,
-        createdDate: "2024-01-05",
-        lastModified: "2024-01-25",
-        createdBy: "Emily Chen",
-        tags: ["Data Science", "Python", "ML"],
-        priority: "medium",
-        remote: false,
-        experienceLevel: "mid",
-    },
-    {
-        id: "5",
-        title: "DevOps Intern",
-        department: "Infrastructure",
-        location: "Seattle, WA",
-        type: "full-time",
-        status: "closed",
-        description: "Learn about cloud infrastructure and deployment automation.",
-        requirements: ["Docker", "Kubernetes", "AWS", "CI/CD", "Linux"],
-        responsibilities: [
-            "Manage cloud infrastructure",
-            "Automate deployment processes",
-            "Monitor system health",
-            "Implement security best practices",
-        ],
-        qualifications: [
-            "Computer Science background",
-            "Experience with cloud platforms",
-            "Understanding of DevOps practices",
-        ],
-        benefits: ["Cloud certifications", "Health insurance", "Learning budget", "Flexible hours"],
-        salary: "$4,000 - $6,000/month",
-        duration: "3 months",
-        startDate: "2024-03-01",
-        endDate: "2024-05-31",
-        applicationDeadline: "2024-02-15",
-        maxApplications: 25,
-        currentApplications: 25,
-        acceptedCandidates: 2,
-        createdDate: "2023-12-20",
-        lastModified: "2024-01-10",
-        createdBy: "Tom Anderson",
-        tags: ["DevOps", "AWS", "Docker"],
-        priority: "low",
-        remote: false,
-        experienceLevel: "senior",
-    },
-]
-
+import { usePositionStore } from '../../../store/PositionStore'
+import { de } from 'date-fns/locale/de'
+import { ToastContainer, toast } from 'react-toastify';
 
 const PositonContent = () => {
-    const [positions, setPositions] = useState(mockPositions)
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -202,14 +19,25 @@ const PositonContent = () => {
     const [typeFilter, setTypeFilter] = useState("all")
     const [sortField, setSortField] = useState("createdDate")
     const [sortDirection, setSortDirection] = useState("desc")
-    const [activeTab, setActiveTab] = useState("all")
+  
     const [showEditModal, setShowEditModal] = useState(false)
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [selectedPosition, setSelectedPosition] = useState(null)
     const [editingPosition, setEditingPosition] = useState(null)
     const [deletingPosition, setDeletingPosition] = useState(null)
-    // const { toast } = useToast()
+
+    // NEW: Track where the edit modal was opened from
+    const [editOpenedFromDetails, setEditOpenedFromDetails] = useState(false)
+
+    const positions = usePositionStore(state => state.positions);
+    const fetchPositions = usePositionStore(state => state.fetchPositions);
+    const deletePosition = usePositionStore(state => state.deletePosition)
+    const updatePosition = usePositionStore(state => state.updatePosition)
+    const loading = usePositionStore(state => state.loading);
+    const error = usePositionStore(state => state.error);
+    const status = usePositionStore(state => state.status);
+    const message = usePositionStore(state => state.message)
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -224,17 +52,17 @@ const PositonContent = () => {
 
     const getTypeBadge = (type) => {
         const colors = {
-            "full-time": "bg-blue-100 text-blue-800 hover:bg-blue-100",
-            "part-time": "bg-purple-100 text-purple-800 hover:bg-purple-100",
-            remote: "bg-green-100 text-green-800 hover:bg-green-100",
-            hybrid: "bg-orange-100 text-orange-800 hover:bg-orange-100",
+            "Full-time": "bg-blue-100 text-blue-800 hover:bg-blue-100",
+            "Part-time": "bg-purple-100 text-purple-800 hover:bg-purple-100",
+            "Remote": "bg-green-100 text-green-800 hover:bg-green-100",
+            "Hybrid": "bg-orange-100 text-orange-800 hover:bg-orange-100",
         }
 
         const labels = {
-            "full-time": "Full-time",
-            "part-time": "Part-time",
-            remote: "Remote",
-            hybrid: "Hybrid",
+            "Full-time": "Full-time",
+            "Part-time": "Part-time",
+            "Remote": "Remote",
+            "Hybrid": "Hybrid",
         }
 
         return (
@@ -263,9 +91,19 @@ const PositonContent = () => {
         setShowDetailsModal(true)
     }
 
-    const handleEditPosition = (position) => {
+    // Handle edit from table (direct edit)
+    const handleEditPositionFromTable = (position) => {
         setEditingPosition(position)
         setShowEditModal(true)
+        setEditOpenedFromDetails(false) // Opened from table
+    }
+
+    // Handle edit from details modal
+    const handleEditPositionFromDetails = (position) => {
+        setEditingPosition(position)
+        setShowEditModal(true)
+        setShowDetailsModal(false) // Close details modal
+        setEditOpenedFromDetails(true) // Track that it was opened from details
     }
 
     const handleDeletePosition = (position) => {
@@ -275,90 +113,41 @@ const PositonContent = () => {
 
     const confirmDeletePosition = () => {
         if (deletingPosition) {
-            setPositions(positions.filter((pos) => pos.id !== deletingPosition.id))
-            toast({
-                title: "Position deleted",
-                description: "The position has been successfully deleted.",
-            })
+            deletePosition(deletingPosition._id)
             setDeletingPosition(null)
         }
     }
 
-
     const handleUpdatePosition = (updatedData) => {
         if (!editingPosition) return
 
-        const updatedPositions = positions.map((pos) =>
-            pos.id === editingPosition.id
-                ? { ...pos, ...updatedData, lastModified: new Date().toISOString().split("T")[0] }
-                : pos,
-        )
-
-        setPositions(updatedPositions)
+        updatePosition(updatedData)
         setEditingPosition(null)
-        toast({
-            title: "Position updated",
-            description: "Position has been successfully updated.",
-        })
-    }
 
-    const handleDuplicatePosition = (position) => {
-        const duplicatedPosition = {
-            ...position,
-            id: Date.now().toString(),
-            title: `${position.title} (Copy)`,
-            status: "draft",
-            currentApplications: 0,
-            acceptedCandidates: 0,
-            createdDate: new Date().toISOString().split("T")[0],
-            lastModified: new Date().toISOString().split("T")[0],
-            createdBy: "Current User",
+        // NEW: If edit was opened from details, go back to details
+        if (editOpenedFromDetails) {
+            // Update the selectedPosition with the new data
+            setSelectedPosition(prev => ({ ...prev, ...updatedData }))
+            setShowDetailsModal(true)
+            setEditOpenedFromDetails(false) // Reset the flag
         }
-
-        setPositions([duplicatedPosition, ...positions])
-        toast({
-            title: "Position duplicated",
-            description: "Position has been successfully duplicated.",
-        })
     }
 
-    const handleCreatePosition = (positionData) => {
-        const newPosition = {
-            id: Date.now().toString(),
-            title: positionData.title || "",
-            department: positionData.department || "",
-            location: positionData.location || "",
-            type: positionData.type || "full-time",
-            status: "draft",
-            description: positionData.description || "",
-            requirements: positionData.requirements || [],
-            responsibilities: positionData.responsibilities || [],
-            qualifications: positionData.qualifications || [],
-            benefits: positionData.benefits || [],
-            salary: positionData.salary,
-            duration: positionData.duration || "",
-            startDate: positionData.startDate || "",
-            endDate: positionData.endDate || "",
-            applicationDeadline: positionData.applicationDeadline || "",
-            maxApplications: positionData.maxApplications,
-            currentApplications: 0,
-            acceptedCandidates: 0,
-            createdDate: new Date().toISOString().split("T")[0],
-            lastModified: new Date().toISOString().split("T")[0],
-            createdBy: "Current User",
-            tags: positionData.tags || [],
-            priority: positionData.priority || "medium",
-            remote: positionData.remote || false,
-            experienceLevel: positionData.experienceLevel || "entry",
+    // NEW: Handle edit modal close (cancel/X button)
+    const handleEditModalClose = (open) => {
+        if (!open) { // Modal is being closed
+            setShowEditModal(false)
+            setEditingPosition(null)
+
+            // If edit was opened from details, go back to details
+            if (editOpenedFromDetails) {
+                setShowDetailsModal(true)
+                setEditOpenedFromDetails(false) // Reset the flag
+            }
+        } else {
+            setShowEditModal(open)
         }
-
-        setPositions([newPosition, ...positions])
-        toast({
-            title: "Position created",
-            description: "New position has been successfully created.",
-        })
     }
-
 
     const handleSort = (field) => {
         if (sortField === field) {
@@ -369,59 +158,102 @@ const PositonContent = () => {
         }
     }
 
-    const filteredPositions = positions
-        .filter((pos) => {
-            const matchesSearch =
-                pos.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                pos.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                pos.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                pos.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    // Compute filteredPositions using useMemo so it's recalculated when dependencies change
+    const filteredPositions = useMemo(() => {
+        return positions
+            .filter((pos) => {
+                const matchesSearch =
+                    pos.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    pos.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    pos.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    pos.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
-            const matchesStatus = statusFilter === "all" || pos.status === statusFilter
-            const matchesDepartment = departmentFilter === "all" || pos.department === departmentFilter
-            const matchesType = typeFilter === "all" || pos.type === typeFilter
-            const matchesTab = activeTab === "all" || pos.status === activeTab
+                const matchesStatus = statusFilter === "all" || pos.status === statusFilter;
+                const matchesDepartment = departmentFilter === "all" || pos.department === departmentFilter;
+                const matchesType = typeFilter === "all" || pos.type === typeFilter;
 
-            return matchesSearch && matchesStatus && matchesDepartment && matchesType && matchesTab
-        })
-        .sort((a, b) => {
-            const aValue = a[sortField]
-            const bValue = b[sortField]
-            const direction = sortDirection === "asc" ? 1 : -1
+                return matchesSearch && matchesStatus && matchesDepartment && matchesType;
+            })
+            .sort((a, b) => {
+                const aValue = a[sortField];
+                const bValue = b[sortField];
+                const direction = sortDirection === "asc" ? 1 : -1;
 
-            if (aValue < bValue) return -1 * direction
-            if (aValue > bValue) return 1 * direction
-            return 0
-        })
+                if (aValue < bValue) return -1 * direction;
+                if (aValue > bValue) return 1 * direction;
+                return 0;
+            });
+    }, [positions, searchTerm, statusFilter, departmentFilter, typeFilter, sortField, sortDirection]);
 
-    const getTabCount = (status) => {
-        if (status === "all") return positions.length
-        return positions.filter((pos) => pos.status === status).length
-    }
+
+    
+
+    useEffect(() => {
+        fetchPositions();
+    }, [])
+
+
+
+    useEffect(() => {
+        // console.log("Jdsj " + message)
+        if (status === 201 || status === 200) {
+            toast.success(message, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        } else {
+            toast.error(error, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+
+    }, [status])
 
     return (
         <div className='space-y-6'>
+            <ToastContainer />
             <Header setShowCreateModal={setShowCreateModal} />
             <StatsCard />
-            <CreatePositionModal open={showCreateModal} onOpenChange={setShowCreateModal} onSubmit={handleCreatePosition} />
+            <CreatePositionModal open={showCreateModal} onOpenChange={setShowCreateModal} />
+
             <PositionTable
                 searchTerm={searchTerm} setSearchTerm={setSearchTerm}
                 statusFilter={statusFilter} setStatusFilter={setStatusFilter}
                 departmentFilter={departmentFilter} setDepartmentFilter={setDepartmentFilter}
                 typeFilter={typeFilter} setTypeFilter={setTypeFilter}
                 handleSort={handleSort} filteredPositions={filteredPositions}
-
                 getTypeBadge={getTypeBadge} getStatusBadge={getStatusBadge}
                 getPriorityBadge={getPriorityBadge}
                 handleViewPosition={handleViewPosition}
-                handleEditPosition={handleEditPosition}
-                handleDuplicatePosition={handleDuplicatePosition}
+                handleEditPosition={handleEditPositionFromTable} // Use specific handler for table
                 handleDeletePosition={handleDeletePosition}
+                loading={loading}
+                error={error}
+                positions = {positions}            />
+
+            <PositionDetailsModal
+                open={showDetailsModal}
+                onOpenChange={setShowDetailsModal}
+                position={selectedPosition}
+                handleEditPosition={handleEditPositionFromDetails} // Use specific handler for details
             />
-            <PositionDetailsModal open={showDetailsModal} onOpenChange={setShowDetailsModal} position={selectedPosition} />
+
             <EditPositionModal
                 open={showEditModal}
-                onOpenChange={setShowEditModal}
+                onOpenChange={handleEditModalClose} // Use custom close handler
                 position={editingPosition}
                 onSubmit={handleUpdatePosition}
             />
@@ -435,10 +267,9 @@ const PositonContent = () => {
                 description="Are you sure you want to delete this position? This will also remove all associated applications."
             />
         </div>
-
-
     )
 }
+
 
 
 export default PositonContent

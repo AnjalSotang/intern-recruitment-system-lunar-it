@@ -16,9 +16,12 @@ import {
     Edit,
     Copy,
 } from "lucide-react"
+import EditPositionModal from "./EditPositionModal"
 
-const PositionDetailsModal = ({ open, onOpenChange, position }) => {
+const PositionDetailsModal = ({ open, onOpenChange, position, handleEditPosition
+ }) => {
     if (!position) return null
+    // console.log(position)
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -33,17 +36,17 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
 
     const getTypeBadge = (type) => {
         const colors = {
-            "full-time": "bg-blue-100 text-blue-800 hover:bg-blue-100",
-            "part-time": "bg-purple-100 text-purple-800 hover:bg-purple-100",
-            remote: "bg-green-100 text-green-800 hover:bg-green-100",
-            hybrid: "bg-orange-100 text-orange-800 hover:bg-orange-100",
+            "Full-time": "bg-blue-100 text-blue-800 hover:bg-blue-100",
+            "Part-time": "bg-purple-100 text-purple-800 hover:bg-purple-100",
+            "Remote": "bg-green-100 text-green-800 hover:bg-green-100",
+            "Hybrid": "bg-orange-100 text-orange-800 hover:bg-orange-100",
         }
 
         const labels = {
-            "full-time": "Full-time",
-            "part-time": "Part-time",
-            remote: "Remote",
-            hybrid: "Hybrid",
+            "Full-time": "Full-time",
+            "Part-time": "Part-time",
+            "Remote": "Remote",
+            "Hybrid": "Hybrid",
         }
 
         return (
@@ -57,7 +60,7 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
         const colors = {
             high: "bg-red-100 text-red-800 hover:bg-red-100",
             medium: "bg-orange-100 text-orange-800 hover:bg-orange-100",
-            low: "bg-gray-100 text-gray-800 hover:bg-gray-100",
+            low: "bg-blue-100 text-gray-800 hover:bg-gray-100",
         }
 
         return (
@@ -68,6 +71,7 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
     }
 
     return (
+         <>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -139,6 +143,34 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
                             </Card>
                         )}
 
+                        {/* If both are empty */}
+                        {position.responsibilities.length === 0 && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg">Responsibilities Not Available</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-gray-500">
+                                        This position has no listed qualifications at the moment.
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                          {position.qualifications.length === 0 && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg">Qualification Not Available</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-gray-500">
+                                        This position has no listed qualifications at the moment.
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        )}
+
+
                         {/* Responsibilities */}
                         {position.responsibilities.length > 0 && (
                             <Card>
@@ -178,14 +210,14 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
                         )}
 
                         {/* Benefits */}
-                        {position.benefits.length > 0 && (
+                        {position.optional.length > 0 && (
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg">Benefits & Perks</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-2 gap-2">
-                                        {position.benefits.map((benefit) => (
+                                        {position.optional.map((benefit) => (
                                             <div key={benefit} className="flex items-center gap-2">
                                                 <CheckCircle className="h-4 w-4 text-green-600" />
                                                 <span className="text-sm">{benefit}</span>
@@ -208,16 +240,16 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm font-medium">Current Applications:</span>
-                                        <Badge variant="outline">{position.currentApplications}</Badge>
+                                        <Badge variant="outline">{position.currentApplications ?? 0}</Badge>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm font-medium">Accepted Candidates:</span>
-                                        <Badge variant="outline">{position.acceptedCandidates}</Badge>
+                                        <Badge variant="outline">{position.acceptedCandidates ?? 0}</Badge>
                                     </div>
                                     {position.maxApplications && (
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium">Max Applications:</span>
-                                            <Badge variant="outline">{position.maxApplications}</Badge>
+                                            <Badge variant="outline">{position.maxApplications ?? 0}</Badge>
                                         </div>
                                     )}
                                 </div>
@@ -303,19 +335,20 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
                                 <CardTitle className="text-lg">Quick Actions</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-2">
-                                <Button className="w-full justify-start bg-transparent" variant="outline">
+                                <Button className="w-full justify-start bg-transparent" variant="outline"
+                                    onClick={() => handleEditPosition(position)}
+                                >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit Position
                                 </Button>
-                                <Button className="w-full justify-start bg-transparent" variant="outline">
-                                    <Copy className="mr-2 h-4 w-4" />
-                                    Duplicate Position
-                                </Button>
+                                {/* 
                                 <Button className="w-full justify-start bg-transparent" variant="outline">
                                     <Share className="mr-2 h-4 w-4" />
                                     Share Position
-                                </Button>
-                                <Button className="w-full justify-start bg-transparent" variant="outline">
+                                </Button> */}
+                                <Button className="w-full justify-start bg-transparent" variant="outline"
+
+                                >
                                     <Users className="mr-2 h-4 w-4" />
                                     View Applications
                                 </Button>
@@ -325,6 +358,8 @@ const PositionDetailsModal = ({ open, onOpenChange, position }) => {
                 </div>
             </DialogContent>
         </Dialog>
+
+           </>
     )
 }
 

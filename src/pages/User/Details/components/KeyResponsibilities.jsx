@@ -1,7 +1,8 @@
 import React from 'react'
-import { responsibilities } from '../../../../constants'
+// import { responsibilities } from '../../../../constants'
 
-const KeyResponsibilities = () => {
+const KeyResponsibilities = ({responsibilities }) => {
+console.log("Responsibilities inside component:", responsibilities);
     return (
         <section className="mb-12">
             <div className="bg-white rounded-xl border border-gray-200 p-8">
@@ -9,16 +10,16 @@ const KeyResponsibilities = () => {
                     Key Responsibilities
                 </h2>
                 <ul className="space-y-4">
-                    {responsibilities.map((responsibility, index) => (
-                        <li key={index} className="flex items-start">
-                            <div className="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 mr-4">
-                                <i className="fas fa-check text-xs"></i>
-                            </div>
-                            <span className="text-gray-700 leading-relaxed">
+                    {responsibilities.length === 0 ? (
+                        <p className="text-gray-500 italic">No responsibilities listed for this position.</p>
+                    ) : (
+                        responsibilities.map((responsibility, index) => (
+                            <li key={index} className="flex items-start">
                                 {responsibility}
-                            </span>
-                        </li>
-                    ))}
+                            </li>
+                        ))
+                    )}
+
                 </ul>
             </div>
         </section>

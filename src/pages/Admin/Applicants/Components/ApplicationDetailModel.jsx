@@ -1,14 +1,61 @@
-"use client"
-
+import { useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, FileText, Download } from "lucide-react"
+import { User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, FileText, Download, ExternalLink, Loader2 } from "lucide-react"
 
 const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
+
   if (!application) return null
+
+  const [downloading, setDownloading] = useState({});
+
+  // Function to handle file downloads
+  const handleDownload = async (type, applicationId, fileName) => {
+    try {
+      setDownloading(prev => ({ ...prev, [type]: true }));
+
+      console.log(applicationId)
+
+      const response = await fetch(`http://localhost:3000/api/application/${applicationId}/resume`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf'
+        }
+      });
+
+      if (!response.ok) throw new Error(`Download failed: ${response.statusText}`);
+
+      const text = await response.clone().text();
+      console.log('Response text preview:', text.slice(0, 200));
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName
+        ? safeFileName(fileName)
+        : `${application.firstName}_${application.lastName}_${type}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      // console.error('Download error:', error);
+      alert("Failed to download the resume!");
+    } finally {
+      setDownloading(prev => ({ ...prev, [type]: false }));
+    }
+  };
+
+  const safeFileName = (fileName) =>
+    fileName.replace(/[^\w.-]/g, '_');
+
 
   const getStatusBadge = (status) => {
     const colors = {
@@ -21,18 +68,12 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
     return <Badge className={colors[status]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
   }
 
-  // Mock additional data that would come from your API
-  const mockDetails = {
-    phone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    education: "Computer Science, Stanford University",
-    gpa: "3.8/4.0",
-    skills: ["React", "TypeScript", "Node.js", "Python", "SQL"],
-    coverLetter:
-      "I am excited to apply for the Frontend Developer Intern position. With my strong background in React and TypeScript, I believe I can contribute effectively to your team while gaining valuable industry experience.",
-    resume: "resume_alice_johnson.pdf",
-    portfolio: "https://alicejohnson.dev",
-  }
+  // Helper function to get clean file name for display
+  const getDisplayFileName = (filePath, type) => {
+    if (!filePath) return `${type}.pdf`;
+    const fileName = filePath.split('\\').pop().split('/').pop();
+    return `${application.firstName} ${type}.pdf`;
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,9 +81,9 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {application.candidateName}
+            {application.fullName}
           </DialogTitle>
-          <DialogDescription>Application for {application.position}</DialogDescription>
+          <DialogDescription>Application for {application.positionTitle}</DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -59,11 +100,11 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{mockDetails.phone}</span>
+                  <span className="text-sm">{application.phone}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{mockDetails.location}</span>
+                  <span className="text-sm">{application.department}</span>
                 </div>
               </CardContent>
             </Card>
@@ -83,7 +124,7 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Experience: {application.experience}</span>
+                  <span className="text-sm">Priority: {application.priority}</span>
                 </div>
               </CardContent>
             </Card>
@@ -93,16 +134,73 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
                 <CardTitle className="text-lg">Documents</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
-                  <FileText className="mr-2 h-4 w-4" />
-                  {mockDetails.resume}
-                  <Download className="ml-auto h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Portfolio Link
-                  <Download className="ml-auto h-4 w-4" />
-                </Button>
+                {/* Resume Download Button */}
+                {application.resume && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start bg-transparent hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => handleDownload('resume', application._id, `${application.firstName}_${application.lastName}_Resume.pdf`)}
+                    disabled={downloading.resume}
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span className="flex-1 text-left truncate">
+                      {getDisplayFileName(application.resume, 'Resume')}
+                    </span>
+                    {downloading.resume ? (
+                      <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="ml-auto h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+
+                {/* Quick Links Section */}
+                {(application.linkedinUrl || application.githubUrl) && (
+                  <>
+                    <Separator className="my-3" />
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-muted-foreground">Quick Links</h4>
+                      {application.linkedinUrl && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start"
+                          onClick={() => window.open(application.linkedinUrl, '_blank')}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          LinkedIn Profile
+                        </Button>
+                      )}
+                      {application.githubUrl && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start"
+                          onClick={() => window.open(application.githubUrl, '_blank')}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          GitHub Profile
+                        </Button>
+                      )}
+
+                      {/* Portfolio Access Button */}
+                      {(application.portfolioUrl) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start"
+                          onClick={() => window.open(application.portfolioUrl, '_blank')}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Portfolio Link
+                        </Button>
+
+
+                      )}
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -119,18 +217,19 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="font-medium mb-2">Education</h4>
-                  <p className="text-sm text-muted-foreground">{mockDetails.education}</p>
-                  <p className="text-sm text-muted-foreground">GPA: {mockDetails.gpa}</p>
+                  <p className="text-sm text-muted-foreground">{`${application.major}, ${application.university}`}</p>
+                  <p className="text-sm text-muted-foreground">GPA: {application.gpa}</p>
+                  <p className="text-sm text-muted-foreground">Graduation Year: {application.graduationYear}</p>
                 </div>
                 <Separator />
                 <div>
                   <h4 className="font-medium mb-2">Technical Skills</h4>
                   <div className="flex flex-wrap gap-2">
-                    {mockDetails.skills.map((skill) => (
-                      <Badge key={skill} variant="secondary">
+                    {application.skills?.map((skill, index) => (
+                      <Badge key={index} variant="secondary">
                         {skill}
                       </Badge>
-                    ))}
+                    )) || <span className="text-sm text-muted-foreground">No skills listed</span>}
                   </div>
                 </div>
               </CardContent>
@@ -141,9 +240,25 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
                 <CardTitle className="text-lg">Cover Letter</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-relaxed text-muted-foreground">{mockDetails.coverLetter}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {application.coverLetter || "No cover letter provided."}
+                </p>
               </CardContent>
             </Card>
+
+            {/* Additional Information Card */}
+            {application.additionalInfo && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Additional Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {application.additionalInfo}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="flex gap-2 pt-4">
               <Button className="flex-1">Schedule Interview</Button>

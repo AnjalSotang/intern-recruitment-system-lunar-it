@@ -35,7 +35,7 @@ const ChooseUs = () => {
                 <div className=" max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                            Why Choose 
+                            Why Choose
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                             We provide more than just work experience - we offer a
@@ -46,7 +46,7 @@ const ChooseUs = () => {
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {benefits.map((benefit, index) => (
                             <div key={index} className="text-center group border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300">
-                                <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <div className="bg-gradient-to-br from-indigo-600 to-purple-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                                     <FontAwesomeIcon icon={benefit.icon} className="text-white text-lg" />
                                     <i className={`${benefit.icon} text-2xl text-white`}></i>
                                 </div>

@@ -17,6 +17,7 @@ const DeleteConfirmationModal = ({
   description,
   itemName,
 }) => {
+  
   const handleConfirm = () => {
     onConfirm()
     onOpenChange(false)

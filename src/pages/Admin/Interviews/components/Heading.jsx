@@ -34,7 +34,7 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
                     <h1 className="text-3xl font-bold tracking-tight">Interviews</h1>
                     <p className="text-muted-foreground">Manage and track all candidate interviews</p>
                 </div>
-                <Button onClick={() => setShowModal(true)}>
+                <Button onClick={() => setShowScheduleModal(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Schedule Interview
                 </Button>

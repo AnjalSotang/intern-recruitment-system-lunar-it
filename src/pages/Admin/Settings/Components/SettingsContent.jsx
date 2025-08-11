@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Building2, Bell, Shield, Users, Save, Upload, Trash2, Plus, Edit } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-const SettingsContent = () => {
+const   SettingsContent = () => {
   const [profileData, setProfileData] = useState({
     name: "Admin User",
     email: "admin@company.com",

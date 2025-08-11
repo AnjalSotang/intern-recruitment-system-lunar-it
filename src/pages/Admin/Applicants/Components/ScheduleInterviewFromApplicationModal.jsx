@@ -66,9 +66,9 @@ const ScheduleInterviewFromApplicationModal = ({
         if (validateForm() && application) {
             const interviewData = {
                 id: Date.now().toString(),
-                candidateName: application.candidateName,
+                candidateName: application.firstName,
                 candidateEmail: application.email,
-                position: application.position,
+                position: application.positionTitle,
                 department: application.department,
                 interviewer: formData.interviewer,
                 date: formData.date,
@@ -124,7 +124,7 @@ const ScheduleInterviewFromApplicationModal = ({
                         Schedule Interview
                     </DialogTitle>
                     <DialogDescription>
-                        Schedule an interview with {application.candidateName} for the {application.position} position.
+                        Schedule an interview with {application.firstName} for the {application.positionTitle} position.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -135,14 +135,14 @@ const ScheduleInterviewFromApplicationModal = ({
                             <User className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                            <h3 className="font-semibold">{application.candidateName}</h3>
+                            <h3 className="font-semibold">{application.firstName}</h3>
                             <p className="text-sm text-muted-foreground">{application.email}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                         <Briefcase className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm">
-                            {application.position} • {application.department}
+                            {application.positionTitle} • {application.department}
                         </span>
                     </div>
                 </div>

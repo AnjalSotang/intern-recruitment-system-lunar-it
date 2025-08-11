@@ -1,7 +1,7 @@
 import React from 'react'
 import { requiredSkills, niceToHaveSkills } from '../../../../constants'
 
-const TechnicalSkills = () => {
+const TechnicalSkills = ({ requirements, optional }) => {
     return (
         <section className="mb-12">
             <div className="grid lg:grid-cols-2 gap-8">
@@ -11,14 +11,17 @@ const TechnicalSkills = () => {
                         Required Technical Skills
                     </h3>
                     <div className="flex flex-wrap gap-3">
-                        {requiredSkills.map((skill, index) => (
-                            <span
-                                key={index}
-                                className="bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm font-medium border border-red-200"
-                            >
-                                {skill}
-                            </span>
-                        ))}
+                        {requirements.length === 0 ?
+                            <p className="text-gray-500 italic">No requirements listed for this position.</p>
+                            :
+                            requirements.map((skill, index) => (
+                                <span
+                                    key={index}
+                                    className="bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm font-medium border border-red-200"
+                                >
+                                    {skill}
+                                </span>
+                            ))}
                     </div>
                 </div>
 
@@ -28,14 +31,18 @@ const TechnicalSkills = () => {
                         Nice-to-Have Skills
                     </h3>
                     <div className="flex flex-wrap gap-3">
-                        {niceToHaveSkills.map((skill, index) => (
-                            <span
-                                key={index}
-                                className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium border border-green-200"
-                            >
-                                {skill}
-                            </span>
-                        ))}
+                        {optional.length === 0 ?
+                            <p className="text-gray-500 italic">No nice to have skills listed for this position.</p>
+
+                            :
+                            optional.map((skill, index) => (
+                                <span
+                                    key={index}
+                                    className="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium border border-green-200"
+                                >
+                                    {skill}
+                                </span>
+                            ))}
                     </div>
                 </div>
             </div>

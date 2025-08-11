@@ -59,6 +59,7 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+		
   		borderRadius: {
   			none: '0px',
   			sm: 'calc(var(--radius) - 4px)',

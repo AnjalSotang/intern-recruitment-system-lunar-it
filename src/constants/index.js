@@ -195,3 +195,244 @@ export const internPositions = [
     }
 ];
 
+
+   // Mock internship data
+    export const internships = [
+        {
+            id: 1,
+            title: "Frontend Developer",
+            role: "frontend",
+            duration: "3",
+            location: "remote",
+            locationText: "Remote (with occasional office visits)",
+            description: "Join our UI/UX team to create responsive, user-friendly interfaces using React, TypeScript, and modern CSS frameworks. You'll work on real client projects and collaborate with designers and backend developers.",
+            requirements: [
+                "Strong knowledge of HTML, CSS, and JavaScript",
+                "Experience with React or similar framework",
+                "Understanding of responsive design principles",
+                "Basic knowledge of version control (Git)"
+            ],
+            deadline: "August 15, 2025",
+            skills: ["React", "TypeScript", "Tailwind CSS", "Figma"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 2,
+            title: "Backend Engineer",
+            role: "backend",
+            duration: "6",
+            location: "hybrid",
+            locationText: "Hybrid (3 days in office)",
+            description: "Develop robust APIs and microservices using Node.js, Express, and MongoDB while learning best practices in backend architecture. You'll be involved in designing, implementing, and testing server-side applications.",
+            requirements: [
+                "Knowledge of JavaScript and Node.js",
+                "Basic understanding of databases (SQL or NoSQL)",
+                "Familiarity with RESTful API design",
+                "Interest in server architecture and performance"
+            ],
+            deadline: "September 1, 2025",
+            skills: ["Node.js", "Express", "MongoDB", "REST API"],
+            color: "bg-teal-600"
+        },
+        {
+            id: 3,
+            title: "Data Scientist",
+            role: "data",
+            duration: "4",
+            location: "onsite",
+            locationText: "On-site (London Office)",
+            description: "Analyze complex datasets and build predictive models to help our clients make data-driven decisions using Python and ML frameworks. You'll work on real-world data science problems and develop solutions with business impact.",
+            requirements: [
+                "Strong Python programming skills",
+                "Knowledge of statistical analysis",
+                "Experience with data manipulation libraries",
+                "Understanding of machine learning concepts"
+            ],
+            deadline: "August 30, 2025",
+            skills: ["Python", "TensorFlow", "SQL", "Data Visualization"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 4,
+            title: "UI/UX Designer",
+            role: "design",
+            duration: "3",
+            location: "remote",
+            locationText: "Remote (weekly team meetings)",
+            description: "Create user-centered designs by understanding business requirements, user feedback, and usability principles. You'll work on wireframes, visual designs, and prototypes for web and mobile applications.",
+            requirements: [
+                "Design portfolio demonstrating UI/UX skills",
+                "Proficiency with design tools (Figma, Sketch)",
+                "Understanding of user-centered design principles",
+                "Basic knowledge of HTML/CSS is a plus"
+            ],
+            deadline: "August 20, 2025",
+            skills: ["Figma", "Wireframing", "Prototyping", "User Research"],
+            color: "bg-teal-600"
+        },
+        {
+            id: 5,
+            title: "Product Management",
+            role: "product",
+            duration: "6",
+            location: "hybrid",
+            locationText: "Hybrid (2 days in office)",
+            description: "Assist in managing the entire product lifecycle from strategic planning to tactical activities. You'll help gather user requirements, define product vision, and work with development teams to deliver solutions.",
+            requirements: [
+                "Strong analytical and problem-solving skills",
+                "Excellent communication abilities",
+                "Basic understanding of software development",
+                "Interest in market research and user experience"
+            ],
+            deadline: "September 10, 2025",
+            skills: ["Product Strategy", "User Stories", "Market Analysis", "Agile"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 6,
+            title: "DevOps Engineer",
+            role: "devops",
+            duration: "4",
+            location: "onsite",
+            locationText: "On-site (Manchester Office)",
+            description: "Learn to build and maintain the infrastructure necessary for software development and deployment. You'll work with CI/CD pipelines, cloud services, and automation tools to improve development workflows.",
+            requirements: [
+                "Basic knowledge of Linux systems",
+                "Understanding of networking concepts",
+                "Familiarity with scripting languages",
+                "Interest in cloud technologies (AWS, Azure, GCP)"
+            ],
+            deadline: "August 25, 2025",
+            skills: ["Docker", "Kubernetes", "CI/CD", "AWS"],
+            color: "bg-teal-600"
+        },
+        {
+            id: 7,
+            title: "Mobile App Developer",
+            role: "frontend",
+            duration: "4",
+            location: "hybrid",
+            locationText: "Hybrid (flexible schedule)",
+            description: "Develop cross-platform mobile applications using React Native or Flutter. You'll work on UI implementation, state management, and integration with backend services for both iOS and Android platforms.",
+            requirements: [
+                "Experience with JavaScript or Dart",
+                "Understanding of mobile UI/UX principles",
+                "Knowledge of React or Flutter basics",
+                "Familiarity with mobile development concepts"
+            ],
+            deadline: "September 5, 2025",
+            skills: ["React Native", "Flutter", "Mobile UI", "API Integration"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 8,
+            title: "Business Intelligence Analyst",
+            role: "data",
+            duration: "6",
+            location: "remote",
+            locationText: "Remote (global team)",
+            description: "Transform raw data into actionable insights through data visualization and reporting. You'll work with BI tools to create dashboards and reports that help stakeholders make informed business decisions.",
+            requirements: [
+                "Strong analytical and critical thinking skills",
+                "Experience with SQL and data manipulation",
+                "Knowledge of data visualization principles",
+                "Understanding of business metrics and KPIs"
+            ],
+            deadline: "September 15, 2025",
+            skills: ["SQL", "Tableau", "Power BI", "Data Analysis"],
+            color: "bg-teal-600"
+        },
+        {
+            id: 9,
+            title: "QA Engineer",
+            role: "backend",
+            duration: "3",
+            location: "onsite",
+            locationText: "On-site (Edinburgh Office)",
+            description: "Ensure software quality through manual and automated testing. You'll design test cases, identify bugs, and work with development teams to improve product quality and user experience.",
+            requirements: [
+                "Attention to detail and analytical mindset",
+                "Basic understanding of software testing principles",
+                "Interest in automation testing",
+                "Good communication and documentation skills"
+            ],
+            deadline: "August 18, 2025",
+            skills: ["Test Planning", "Selenium", "JIRA", "Bug Tracking"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 10,
+            title: "Content Designer",
+            role: "design",
+            duration: "4",
+            location: "hybrid",
+            locationText: "Hybrid (1 day in office)",
+            description: "Create engaging visual content for digital platforms including social media, websites, and marketing materials. You'll work with the marketing team to develop a consistent brand identity across all channels.",
+            requirements: [
+                "Creative portfolio demonstrating design skills",
+                "Proficiency with Adobe Creative Suite",
+                "Understanding of design principles and typography",
+                "Knowledge of social media platforms and formats"
+            ],
+            deadline: "August 22, 2025",
+            skills: ["Photoshop", "Illustrator", "Social Media", "Brand Design"],
+            color: "bg-teal-600"
+        },
+        {
+            id: 11,
+            title: "Digital Marketing",
+            role: "product",
+            duration: "3",
+            location: "remote",
+            locationText: "Remote (UK-based)",
+            description: "Assist in planning and executing digital marketing campaigns across various channels. You'll help with content creation, social media management, SEO optimization, and performance analysis.",
+            requirements: [
+                "Strong written communication skills",
+                "Basic understanding of digital marketing concepts",
+                "Familiarity with social media platforms",
+                "Interest in analytics and data-driven marketing"
+            ],
+            deadline: "August 28, 2025",
+            skills: ["SEO", "Content Marketing", "Google Analytics", "Social Media"],
+            color: "bg-violet-700"
+        },
+        {
+            id: 12,
+            title: "Cybersecurity Analyst",
+            role: "devops",
+            duration: "6",
+            location: "onsite",
+            locationText: "On-site (Bristol Office)",
+            description: "Assist in monitoring and improving security systems to protect against cyber threats. You'll learn about vulnerability assessments, security protocols, and incident response procedures.",
+            requirements: [
+                "Understanding of basic security concepts",
+                "Knowledge of networking fundamentals",
+                "Interest in ethical hacking and penetration testing",
+                "Analytical mindset and attention to detail"
+            ],
+            deadline: "September 20, 2025",
+            skills: ["Network Security", "Vulnerability Assessment", "Security Tools", "Incident Response"],
+            color: "bg-teal-600"
+        }
+    ];
+
+    export const filterOptions = {
+        roles: [
+            { value: 'frontend', label: 'Frontend Development' },
+            { value: 'backend', label: 'Backend Engineering' },
+            { value: 'data', label: 'Data Science' },
+            { value: 'design', label: 'UI/UX Design' },
+            { value: 'product', label: 'Product Management' },
+            { value: 'devops', label: 'DevOps' }
+        ],
+        durations: [
+            { value: '3', label: '3 Months' },
+            { value: '4', label: '4 Months' },
+            { value: '6', label: '6 Months' }
+        ],
+        locations: [
+            { value: 'remote', label: 'Remote' },
+            { value: 'hybrid', label: 'Hybrid' },
+            { value: 'onsite', label: 'On-site' }
+        ]
+    };

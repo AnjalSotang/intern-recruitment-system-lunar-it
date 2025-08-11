@@ -15,10 +15,9 @@ const viewDetailsForm = () => {
         linkedinUrl: "",
         coverLetter: "",
         additionalInfo: "",
+        selectedSkills: [],
+        resume:""
     });
-
-    const [selectedSkills, setSelectedSkills] = useState([]);
-    const [resumeFile, setResumeFile] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
