@@ -11,9 +11,10 @@ const ContactUs = () => {
         <div className="min-h-screen bg-white">
         <Layout>
             {/* Main Content */}
-            <div className="max-w-7xl my-16 mx-auto px-4 sm:px-6 lg:px-8 py-12">
+         
                 {/* Header Section */}
               <Header/>
+                 <div className="max-w-7xl my-16 mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 {/* Contact Section */}
                 <Contact/>
                 {/* Map Section */}

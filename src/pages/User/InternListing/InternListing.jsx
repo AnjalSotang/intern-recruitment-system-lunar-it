@@ -92,27 +92,22 @@ const InternshipListings = () => {
     };
 
     return (
-        <div className="bg-gray-50 min-h-screen flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
 
             <Layout>
-                <div className="pt-24 pb-6 bg-white border-b border-gray-200">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <div className="flex items-center">
-                                {/* <a href="#" className="inline-flex items-center text-violet-700 hover:text-violet-600 transition-colors mr-4">
-                <ArrowLeft className="w-5 h-5 mr-1" />
-                <span className="text-sm font-medium">Back to Overview</span>
-              </a> */}
-                                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">All Internship Positions</h1>
-                            </div>
-                            <p className="mt-2 md:mt-0 text-gray-600">Find the perfect opportunity to kickstart your tech career</p>
-                        </div>
-                    </div>
+                <div className="text-center mt-10 pt-24 mb-12">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        Internship Opportunities
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Discover exciting internship opportunities across various departments and kickstart your career in tech
+                    </p>
                 </div>
 
                 {/* Filter Section */}
-                <div className="bg-white py-4 shadow-sm sticky top-16 z-40">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 max-w-7xl mx-auto">
+                    <div className="px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
                             <div className="relative flex-grow max-w-lg">
                                 <input
@@ -264,7 +259,7 @@ const InternshipListings = () => {
                 )}
 
                 {/* Results Count */}
-                <div className="bg-gray-50 py-4 border-b border-gray-200">
+                <div className="">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between">
                             <p className="text-sm text-gray-700">

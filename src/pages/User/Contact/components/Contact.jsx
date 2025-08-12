@@ -131,7 +131,7 @@ const Contact = () => {
 
                     {/* Contact Information */}
                     <div className="space-y-8">
-                        <div>
+                        {/* <div>
                             <h2 className="text-3xl font-bold text-gray-900 mb-8">
                                 Get in Touch
                             </h2>
@@ -139,7 +139,7 @@ const Contact = () => {
                                 We're here to help and answer any questions you might have. We
                                 look forward to hearing from you.
                             </p>
-                        </div>
+                        </div> */}
 
                         {/* Contact Cards */}
                         <div className="space-y-6">

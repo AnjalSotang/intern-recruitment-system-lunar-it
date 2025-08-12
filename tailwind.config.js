@@ -7,6 +7,9 @@ export default {
   ],
   theme: {
   	extend: {
+		 fontFamily: {
+        pacifico: ['Pacifico', 'cursive'],
+      },
   		colors: {
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',

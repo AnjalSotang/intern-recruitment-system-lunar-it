@@ -1,171 +1,259 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import { Card, CardContent } from "@/components/ui/card"
+import { Heart, Lightbulb, Rocket } from "lucide-react"
+import CTAs from "../Home/sections/CTAs"
+import Layout from "../../../layout/MainLayout"
+import diverseTechCollaboration from '../../../assets/diverse-tech-collaboration.png';
+import professionalWomanBusiness from '../../../assets/professional-woman-business.png';
+import asianManCasualBusiness from '../../../assets/asian-man-casual-business.png';
+import professionalLatinaWomanSmiling from '../../../assets/professional-latina-woman-smiling.png';
+import company from '../../../assets/company-growth-timeline.png';
 
-import React from 'react';
-import Layout from '../../../layout/MainLayout';
-import { Link } from 'react-router-dom';
 
-const About = () => {
+
+export const metadata = {
+  title: "About Us - Lunar IT Internship Program",
+  description:
+    "Learn about Lunar IT's mission to nurture the next generation of tech talent through innovative internship programs.",
+}
+
+export default function AboutPage() {
+  const values = [
+    {
+      icon: Heart,
+      title: "Passion for Excellence",
+      description:
+        "We believe in doing everything with passion and striving for excellence in every project we undertake.",
+    },
+    {
+      icon: Lightbulb,
+      title: "Innovation First",
+      description: "We encourage creative thinking and innovative solutions to solve complex technological challenges.",
+    },
+    {
+      icon: Rocket,
+      title: "Growth Mindset",
+      description: "We foster continuous learning and personal growth, helping our interns reach their full potential.",
+    },
+  ]
+
+  const team = [
+    {
+      name: "Sarah Johnson",
+      role: "Head of Internship Program",
+      img: professionalWomanBusiness,
+      bio: "With 15+ years in tech leadership, Sarah has mentored over 200 interns who now work at top tech companies.",
+    },
+    {
+      name: "Michael Chen",
+      role: "Senior Technical Mentor",
+      img: asianManCasualBusiness,
+      bio: "Former Google engineer with expertise in full-stack development and machine learning, passionate about teaching.",
+    },
+    {
+      name: "Emily Rodriguez",
+      role: "Career Development Specialist",
+      img: professionalLatinaWomanSmiling,
+      bio: "HR expert specializing in tech talent development and career coaching for emerging professionals.",
+    },
+  ]
+
+  const stats = [
+    { number: "500+", label: "Interns Mentored" },
+    { number: "95%", label: "Job Placement Rate" },
+    { number: "50+", label: "Partner Companies" },
+    { number: "8", label: "Years of Excellence" },
+  ]
+
   return (
-    <div className="min-h-screen bg-white">
-
+    <>
       <Layout>
-        {/* Main Content */}
-        <div className="max-w-7xl my-16 mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Header Section */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">About Lunar IT</h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Pioneering the future of technology through innovation, collaboration, and exceptional talent development
-            </p>
-          </div>
-
-          {/* Company Description */}
-          <div className="grid md:grid-cols-2 gap-12 mb-16">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                Founded in 2015, Lunar IT has emerged as a leading technology company specializing in cutting-edge software solutions, cloud infrastructure, and digital transformation services. Our journey began with a simple vision: to bridge the gap between innovative technology and real-world business challenges.
-              </p>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                Over the years, we have grown from a small startup to a dynamic organization serving clients across various industries. Our commitment to excellence, continuous learning, and fostering young talent has been the cornerstone of our success.
-              </p>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                Today, Lunar IT stands at the forefront of technological advancement, consistently delivering solutions that drive business growth and create meaningful impact in the digital landscape.
-              </p>
+        <main>
+          {/* Hero Section */}
+          <section className="bg-gradient-to-r from-indigo-50 to-purple-50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="py-32 md:py-28 lg:py-32 text-center">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                  About <span className="text-primary font-pacifico">LunarIT</span>
+                </h1>
+                <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
+                  We're on a mission to bridge the gap between academic learning and industry experience, creating the
+                  next generation of tech innovators.
+                </p>
+              </div>
             </div>
-            <div className="relative overflow-hidden rounded-lg shadow-lg">
-              <img
-                src="https://readdy.ai/api/search-image?query=modern%20tech%20office%20with%20diverse%20team%20of%20professionals%20working%20collaboratively%20on%20computers%20and%20digital%20projects%20in%20a%20bright%20contemporary%20workspace%20with%20glass%20walls%20and%20natural%20lighting&width=600&height=400&seq=about-office-1&orientation=landscape"
-                alt="Lunar IT Office"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-          </div>
-
-          {/* Mission Statement */}
-          <div className="bg-gray-50 rounded-lg p-8 mb-16 border-l-4 border-blue-500">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-              <p className="text-lg text-gray-700 italic leading-relaxed max-w-4xl mx-auto">
-                "To empower businesses through innovative technology solutions while nurturing the next generation of tech professionals. We believe in creating an ecosystem where creativity meets functionality, and where every intern becomes a catalyst for future innovation."
-              </p>
-            </div>
-          </div>
-
-          {/* Core Values */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Our Core Values</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i className="fas fa-lightbulb text-2xl text-blue-600"></i>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Innovation</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    We constantly push boundaries and embrace new technologies to deliver groundbreaking solutions that shape the future of digital experiences.
+          </section>
+          {/* Mission Section */}
+          <section className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                    At Lunar IT, we believe that the future of technology lies in the hands of passionate, well-trained
+                    professionals. Our internship program is designed to provide real-world experience that goes beyond
+                    traditional classroom learning.
                   </p>
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i className="fas fa-users text-2xl text-green-600"></i>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Collaboration</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    We believe in the power of teamwork and foster an environment where diverse perspectives come together to create exceptional outcomes.
+                  <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                    We partner with leading companies to offer internships that matter – positions where interns work on
+                    actual projects, contribute to meaningful solutions, and gain the skills needed to excel in their
+                    careers.
                   </p>
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i className="fas fa-graduation-cap text-2xl text-purple-600"></i>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {stats.map((stat, index) => (
+                      <div key={index} className="text-center">
+                        <div className="text-2xl font-bold text-primary mb-1">{stat.number}</div>
+                        <div className="text-sm text-gray-600">{stat.label}</div>
+                      </div>
+                    ))}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Growth</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    We are committed to continuous learning and development, providing opportunities for both personal and professional advancement.
-                  </p>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Company Statistics */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-lg p-12 mb-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-              <div>
-                <div className="text-4xl font-bold mb-2">150+</div>
-                <div className="text-blue-100">Projects Completed</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">50+</div>
-                <div className="text-blue-100">Happy Clients</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">200+</div>
-                <div className="text-blue-100">Interns Trained</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">8+</div>
-                <div className="text-blue-100">Years Experience</div>
-              </div>
-            </div>
-          </div>
+                <div className="relative">
+                  {/* <div className="bg-gradient-to-r from-primary to-primary/80 rounded-3xl p-1"> */}
 
-          {/* Internship Focus */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative overflow-hidden rounded-lg shadow-lg">
-              <img
-                src="https://readdy.ai/api/search-image?query=young%20diverse%20interns%20and%20mentors%20working%20together%20on%20laptops%20and%20coding%20projects%20in%20a%20modern%20tech%20office%20environment%20with%20collaborative%20workspace%20and%20learning%20atmosphere&width=600&height=400&seq=internship-focus-1&orientation=landscape"
-                alt="Internship Program"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-gray-900">Empowering Future Tech Leaders</h2>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                Our internship program is designed to provide hands-on experience in real-world projects while working alongside industry experts. We believe in learning by doing, and our interns contribute to meaningful projects from day one.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <i className="fas fa-check-circle text-green-500 mt-1"></i>
-                  <span className="text-gray-700">Mentorship from senior developers and tech leads</span>
+                  <div className="bg-white rounded-3xl p-2">
+                    <img
+                      src={diverseTechCollaboration}
+                      alt="Our mission in action"
+                      width="500"
+                      height="400"
+                      className="rounded-2xl w-full h-auto"
+                    />
+
+                  </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <i className="fas fa-check-circle text-green-500 mt-1"></i>
-                  <span className="text-gray-700">Exposure to cutting-edge technologies and frameworks</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <i className="fas fa-check-circle text-green-500 mt-1"></i>
-                  <span className="text-gray-700">Collaborative project work with cross-functional teams</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <i className="fas fa-check-circle text-green-500 mt-1"></i>
-                  <span className="text-gray-700">Professional development workshops and training sessions</span>
-                </div>
-              </div>
-              <div className="pt-4">
-                <Link
-                  to="/Internship"
-                  className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer whitespace-nowrap !rounded-button"
-                >
-                  Explore Internship Opportunities
-                  <i className="fas fa-arrow-right ml-2"></i>
-                </Link>
+
 
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
+          {/* Values Section */}
+          <section className="py-16 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  These principles guide everything we do and shape the experience we provide to our interns.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {values.map((value, index) => (
+                  <Card
+                    key={index}
+                    className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100"
+                  >
+                    <CardContent className="p-0">
+                      <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <value.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">{value.title}</h3>
+                      <p className="text-gray-600">{value.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Team Section */}
+          <section className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Our experienced team of mentors and industry professionals are dedicated to your success.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {team.map((member, index) => (
+                  <Card
+                    key={index}
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden"
+                  >
+                    <div className="aspect-square relative">
+                      <img
+                        src={member.img || "/placeholder.svg"}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{member.name}</h3>
+                      <p className="text-primary font-medium mb-3">{member.role}</p>
+                      <p className="text-gray-600 text-sm">{member.bio}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* History Section */}
+          <section className="py-16 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="relative">
+                  <img
+                    src={company}
+                    alt="Our journey"
+                    width={500}
+                    height={400}
+                    className="rounded-2xl w-full h-auto shadow-lg"
+                  />
+
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Journey</h2>
+                  <div className="space-y-6">
+                    <div className="flex items-start">
+                      <div className="w-4 h-4 bg-primary rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">2017 - Founded</h3>
+                        <p className="text-gray-600">
+                          Started with a vision to transform tech education through practical experience.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-4 h-4 bg-primary rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">2019 - First 100 Interns</h3>
+                        <p className="text-gray-600">
+                          Reached our first major milestone with 100 successful intern placements.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-4 h-4 bg-primary rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">2022 - Global Expansion</h3>
+                        <p className="text-gray-600">
+                          Expanded our program internationally with remote internship opportunities.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-4 h-4 bg-primary rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">2025 - 500+ Success Stories</h3>
+                        <p className="text-gray-600">
+                          Celebrating over 500 interns who have launched successful tech careers.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <CTAs />
+        </main>
       </Layout>
 
 
-    </div>
-  );
-};
-
-export default About;
+    </>
+  )
+}

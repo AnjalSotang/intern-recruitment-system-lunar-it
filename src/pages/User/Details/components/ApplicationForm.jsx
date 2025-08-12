@@ -319,28 +319,6 @@ const ApplicationForm = ({ id }) => {
                         Submit Your Application
                     </h2>
 
-                    {/* Success/Error Messages */}
-                    {submitStatus === 'success' && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                            <div className="flex items-center">
-                                <i className="fas fa-check-circle text-green-500 mr-3"></i>
-                                <span className="text-green-800 font-medium">
-                                    Application submitted successfully! We'll be in touch soon.
-                                </span>
-                            </div>
-                        </div>
-                    )}
-
-                    {submitStatus === 'error' && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <div className="flex items-center">
-                                <i className="fas fa-exclamation-triangle text-red-500 mr-3"></i>
-                                <span className="text-red-800 font-medium">
-                                    There was an error submitting your application. Please try again.
-                                </span>
-                            </div>
-                        </div>
-                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-8" noValidate>
                         {/* Personal Information */}
@@ -683,6 +661,29 @@ const ApplicationForm = ({ id }) => {
                             </button>
                         </div>
                     </form>
+                    
+                    {/* Success/Error Messages */}
+                    {submitStatus === 'success' && (
+                        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <div className="flex items-center">
+                                <i className="fas fa-check-circle text-green-500 mr-3"></i>
+                                <span className="text-green-800 font-medium">
+                                    Application submitted successfully! We'll be in touch soon.
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    {submitStatus === 'error' && (
+                        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <i className="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                                <span className="text-red-800 font-medium">
+                                    There was an error submitting your application. Please try again.
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
         </div>

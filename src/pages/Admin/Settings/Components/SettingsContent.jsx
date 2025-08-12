@@ -1,6 +1,4 @@
-"use client"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,9 +11,48 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Building2, Bell, Shield, Users, Save, Upload, Trash2, Plus, Edit } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
 
-const   SettingsContent = () => {
+import AddMemberModal from "./AddMemberModal"
+import EditMemberModal from "./EditMemberModal"
+import DeleteMemberModal from "./DeleteMemberModal"
+import { useMemberStore } from "../../../../store/MemberStore"
+import { toast, ToastContainer } from "react-toastify"
+
+
+export default function SettingsContent() {
+  const loading = useMemberStore(state => state.loading)
+  const status = useMemberStore(state => state.status)
+  const error = useMemberStore(state => state.error)
+  const members = useMemberStore(state => state.members)
+  const fetchMembers = useMemberStore(state => state.fetchMembers)
+  const message = useMemberStore(state => state.message)
+
+  // console.log(loading)
+  // console.log(members)
+  // To this:
+  useEffect(() => {
+    fetchMembers()
+  }, [])
+
+  useEffect(() => {
+    if (status && message) {
+      if (status >= 200 && status < 300) {
+        toast.success(message);
+      }
+      else {
+        toast.error(message);
+      }
+    }
+  }, [status, message]);
+
+  // Also handle error state separately
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+
   const [profileData, setProfileData] = useState({
     name: "Admin User",
     email: "admin@company.com",
@@ -39,13 +76,41 @@ const   SettingsContent = () => {
     weeklyReports: false,
   })
 
-  const [teamMembers] = useState([
-    { id: 1, name: "John Smith", email: "john@company.com", role: "HR Manager", status: "active" },
-    { id: 2, name: "Sarah Davis", email: "sarah@company.com", role: "Recruiter", status: "active" },
-    { id: 3, name: "Mike Johnson", email: "mike@company.com", role: "Technical Interviewer", status: "inactive" },
+  const [teamMembers, setTeamMembers] = useState([
+    {
+      id: 1,
+      name: "John Smith",
+      email: "john@company.com",
+      role: "HR Manager",
+      status: "active",
+      phone: "+1 (555) 123-4567",
+      department: "Human Resources",
+    },
+    {
+      id: 2,
+      name: "Sarah Davis",
+      email: "sarah@company.com",
+      role: "Recruiter",
+      status: "active",
+      phone: "+1 (555) 234-5678",
+      department: "Human Resources",
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      email: "mike@company.com",
+      role: "Technical Interviewer",
+      status: "inactive",
+      phone: "+1 (555) 345-6789",
+      department: "Engineering",
+    },
   ])
 
-  const { toast } = useToast()
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false)
+  const [showEditMemberModal, setShowEditMemberModal] = useState(false)
+  const [showDeleteMemberModal, setShowDeleteMemberModal] = useState(false)
+  const [selectedMember, setSelectedMember] = useState(null)
+
 
   const handleSaveProfile = () => {
     toast({
@@ -66,6 +131,22 @@ const   SettingsContent = () => {
       title: "Notification preferences updated",
       description: "Your notification settings have been saved.",
     })
+  }
+
+
+  const handleEditMember = (member) => {
+    setSelectedMember(member)
+    setShowEditMemberModal(true)
+  }
+
+
+  const handleDeleteMember = (member) => {
+    setSelectedMember(member)
+    setShowDeleteMemberModal(true)
+  }
+
+  const handleRemoveMember = (memberId) => {
+    setTeamMembers((prev) => prev.filter((member) => member.id !== memberId))
   }
 
   return (
@@ -322,15 +403,40 @@ const   SettingsContent = () => {
                 <CardTitle>Team Members</CardTitle>
                 <CardDescription>Manage team members and their access levels</CardDescription>
               </div>
-              <Button>
+              <Button onClick={() => setShowAddMemberModal(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add Member
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {loading === true && (
+                  <>
+                    {/* Skeleton for multiple team members */}
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
+                          <div>
+                            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-2"></div>
+                            <div className="h-3 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="h-5 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+                              <div className="h-5 w-14 bg-gray-200 rounded-full animate-pulse"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {loading === false && members?.map((member) => (
+                  <div key={member._id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarFallback>
@@ -345,15 +451,17 @@ const   SettingsContent = () => {
                         <p className="text-sm text-muted-foreground">{member.email}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="secondary">{member.role}</Badge>
-                          <Badge variant={member.status === "active" ? "default" : "secondary"}>{member.status}</Badge>
+                          <Badge variant={member.status === "active" ? "default" : "secondary"}>
+                            {member.status}
+                          </Badge>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleEditMember(member)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleDeleteMember(member)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -429,8 +537,21 @@ const   SettingsContent = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AddMemberModal open={showAddMemberModal} onOpenChange={setShowAddMemberModal} />
+
+      <EditMemberModal
+        open={showEditMemberModal}
+        onOpenChange={setShowEditMemberModal}
+        member={selectedMember}
+
+      />
+
+      <DeleteMemberModal
+        open={showDeleteMemberModal}
+        onOpenChange={setShowDeleteMemberModal}
+        member={selectedMember}
+      />
     </div>
   )
 }
-
-export default SettingsContent

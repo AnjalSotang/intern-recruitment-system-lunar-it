@@ -28,7 +28,6 @@ import {
 } from "lucide-react"
 // import { ApplicationDetailsModal } from "@/components/application-details-modal"
 // import { BulkActionsModal } from "@/components/bulk-actions-modal"
-import { useToast } from "@/hooks/use-toast"
 import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
 import BulkActionsModal from "./Components/BulkActionsModal"
 import { CreateApplicationModal } from "./Components/CreateApplicationModal"
@@ -234,9 +233,6 @@ const ApplicationContents = () => {
     const [showBulkModal, setShowBulkModal] = useState(false)
     const [selectedApplication, setSelectedApplication] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
-    const [showCreateModal, setShowCreateModal] = useState(false)
-    const [showEditModal, setShowEditModal] = useState(false)
-    const [editingApplication, setEditingApplication] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [deletingApplication, setDeletingApplication] = useState(null)
     const [showScheduleInterviewModal, setShowScheduleInterviewModal] = useState(false)
@@ -248,6 +244,8 @@ const ApplicationContents = () => {
     const applications = useApplicationStore(state => state.applications);
     const fetchApplications = useApplicationStore(state => state.fetchApplications);
     const updateApplication = useApplicationStore(state => state.updateApplication)
+    const deleteApplication = useApplicationStore(state => state.deleteApplication)
+    const sendMessage = useApplicationStore(state => state.sendMessage)
     const loading = useApplicationStore(state => state.loading);
     const error = useApplicationStore(state => state.error);
     const status = useApplicationStore(state => state.status);
@@ -326,11 +324,7 @@ const ApplicationContents = () => {
 
     const confirmDeleteApplication = () => {
         if (deletingApplication) {
-            setApplications(applications.filter((app) => app.id !== deletingApplication.id))
-            toast({
-                title: "Application deleted",
-                description: "The application has been successfully deleted.",
-            })
+            deleteApplication(deletingApplication._id)
             setDeletingApplication(null)
         }
     }
@@ -452,7 +446,9 @@ const ApplicationContents = () => {
 
     const handleMessageSent = (messageData) => {
         // In a real app, you would save this to your messages/communications log
-        console.log("Message sent:", messageData)
+        // console.log("Message sent:", messageData)
+        sendMessage(messageData)
+        
     }
 
     const filteredApplications = applications
@@ -653,7 +649,7 @@ const ApplicationContents = () => {
                                         <ArrowUpDown className="ml-2 h-4 w-4" />
                                     </Button>
                                 </TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead className="text-right text-red-600">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -676,7 +672,7 @@ const ApplicationContents = () => {
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage
-                                                    src={`/placeholder.svg?height=32&width=32&text=${application.firstName.charAt(0)}`}
+                                                    src={'https://img.gamdb.com/character/large/63768c4111fd25a6e6d9987465cb9f4d-ns.png'}
                                                 />
                                                 <AvatarFallback>
                                                     {application.firstName?.charAt(0) || 'N/A'}
@@ -757,20 +753,6 @@ const ApplicationContents = () => {
                     })
                 }}
             />
-
-            {/* <CreateApplicationModal
-                open={showCreateModal}
-                onOpenChange={setShowCreateModal}
-                onSubmit={handleCreateApplication}
-            /> */}
-
-            {/* <EditApplicationModal
-                open={showEditModal}
-                onOpenChange={setShowEditModal}
-                application={editingApplication}
-                onSubmit={handleUpdateApplication}
-            /> */}
-
             <DeleteConfirmationModal
                 open={showDeleteModal}
                 onOpenChange={setShowDeleteModal}

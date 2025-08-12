@@ -7,7 +7,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Loader } from "lucide-react"
+import { useApplicationStore } from '../../../../store/AppliactionStore'
 
 const DeleteConfirmationModal = ({
     open,
@@ -18,10 +19,14 @@ const DeleteConfirmationModal = ({
     itemName,
 }) => {
 
+    const loading = useApplicationStore(state => state.loading);
 
     const handleConfirm = () => {
         onConfirm()
-        onOpenChange(false)
+        setTimeout(() => {
+            onOpenChange(false)
+        }, 3000)
+
     }
 
     return (
@@ -42,8 +47,18 @@ const DeleteConfirmationModal = ({
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
-                    <Button variant="destructive" onClick={handleConfirm}>
-                        Delete
+
+                    <Button variant="destructive"
+                        disabled={loading}
+                        onClick={handleConfirm}>
+                        {loading ? (
+                            <span className="flex items-center space-x-2">
+                                <Loader className="animate-spin h-4 w-4" />
+                                <span>XOXO...</span>
+                            </span>
+                        ) : (
+                            "Delete"
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>

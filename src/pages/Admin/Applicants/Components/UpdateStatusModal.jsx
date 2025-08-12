@@ -81,13 +81,16 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
     onStatusUpdate(application._id, selectedStatus, sendNotification, notes)
 
 
-    // if (loading === true ) {
-    //   // Reset form and close modal
-    //   setSelectedStatus("")
-    //   setNotes("")
-    //   setSendNotification(true)
-    //   onOpenChange(false)
-    // }
+
+    // Reset form and close modal
+    setSelectedStatus("")
+    setNotes("")
+    setSendNotification(true)
+    // Delay closing modal
+  setTimeout(() => {
+    onOpenChange(false);
+  }, 8000); // 4 seconds
+
 
   }
 
@@ -245,7 +248,7 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
             <Button type="submit" disabled={loading || !selectedStatus}>
               {loading ? (
                 <span className="flex items-center space-x-2">
-      <Loader className="animate-spin h-4 w-4" />
+                  <Loader className="animate-spin h-4 w-4" />
                   <span>Updating...</span>
                 </span>
               ) : (

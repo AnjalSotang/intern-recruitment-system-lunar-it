@@ -15,8 +15,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { User, Mail, Briefcase, FileText, Clock, Calendar } from "lucide-react"
+import { User, Mail, Briefcase, FileText, Clock, Calendar, Loader } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useApplicationStore } from '../../../../store/AppliactionStore'
 
 const emailTemplates = [
     {
@@ -95,7 +96,9 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
     const [scheduleEmail, setScheduleEmail] = useState(false)
     const [scheduledDate, setScheduledDate] = useState("")
     const [scheduledTime, setScheduledTime] = useState("")
-    const { toast } = useToast()
+    const loading = useApplicationStore(state => state.loading);
+
+    // const { toast } = useToast()
 
     const handleTemplateChange = (templateId) => {
         setSelectedTemplate(templateId)
@@ -126,8 +129,7 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
         }
 
         const messageData = {
-            id: Date.now().toString(),
-            applicationId: application.id,
+            applicationId: application._id,
             candidateName: application.firstName,
             candidateEmail: application.email,
             subject,
@@ -144,12 +146,12 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
 
         onMessageSent(messageData)
 
-        toast({
-            title: scheduleEmail ? "Email scheduled" : "Message sent",
-            description: scheduleEmail
-                ? `Email scheduled to be sent to ${application.candidateName} on ${scheduledDate} at ${scheduledTime}.`
-                : `Message sent successfully to ${application.candidateName}.`,
-        })
+        // toast({
+        //     title: scheduleEmail ? "Email scheduled" : "Message sent",
+        //     description: scheduleEmail
+        //         ? `Email scheduled to be sent to ${application.candidateName} on ${scheduledDate} at ${scheduledTime}.`
+        //         : `Message sent successfully to ${application.candidateName}.`,
+        // })
 
         // Reset form and close modal
         setSelectedTemplate("custom")
@@ -160,7 +162,10 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
         setScheduleEmail(false)
         setScheduledDate("")
         setScheduledTime("")
-        onOpenChange(false)
+        setTimeout(() => {
+            onOpenChange(false);
+        }, 8000); // 4 seconds
+
     }
 
     if (!application) return null
@@ -266,7 +271,7 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
                                 </SelectContent>
                             </Select>
                         </div>
-
+{/* 
                         <div className="space-y-2">
                             <Label>Options</Label>
                             <div className="space-y-2">
@@ -295,7 +300,7 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
                                     </Label>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {scheduleEmail && (
@@ -365,7 +370,17 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit">{scheduleEmail ? "Schedule Email" : "Send Message"}</Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? (
+                                <span className="flex items-center space-x-2">
+                                    <Loader className="animate-spin h-4 w-4" />
+                                    <span>{scheduleEmail ? "Scheduling Email...." : "Scheduling Message......"}</span>
+                                </span>
+                            ) : (
+                                scheduleEmail ? "Schedule Email" : "Send Message"
+                            )}
+                        </Button>
+
                     </DialogFooter>
                 </form>
             </DialogContent>
