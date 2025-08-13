@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import { useState } from "react"
 import {
@@ -16,10 +16,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, User, Briefcase } from "lucide-react"
+import { CalendarIcon, User, Briefcase, Loader } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { useToast } from "@/hooks/use-toast"
+import { useMemberStore } from "../../../../store/MemberStore"
+import { useInterviewStore } from "../../../../store/InterviewStore"
+import { toast, ToastContainer } from "react-toastify"
+
 
 const ScheduleInterviewFromApplicationModal = ({
     open,
@@ -27,8 +30,50 @@ const ScheduleInterviewFromApplicationModal = ({
     application,
     onScheduled,
 }) => {
+
+    const members = useMemberStore(state => state.members)
+
+    const fetchMembers = useMemberStore(state => state.fetchMembers)
+
+    const scheduleInterview = useInterviewStore(state => state.scheduleInterview)
+
+    const loading = useInterviewStore(state => state.loading)
+
+    const error = useInterviewStore(state => state.error)
+
+    const status = useInterviewStore(state => state.status)
+
+    const message = useInterviewStore(state => state.message)
+
+    // console.log(loading)
+    // console.log(members)
+    // To this:
+    useEffect(() => {
+        fetchMembers()
+    }, [])
+
+    useEffect(() => {
+        if (status && message) {
+            if (status >= 200 && status < 300) {
+                toast.success(message);
+            } else {
+                ToastContainer.error(message);
+            }
+        }
+    }, [status, message]);
+
+    // Show toast if error from store
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
+
+
+
+    // console.log(application)
     const [formData, setFormData] = useState({
-        interviewer: "",
+        interviewerId: "",
         date: undefined,
         time: "",
         type: "",
@@ -39,12 +84,12 @@ const ScheduleInterviewFromApplicationModal = ({
         sendNotification: true,
     })
     const [errors, setErrors] = useState({})
-    const { toast } = useToast()
+
 
     const validateForm = () => {
         const newErrors = {}
 
-        if (!formData.interviewer.trim()) newErrors.interviewer = "Interviewer is required"
+        if (!formData.interviewerId.trim()) newErrors.interviewerId = "Interviewer is required"
         if (!formData.date) newErrors.date = "Date is required"
         if (!formData.time.trim()) newErrors.time = "Time is required"
         if (!formData.type) newErrors.type = "Interview type is required"
@@ -65,12 +110,12 @@ const ScheduleInterviewFromApplicationModal = ({
 
         if (validateForm() && application) {
             const interviewData = {
-                id: Date.now().toString(),
-                candidateName: application.firstName,
-                candidateEmail: application.email,
-                position: application.positionTitle,
-                department: application.department,
-                interviewer: formData.interviewer,
+                // id: Date.now().toString(),
+                // candidateName: application.firstName,
+                // candidateEmail: application.email,
+                // position: application.positionTitle,
+                // department: application.department,
+                interviewerId: formData.interviewerId,
                 date: formData.date,
                 time: formData.time,
                 type: formData.type,
@@ -79,15 +124,17 @@ const ScheduleInterviewFromApplicationModal = ({
                 duration: formData.duration,
                 notes: formData.notes,
                 status: "scheduled",
-                applicationId: application.id,
+                applicantId: application.id,
+                sendNotification: formData.sendNotification
             }
 
-            onScheduled(interviewData)
+            console.log("lets", interviewData) // ✅ Recommended
+            scheduleInterview(interviewData)
 
-            toast({
-                title: "Interview scheduled",
-                description: `Interview scheduled with ${application.candidateName} for ${format(formData.date, "PPP")} at ${formData.time}.`,
-            })
+            // toast({
+            //     title: "Interview scheduled",
+            //     description: `Interview scheduled with ${application.candidateName} for ${format(formData.date, "PPP")} at ${formData.time}.`,
+            // })
 
             // Reset form and close modal
             setFormData({
@@ -102,7 +149,10 @@ const ScheduleInterviewFromApplicationModal = ({
                 sendNotification: true,
             })
             setErrors({})
-            onOpenChange(false)
+            // Close modal after a brief delay to allow toast to show
+            setTimeout(() => {
+                onOpenChange(false)
+            }, 3000)
         }
     }
 
@@ -150,17 +200,17 @@ const ScheduleInterviewFromApplicationModal = ({
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="interviewer">Interviewer *</Label>
-                        <Select value={formData.interviewer} onValueChange={(value) => handleInputChange("interviewer", value)}>
+                        <Select value={formData.interviewerId} onValueChange={(value) => handleInputChange("interviewerId", value)}>
                             <SelectTrigger className={errors.interviewer ? "border-red-500" : ""}>
                                 <SelectValue placeholder="Select interviewer" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="John Smith">John Smith - Senior Engineer</SelectItem>
-                                <SelectItem value="Sarah Davis">Sarah Davis - HR Manager</SelectItem>
-                                <SelectItem value="Mike Johnson">Mike Johnson - Tech Lead</SelectItem>
-                                <SelectItem value="Emily Chen">Emily Chen - Product Manager</SelectItem>
-                                <SelectItem value="Tom Anderson">Tom Anderson - Engineering Manager</SelectItem>
-                                <SelectItem value="Lisa Wong">Lisa Wong - Design Lead</SelectItem>
+                                {members.map((app) => (
+                                    <SelectItem key={app._id} value={app._id}>
+                                        {app.name} - {app.role}
+                                    </SelectItem>
+                                ))}
+
                             </SelectContent>
                         </Select>
                         {errors.interviewer && <p className="text-sm text-red-500">{errors.interviewer}</p>}
@@ -298,7 +348,15 @@ const ScheduleInterviewFromApplicationModal = ({
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit">Schedule Interview</Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader /> Scheduling Interview...
+                                </>
+                            ) : (
+                                "Schedule Interview"
+                            )}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

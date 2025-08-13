@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "react-toastify"
 import { AlertTriangle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+
 
 const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel }) => {
-  const { toast } = useToast()
   const [reason, setReason] = useState("")
   const [notifyCandidate, setNotifyCandidate] = useState(true)
 
@@ -16,19 +16,11 @@ const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel }) => {
     if (!interview) return
 
     if (!reason.trim()) {
-      toast({
-        title: "Reason Required",
-        description: "Please provide a reason for cancelling the interview.",
-        variant: "destructive",
-      })
+      toast.error("error")
       return
     }
 
     onCancel(interview.id, reason, notifyCandidate)
-    toast({
-      title: "Interview Cancelled",
-      description: `The interview with ${interview.candidateName} has been cancelled.`,
-    })
     onOpenChange(false)
     setReason("")
     setNotifyCandidate(true)

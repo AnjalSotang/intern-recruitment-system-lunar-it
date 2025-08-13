@@ -4,17 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Calendar, Clock, Video, MapPin, User, FileText, ExternalLink, Edit, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { EditInterviewModal } from "../models/EditInterviewModal"
 import RescheduleInterviewModal from "../models/RescheduleInterviewModal"
 import CandidateProfileModal from "../models/CandidareProfileModal"
 import CancelInterviewModal from "../models/CancelInterviewModal"
 import StartInterviewModal from "../models/StartInterviewModal"
-// import { EditInterviewModal } from "./edit-interview-modal"
-// import { RescheduleInterviewModal } from "./reschedule-interview-modal"
-// import { CandidateProfileModal } from "./candidate-profile-modal"
-// import { CancelInterviewModal } from "./cancel-interview-modal"
-// import { StartInterviewModal } from "./start-interview-modal"
+import { toast } from "react-toastify"
+import { useInterviewStore } from "../../../../store/InterviewStore"
+
 
 export function InterviewDetailsModal({ open, onOpenChange, interview }) {
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -22,6 +20,33 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
   const [candidateProfileOpen, setCandidateProfileOpen] = useState(false)
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
   const [startModalOpen, setStartModalOpen] = useState(false)
+
+  const updateInterview = useInterviewStore(state => state.updateInterview)
+  const loading = useInterviewStore(state => state.loading);
+    const deleteInterview = useInterviewStore(state => state.deleteInterview);
+
+  const error = useInterviewStore(state => state.error);
+  const status = useInterviewStore(state => state.status);
+  const message = useInterviewStore(state => state.message)
+
+  // Watch backend store updates for toast messages
+  useEffect(() => {
+    if (status && message) {
+      if (status >= 200 && status < 300) {
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
+    }
+  }, [status, message]);
+
+     // Show toast if error from store
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
+
 
   if (!interview) return null
 
@@ -55,22 +80,33 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
 
   const handleEditInterview = (updatedInterview) => {
     // In a real app, this would update the interview in the backend
-    console.log("Updated interview:", updatedInterview)
+    // console.log("Updated interview:", updatedInterview)
+    updateInterview(updatedInterview, updatedInterview.id)
   }
 
+  const handleRescheduleInterview = (interview, interviewId, newDate, newTime, reason) => {
+    // Find the current interview data from your state/store
+    // Prepare updated interview data
+    const updatedInterview = {
+      ...interview,
+      date: newDate,         // Updated date (ISO string or your backend's expected format)
+      time: newTime,         // Updated time
+      notes: reason || currentInterview.notes, // Add reason if provided
+    };
 
+    // Call your API function
+    updateInterview(updatedInterview, interviewId);
+  };
 
-  const handleRescheduleInterview = (interviewId, newDate, newTime, reason) => {
-    // In a real app, this would reschedule the interview in the backend
-    console.log("Rescheduled interview:", { interviewId, newDate, newTime, reason })
-  }
 
   const handleCancelInterview = (interviewId, reason, notifyCandidate) => {
     // In a real app, this would cancel the interview in the backend
+
     console.log("Cancelled interview:", { interviewId, reason, notifyCandidate })
+    deleteInterview(interviewId, reason, notifyCandidate)
   }
 
-  const handleStartInterview = (interviewId)=> {
+  const handleStartInterview = (interviewId) => {
     // In a real app, this would mark the interview as started
     console.log("Started interview:", interviewId)
   }
@@ -213,7 +249,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                   onClick={() => setEditModalOpen(true)}
                 >
                   <Edit className="mr-2 h-4 w-4" />
-                  Edit Interview
+                  Edit Type and Status
                 </Button>
                 <Button
                   className="w-full justify-start bg-transparent"
@@ -223,14 +259,14 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                   <Calendar className="mr-2 h-4 w-4" />
                   Reschedule
                 </Button>
-                <Button
-                  className="w-full justify-start bg-transparent"
-                  variant="outline"
-                  onClick={() => setCandidateProfileOpen(true)}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  View Candidate Profile
-                </Button>
+                {/* <Button
+                    className="w-full justify-start bg-transparent"
+                    variant="outline"
+                    onClick={() => setCandidateProfileOpen(true)}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    View Candidate Profile
+                  </Button> */}
                 <Button
                   className="w-full justify-start bg-transparent"
                   variant="outline"
@@ -275,6 +311,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
           onOpenChange={setEditModalOpen}
           interview={interview}
           onSave={handleEditInterview}
+          loading={loading}
         />
 
         <RescheduleInterviewModal

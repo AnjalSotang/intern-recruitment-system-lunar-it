@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
     Calendar,
     Clock,
@@ -19,8 +20,11 @@ import {
     Users,
     CheckCircle,
     XCircle,
+    AlertCircle,
 } from "lucide-react"
-
+import { useInterviewStore } from "../../../../store/InterviewStore"
+import { toast, ToastContainer } from "react-toastify"
+import SkeletonRows from "./SkeletonRows"
 
 const mockInterviews = [
     {
@@ -85,12 +89,23 @@ const mockInterviews = [
 ]
 
 
-const InterviewTable = ({ handleViewInterview}) => {
-    const [interviews, setInterviews] = useState(mockInterviews)
+const InterviewTable = ({ handleViewInterview, interviews }) => {
+    // const [interviews, setInterviews] = useState(mockInterviews)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [typeFilter, setTypeFilter] = useState("all")
 
+    const scheduleInterview = useInterviewStore(state => state.scheduleInterview)
+
+
+
+    const loading = useInterviewStore(state => state.loading)
+
+    const error = useInterviewStore(state => state.error)
+
+    const status = useInterviewStore(state => state.status)
+
+    const message = useInterviewStore(state => state.message)
     // const { toast } = useToast()
 
 
@@ -100,7 +115,7 @@ const InterviewTable = ({ handleViewInterview}) => {
             scheduled: "bg-blue-100 text-blue-800 hover:bg-blue-100",
             completed: "bg-green-100 text-green-800 hover:bg-green-100",
             cancelled: "bg-red-100 text-red-800 hover:bg-red-100",
-            "no-show": "bg-orange-100 text-orange-800 hover:bg-orange-100",
+            no_show: "bg-orange-100 text-orange-800 hover:bg-orange-100",
         }
 
         return (
@@ -123,6 +138,7 @@ const InterviewTable = ({ handleViewInterview}) => {
         }
     }
 
+    // useEffect(() => ("Error", error), [error])
 
 
     // const handleDeleteInterview = (id) => {
@@ -189,65 +205,99 @@ const InterviewTable = ({ handleViewInterview}) => {
 
 
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Candidate</TableHead>
-                            <TableHead>Position</TableHead>
-                            <TableHead>Interviewer</TableHead>
-                            <TableHead>Date & Time</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredInterviews.map((interview) => (
-                            <TableRow key={interview.id}>
-                                <TableCell className="font-medium">{interview.candidateName}</TableCell>
-                                <TableCell>{interview.position}</TableCell>
-                                <TableCell>{interview.interviewer}</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span>{new Date(interview.date).toLocaleDateString()}</span>
-                                        <span className="text-sm text-muted-foreground">{interview.time}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        {getTypeIcon(interview.type)}
-                                        <span className="capitalize">{interview.type}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{getStatusBadge(interview.status)}</TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleViewInterview(interview)}>
-                                                <Eye className="mr-2 h-4 w-4" />
-                                                View Details
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                Edit Interview
-                                            </DropdownMenuItem>
-                                            {/* <DropdownMenuItem onClick={() => handleDeleteInterview(interview.id)} className="text-red-600"> */}
-                                            <DropdownMenuItem className="text-red-600">
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
+                {error ? (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error loading interviews</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                ) : interviews.length === 0 ? (
+                    <div className="py-16 flex flex-col text-center text-gray-600">
+                        <div className="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full text-gray-400">
+                            {/* Optional icon */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-8 h-8"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M9 17v-2a4 4 0 014-4h4M9 9h.01M21 21H3a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                        </div>
+                        <h3 className="mt-4 text-lg font-medium">No positions found</h3>
+                        <p className="mt-2">Try adjusting your filters or add new positions.</p>
+                    </div>
+                ) : (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Candidate</TableHead>
+                                <TableHead>Position</TableHead>
+                                <TableHead>Interviewer</TableHead>
+                                <TableHead>Date & Time</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {loading ? (
+                                <SkeletonRows rows={5} />
+                            ) : (
+                                filteredInterviews.map((interview) => (
+                                    <TableRow key={interview.id}>
+                                        <TableCell className="font-medium">{interview.candidateName}</TableCell>
+                                        <TableCell>{interview.position}</TableCell>
+                                        <TableCell>{interview.interviewer}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col">
+                                                <span>{new Date(interview.date).toLocaleDateString()}</span>
+                                                <span className="text-sm text-muted-foreground">{interview.time}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                {getTypeIcon(interview.type)}
+                                                <span className="capitalize">{interview.type}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{getStatusBadge(interview.status)}</TableCell>
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => handleViewInterview(interview)}>
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        View Details
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem>
+                                                        <Edit className="mr-2 h-4 w-4" />
+                                                        Edit Interview
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="text-red-600">
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                )
+                }
             </CardContent>
         </Card>
     )

@@ -9,7 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
+
 
 
 const RescheduleInterviewModal = ({
@@ -18,26 +19,18 @@ const RescheduleInterviewModal = ({
     interview,
     onReschedule,
 }) => {
-    const { toast } = useToast()
     const [date, setDate] = useState()
     const [time, setTime] = useState("")
     const [reason, setReason] = useState("")
 
     const handleReschedule = () => {
         if (!interview || !date || !time) {
-            toast({
-                title: "Missing Information",
-                description: "Please select a new date and time.",
-                variant: "destructive",
-            })
+            toast.error("eroor")
             return
         }
 
-        onReschedule(interview.id, date.toISOString(), time, reason)
-        toast({
-            title: "Interview Rescheduled",
-            description: `The interview has been rescheduled to ${format(date, "PPP")} at ${time}.`,
-        })
+        onReschedule(interview, interview.id, date.toISOString(), time, reason)
+
         onOpenChange(false)
         setDate(undefined)
         setTime("")

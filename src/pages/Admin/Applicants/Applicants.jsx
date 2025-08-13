@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const Applicants = () => {
   return (
     <AdminLayout>
-            <ToastContainer position="top-right" autoClose={3000} />
+<ToastContainer position="top-right" autoClose={3000} />
        <ApplicationContents/> 
     </AdminLayout>
   )

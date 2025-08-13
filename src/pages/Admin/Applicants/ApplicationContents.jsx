@@ -31,163 +31,14 @@ import {
 import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
 import BulkActionsModal from "./Components/BulkActionsModal"
 import { CreateApplicationModal } from "./Components/CreateApplicationModal"
-// import EditApplicationModal from "./Components/EditApplicationModal"
 import DeleteConfirmationModal from "./Components/DeleteConfirmationModal"
 import ScheduleInterviewFromApplicationModal from "./Components/ScheduleInterviewFromApplicationModal"
 import UpdateStatusModal from "./Components/UpdateStatusModal"
 import SendMessageModal from "./Components/SendMessageModal"
-// import { CreateApplicationModal } from "@/components/create-application-modal"
-// import { EditApplicationModal } from "@/components/edit-application-modal"
-// import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal"
-// import { ScheduleInterviewFromApplicationModal } from "@/components/schedule-interview-from-application-modal"
-// import { UpdateStatusModal } from "@/components/update-status-modal"
-// import { SendMessageModal } from "@/components/send-message-modal"
-
-// interface Application {
-//   id: string
-//   firstName: string
-//   email: string
-//   phone: string
-//   position: string
-//   department: string
-//   status: "pending" | "reviewing" | "accepted" | "rejected" | "interview-scheduled"
-//   priority: "high" | "medium" | "low"
-//   appliedDate: string
-//   experience: string
-//   education: string
-//   location: string
-//   resumeUrl: string
-//   coverLetterUrl?: string
-//   portfolioUrl?: string
-//   skills: string[]
-//   rating?: number
-//   notes?: string
-//   lastActivity: string
-//   source: "website" | "linkedin" | "referral" | "job-board"
-// }
 import { useApplicationStore } from '../../../store/AppliactionStore'
+import { useInterviewStore } from "../../../store/InterviewStore"
 import { toast } from "react-toastify"
 import { Skeleton } from "@/components/ui/skeleton" // ShadCN skeleton
-
-const mockApplications = [
-    {
-        id: "1",
-        firstName: "Alice Johnson",
-        email: "alice@email.com",
-        phone: "+1 (555) 123-4567",
-        position: "Frontend Developer Intern",
-        department: "Engineering",
-        status: "reviewing",
-        priority: "high",
-        appliedDate: "2024-01-15",
-        experience: "2 years",
-        education: "Computer Science, Stanford University",
-        location: "San Francisco, CA",
-        resumeUrl: "resume_alice_johnson.pdf",
-        coverLetterUrl: "cover_letter_alice.pdf",
-        portfolioUrl: "https://alicejohnson.dev",
-        skills: ["React", "TypeScript", "Node.js", "CSS"],
-        rating: 4,
-        notes: "Strong technical background, excellent portfolio",
-        lastActivity: "2024-01-16"
-    },
-    {
-        id: "2",
-        firstName: "Bob Smith",
-        email: "bob@email.com",
-        phone: "+1 (555) 234-5678",
-        position: "Backend Developer Intern",
-        department: "Engineering",
-        status: "pending",
-        priority: "medium",
-        appliedDate: "2024-01-14",
-        experience: "1 year",
-        education: "Software Engineering, UC Berkeley",
-        location: "Oakland, CA",
-        resumeUrl: "resume_bob_smith.pdf",
-        skills: ["Python", "Django", "PostgreSQL", "AWS"],
-        rating: 3,
-        lastActivity: "2024-01-14"
-    },
-    {
-        id: "3",
-        firstName: "Carol Davis",
-        email: "carol@email.com",
-        phone: "+1 (555) 345-6789",
-        position: "UI/UX Designer Intern",
-        department: "Design",
-        status: "accepted",
-        priority: "high",
-        appliedDate: "2024-01-13",
-        experience: "3 years",
-        education: "Design, Art Institute",
-        location: "Los Angeles, CA",
-        resumeUrl: "resume_carol_davis.pdf",
-        portfolioUrl: "https://caroldesigns.com",
-        skills: ["Figma", "Adobe Creative Suite", "Prototyping", "User Research"],
-        rating: 5,
-        notes: "Exceptional design skills, great cultural fit",
-        lastActivity: "2024-01-17"
-    },
-    {
-        id: "4",
-        firstName: "David Wilson",
-        email: "david@email.com",
-        phone: "+1 (555) 456-7890",
-        position: "Data Science Intern",
-        department: "Analytics",
-        status: "rejected",
-        priority: "low",
-        appliedDate: "2024-01-12",
-        experience: "1.5 years",
-        education: "Statistics, UCLA",
-        location: "Santa Monica, CA",
-        resumeUrl: "resume_david_wilson.pdf",
-        skills: ["Python", "R", "Machine Learning", "SQL"],
-        rating: 2,
-        notes: "Limited practical experience",
-        lastActivity: "2024-01-15",
-
-    },
-    {
-        id: "5",
-        firstName: "Eva Brown",
-        email: "eva@email.com",
-        phone: "+1 (555) 567-8901",
-        position: "DevOps Intern",
-        department: "Infrastructure",
-        status: "interview-scheduled",
-        priority: "high",
-        appliedDate: "2024-01-11",
-        experience: "2.5 years",
-        education: "Computer Engineering, MIT",
-        location: "Boston, MA",
-        resumeUrl: "resume_eva_brown.pdf",
-        skills: ["Docker", "Kubernetes", "AWS", "Terraform"],
-        rating: 4,
-        notes: "Strong infrastructure background",
-        lastActivity: "2024-01-18",
-
-    },
-    {
-        id: "6",
-        firstName: "Frank Miller",
-        email: "frank@email.com",
-        phone: "+1 (555) 678-9012",
-        position: "Marketing Intern",
-        department: "Marketing",
-        status: "reviewing",
-        priority: "medium",
-        appliedDate: "2024-01-10",
-        experience: "1 year",
-        education: "Marketing, NYU",
-        location: "New York, NY",
-        resumeUrl: "resume_frank_miller.pdf",
-        skills: ["Digital Marketing", "Analytics", "Content Creation", "SEO"],
-        rating: 3,
-        lastActivity: "2024-01-16",
-    },
-]
 
 const applicationStats = [
     {
@@ -243,6 +94,8 @@ const ApplicationContents = () => {
 
     const applications = useApplicationStore(state => state.applications);
     const fetchApplications = useApplicationStore(state => state.fetchApplications);
+    const fetchInterviews = useInterviewStore(state => state.fetchInterviews);
+
     const updateApplication = useApplicationStore(state => state.updateApplication)
     const deleteApplication = useApplicationStore(state => state.deleteApplication)
     const sendMessage = useApplicationStore(state => state.sendMessage)
@@ -255,7 +108,9 @@ const ApplicationContents = () => {
     // Fetch on mount
     useEffect(() => {
         fetchApplications();
+        fetchInterviews();
     }, []);
+
 
     // Watch backend store updates for toast messages
     useEffect(() => {
@@ -430,15 +285,15 @@ const ApplicationContents = () => {
         setShowSendMessageModal(true)
     }
 
-    const handleInterviewScheduled = (interviewData) => {
-        // Update application status to interview-scheduled
-        const updatedApplications = applications.map((app) =>
-            app.id === interviewData.applicationId
-                ? { ...app, status: "interview-scheduled", lastActivity: new Date().toISOString().split("T")[0] }
-                : app,
-        )
-        // setApplications(updatedApplications)
-    }
+    // const handleInterviewScheduled = (interviewData) => {
+    //     // Update application status to interview-scheduled
+    //     const updatedApplications = applications.map((app) =>
+    //         app.id === interviewData.applicationId
+    //             ? { ...app, status: "interview-scheduled", lastActivity: new Date().toISOString().split("T")[0] }
+    //             : app,
+    //     )
+    //     // setApplications(updatedApplications)
+    // }
 
     const handleStatusUpdated = (id, status, sendNotification) => {
         updateApplication(id, status, sendNotification)
@@ -448,7 +303,7 @@ const ApplicationContents = () => {
         // In a real app, you would save this to your messages/communications log
         // console.log("Message sent:", messageData)
         sendMessage(messageData)
-        
+
     }
 
     const filteredApplications = applications
@@ -497,19 +352,18 @@ const ApplicationContents = () => {
                         Add Application
                     </Button> */}
 
-
-                    {selectedApplications.length > 0 && (
+                    {/* {selectedApplications.length > 0 && (
                         <Button onClick={() => handleBulkAction("bulk")}>
                             <Users className="mr-2 h-4 w-4" />
                             Bulk Actions ({selectedApplications.length})
                         </Button>
-                    )}
+                    )} */}
 
-
+                    {/* 
                     <Button>
                         <Download className="mr-2 h-4 w-4" />
                         Export
-                    </Button>
+                    </Button> */}
 
 
                 </div>
@@ -610,7 +464,7 @@ const ApplicationContents = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-12">
+                                {/* <TableHead className="w-12">
                                     <input
                                         type="checkbox"
                                         checked={
@@ -619,7 +473,7 @@ const ApplicationContents = () => {
                                         onChange={handleSelectAll}
                                         className="rounded"
                                     />
-                                </TableHead>
+                                </TableHead> */}
                                 <TableHead>
                                     <Button
                                         variant="ghost"
@@ -660,14 +514,14 @@ const ApplicationContents = () => {
                                     key={application._id}
                                     className={selectedApplications.includes(application._id) ? "bg-muted/50" : ""}
                                 >
-                                    <TableCell>
+                                    {/* <TableCell>
                                         <input
                                             type="checkbox"
                                             checked={selectedApplications.includes(application._id)}
                                             onChange={() => handleSelectApplication(application._id)}
                                             className="rounded"
                                         />
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-8 w-8">
@@ -764,7 +618,7 @@ const ApplicationContents = () => {
                 open={showScheduleInterviewModal}
                 onOpenChange={setShowScheduleInterviewModal}
                 application={selectedApplicationForAction}
-                onScheduled={handleInterviewScheduled}
+            // onScheduled={handleInterviewScheduled}
             />
 
             <UpdateStatusModal
