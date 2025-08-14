@@ -94,22 +94,48 @@ const interviewStore = (set) => ({
         }
     },
 
-    deleteInterview: async (interviewId, reason, notifyCandidate) => {
-        set({ loading: true, error: null, status: null, message: null });
-        console.log(reason, notifyCandidate)
+   deleteInterview: async (interviewId, reason, notifyCandidate) => {
+    set({ loading: true, error: null, status: null, message: null });
+    console.log(reason, notifyCandidate);
 
+    try {
+        const res = await API.delete(`api/interview/${interviewId}`, { 
+            data: { reason, notifyCandidate } 
+        });
+
+        set((state) => ({
+            interviews: state.interviews.map((interview) =>
+                interview.id === interviewId ? res.data.data : interview
+            ),
+            loading: false,
+            status: res.status,
+            message: res.data.message
+        }));
+    } catch (err) {
+        set({
+            error: err.response?.data?.message || 'Error deleting interview',
+            loading: false,
+            status: err.response?.status || null,
+            message: null
+        });
+        console.log(err.response?.data?.error);
+    }
+},
+
+    permanentDeleteInterview: async (id) => {
+        set({ loading: true, error: null, status: null, message: null });
+        console.log(id)
         try {
-            // console.log(id)
-            const res = await API.delete(`api/interview/${interviewId}`, { data: { reason, notifyCandidate } });
+            const res = await API.delete(`api/interview/${id}/permanent`);
             set((state) => ({
-                interviews: state.interviews.filter((pos) => pos.id !== interviewId),
+                interviews: state.interviews.filter((app) => app.id !== id),
                 loading: false,
                 status: res.status,
                 message: res.data.message
             }))
         } catch (err) {
             set({
-                error: err.response?.data?.message || 'Error deleting interview',
+                error: err.response?.data?.message || 'Error deleting position',
                 loading: false,
                 status: err.response?.status || null,
                 message: null
@@ -117,6 +143,7 @@ const interviewStore = (set) => ({
             console.log(err.response.data.error)
         }
     }
+
 })
 
 export const useInterviewStore = create(devtools(interviewStore))

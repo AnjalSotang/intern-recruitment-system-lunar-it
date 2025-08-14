@@ -26,8 +26,6 @@ import {
     Star,
     Plus,
 } from "lucide-react"
-// import { ApplicationDetailsModal } from "@/components/application-details-modal"
-// import { BulkActionsModal } from "@/components/bulk-actions-modal"
 import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
 import BulkActionsModal from "./Components/BulkActionsModal"
 import { CreateApplicationModal } from "./Components/CreateApplicationModal"
@@ -38,7 +36,8 @@ import SendMessageModal from "./Components/SendMessageModal"
 import { useApplicationStore } from '../../../store/AppliactionStore'
 import { useInterviewStore } from "../../../store/InterviewStore"
 import { toast } from "react-toastify"
-import { Skeleton } from "@/components/ui/skeleton" // ShadCN skeleton
+import { Skeleton } from "@/components/ui/skeleton"
+import SkeletonTable from "./Components/SkeletonTable"
 
 const applicationStats = [
     {
@@ -72,7 +71,7 @@ const applicationStats = [
 ]
 
 const ApplicationContents = () => {
-    // const [applications, setApplications] = useState(mockApplications)
+    // Main modal states
     const [selectedApplications, setSelectedApplications] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -86,50 +85,130 @@ const ApplicationContents = () => {
     const [activeTab, setActiveTab] = useState("all")
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [deletingApplication, setDeletingApplication] = useState(null)
+
+    // Modal states moved from ApplicationDetailsModal
     const [showScheduleInterviewModal, setShowScheduleInterviewModal] = useState(false)
     const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false)
     const [showSendMessageModal, setShowSendMessageModal] = useState(false)
     const [selectedApplicationForAction, setSelectedApplicationForAction] = useState(null)
 
+    const [scheduleOpenedFromDetails, setScheduleOpenedFromDetails] = useState(false)
 
-    const applications = useApplicationStore(state => state.applications);
-    const fetchApplications = useApplicationStore(state => state.fetchApplications);
-    const fetchInterviews = useInterviewStore(state => state.fetchInterviews);
-
+    // Store hooks
+    const applications = useApplicationStore(state => state.applications)
+    const fetchApplications = useApplicationStore(state => state.fetchApplications)
+    const fetchInterviews = useInterviewStore(state => state.fetchInterviews)
     const updateApplication = useApplicationStore(state => state.updateApplication)
     const deleteApplication = useApplicationStore(state => state.deleteApplication)
     const sendMessage = useApplicationStore(state => state.sendMessage)
-    const loading = useApplicationStore(state => state.loading);
-    const error = useApplicationStore(state => state.error);
-    const status = useApplicationStore(state => state.status);
+    const loading = useApplicationStore(state => state.loading)
+    const error = useApplicationStore(state => state.error)
+    const status = useApplicationStore(state => state.status)
     const message = useApplicationStore(state => state.message)
 
+    // SOLUTION: Sync selectedApplication and selectedApplicationForAction with store updates
+    useEffect(() => {
+        if (selectedApplication && applications.length > 0) {
+            const updatedApplication = applications.find(app => app._id === selectedApplication._id)
+            if (updatedApplication) {
+                setSelectedApplication(updatedApplication)
+            }
+        }
+    }, [applications, selectedApplication?._id])
+
+    useEffect(() => {
+        if (selectedApplicationForAction && applications.length > 0) {
+            const updatedApplication = applications.find(app => app._id === selectedApplicationForAction._id)
+            if (updatedApplication) {
+                setSelectedApplicationForAction(updatedApplication)
+            }
+        }
+    }, [applications, selectedApplicationForAction?._id])
 
     // Fetch on mount
     useEffect(() => {
-        fetchApplications();
-        fetchInterviews();
-    }, []);
-
+        fetchApplications()
+        fetchInterviews()
+    }, [])
 
     // Watch backend store updates for toast messages
     useEffect(() => {
         if (status && message) {
             if (status >= 200 && status < 300) {
-                toast.success(message);
+                toast.success(message)
             } else {
-                toast.error(message);
+                toast.error(message)
             }
         }
-    }, [status, message]);
+    }, [status, message])
 
     // Show toast if error from store
     useEffect(() => {
         if (error) {
-            toast.error(error);
+            toast.error(error)
         }
-    }, [error]);
+    }, [error])
 
+    // Modal trigger functions to pass to ApplicationDetailsModal
+    const modalTriggers = {
+        openScheduleInterviewModal: () => {
+            setShowDetailsModal(false)
+            setShowScheduleInterviewModal(true);
+            setScheduleOpenedFromDetails(true)
+        },
+        openUpdateStatusModal: () => {
+            setShowDetailsModal(false)
+            setShowUpdateStatusModal(true)
+            setScheduleOpenedFromDetails(true)
+        },
+        openSendMessageModal: () => {
+            setShowDetailsModal(false)
+            setShowSendMessageModal(true)
+            setScheduleOpenedFromDetails(true)
+        }
+    }
+
+    // Handle view application (opens details modal)
+    const handleViewApplication = (application) => {
+        setSelectedApplication(application)
+        setSelectedApplicationForAction(application)
+        setShowDetailsModal(true)
+    }
+
+    // Handle setting selected application without opening details modal
+    const handleSetSelectedApplication = (application) => {
+        setSelectedApplication(application)
+        setSelectedApplicationForAction(application)
+    }
+
+    // Handle dropdown actions from table
+    const handleDropdownAction = (action, application) => {
+        // Set the selected application without opening details modal
+        handleSetSelectedApplication(application)
+
+        // Then trigger the appropriate modal
+        switch (action) {
+            case 'schedule-interview':
+                setShowScheduleInterviewModal(true)
+                setScheduleOpenedFromDetails(false)
+                break
+            case 'send-message':
+                setShowSendMessageModal(true)
+                setScheduleOpenedFromDetails(false)
+                break
+            case 'update-status':
+                setShowUpdateStatusModal(true)
+                setScheduleOpenedFromDetails(false)
+                break
+            case 'delete':
+                setDeletingApplication(application)
+                setShowDeleteModal(true)
+                // setScheduleOpenedFromDetails(false)
+                break
+            default:
+                break
+        }
+    }
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -165,13 +244,6 @@ const ApplicationContents = () => {
         )
     }
 
-
-
-    const handleViewApplication = (application) => {
-        setSelectedApplication(application)
-        setShowDetailsModal(true)
-    }
-
     const handleDeleteApplication = (application) => {
         setDeletingApplication(application)
         setShowDeleteModal(true)
@@ -205,94 +277,31 @@ const ApplicationContents = () => {
         }
     }
 
-    const handleSelectApplication = (id) => {
-        setSelectedApplications((prev) => (prev.includes(id) ? prev.filter((appId) => appId !== id) : [...prev, id]))
-    }
+    // const handleSelectApplication = (id) => {
+    //     setSelectedApplications((prev) => (prev.includes(id) ? prev.filter((appId) => appId !== id) : [...prev, id]))
+    // }
 
-    const handleSelectAll = () => {
-        if (selectedApplications.length === filteredApplications.length) {
-            setSelectedApplications([])
-        } else {
-            setSelectedApplications(filteredApplications.map((app) => app.id))
-        }
-    }
-
-    // const handleCreateApplication = (applicationData) => {
-    //     const newApplication = {
-    //         id: Date.now().toString(),
-    //         firstName: applicationData.firstName || "",
-    //         email: applicationData.email || "",
-    //         phone: applicationData.phone || "",
-    //         position: applicationData.position || "",
-    //         department: applicationData.department || "",
-    //         status: "pending",
-    //         priority: applicationData.priority || "medium",
-    //         appliedDate: new Date().toISOString().split("T")[0],
-    //         experience: applicationData.experience || "",
-    //         education: applicationData.education || "",
-    //         location: applicationData.location || "",
-    //         resumeUrl: applicationData.resumeUrl || "",
-    //         coverLetterUrl: applicationData.coverLetterUrl,
-    //         portfolioUrl: applicationData.portfolioUrl,
-    //         skills: applicationData.skills || [],
-    //         rating: applicationData.rating,
-    //         notes: applicationData.notes,
-    //         lastActivity: new Date().toISOString().split("T")[0],
-    //         source: applicationData.source || "website",
+    // const handleSelectAll = () => {
+    //     if (selectedApplications.length === filteredApplications.length) {
+    //         setSelectedApplications([])
+    //     } else {
+    //         setSelectedApplications(filteredApplications.map((app) => app.id))
     //     }
-
-    //     setApplications([newApplication, ...applications])
-    //     toast({
-    //         title: "Application created",
-    //         description: "New application has been successfully created.",
-    //     })
     // }
 
-    // const handleEditApplication = (application) => {
-    //     setEditingApplication(application)
-    //     setShowEditModal(true)
+    // const handleScheduleInterview = (application) => {
+    //     setSelectedApplicationForAction(application)
+    //     setShowScheduleInterviewModal(true)
     // }
 
-    // const handleUpdateApplication = (updatedData) => {
-    //     if (!editingApplication) return
-
-    //     const updatedApplications = applications.map((app) =>
-    //         app.id === editingApplication.id
-    //             ? { ...app, ...updatedData, lastActivity: new Date().toISOString().split("T")[0] }
-    //             : app,
-    //     )
-
-    //     setApplications(updatedApplications)
-    //     setEditingApplication(null)
-    //     toast({
-    //         title: "Application updated",
-    //         description: "Application has been successfully updated.",
-    //     })
+    // const handleUpdateStatus = (application) => {
+    //     setSelectedApplicationForAction(application)
+    //     setShowUpdateStatusModal(true)
     // }
 
-    const handleScheduleInterview = (application) => {
-        setSelectedApplicationForAction(application)
-        setShowScheduleInterviewModal(true)
-    }
-
-    const handleUpdateStatus = (application) => {
-        setSelectedApplicationForAction(application)
-        setShowUpdateStatusModal(true)
-    }
-
-    const handleSendMessage = (application) => {
-        setSelectedApplicationForAction(application)
-        setShowSendMessageModal(true)
-    }
-
-    // const handleInterviewScheduled = (interviewData) => {
-    //     // Update application status to interview-scheduled
-    //     const updatedApplications = applications.map((app) =>
-    //         app.id === interviewData.applicationId
-    //             ? { ...app, status: "interview-scheduled", lastActivity: new Date().toISOString().split("T")[0] }
-    //             : app,
-    //     )
-    //     // setApplications(updatedApplications)
+    // const handleSendMessage = (application) => {
+    //     setSelectedApplicationForAction(application)
+    //     setShowSendMessageModal(true)
     // }
 
     const handleStatusUpdated = (id, status, sendNotification) => {
@@ -300,10 +309,7 @@ const ApplicationContents = () => {
     }
 
     const handleMessageSent = (messageData) => {
-        // In a real app, you would save this to your messages/communications log
-        // console.log("Message sent:", messageData)
         sendMessage(messageData)
-
     }
 
     const filteredApplications = applications
@@ -336,7 +342,51 @@ const ApplicationContents = () => {
         return applications.filter((app) => app.status === status).length
     }
 
+    // Handle modal close functions
+    const handleScheduleModalClose = (open) => {
+        if (!open) { // Modal is being closed
+            setShowDetailsModal(false)
+            setShowScheduleInterviewModal(false);
 
+            // If edit was opened from details, go back to details
+            if (scheduleOpenedFromDetails) {
+                setShowDetailsModal(true)
+                setShowScheduleInterviewModal(false);
+            }
+        } else {
+            setShowScheduleInterviewModal(open)
+        }
+    }
+
+    const handleUpdateModalClose = (open) => {
+        if (!open) { // Modal is being closed
+            setShowDetailsModal(false)
+            setShowUpdateStatusModal(false);
+
+            // If edit was opened from details, go back to details
+            if (scheduleOpenedFromDetails) {
+                setShowDetailsModal(true)
+                setShowUpdateStatusModal(false);
+            }
+        } else {
+            setShowUpdateStatusModal(open);
+        }
+    }
+
+    const handleMessageModalClose = (open) => {
+        if (!open) { // Modal is being closed
+            setShowDetailsModal(false)
+            setShowSendMessageModal(false);
+
+            // If edit was opened from details, go back to details
+            if (scheduleOpenedFromDetails) {
+                setShowDetailsModal(true)
+                setShowSendMessageModal(false);
+            }
+        } else {
+            setShowSendMessageModal(open);
+        }
+    }
 
     return (
         <div className="space-y-6">
@@ -347,25 +397,7 @@ const ApplicationContents = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* <Button onClick={() => setShowCreateModal(true)}>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Application
-                    </Button> */}
-
-                    {/* {selectedApplications.length > 0 && (
-                        <Button onClick={() => handleBulkAction("bulk")}>
-                            <Users className="mr-2 h-4 w-4" />
-                            Bulk Actions ({selectedApplications.length})
-                        </Button>
-                    )} */}
-
-                    {/* 
-                    <Button>
-                        <Download className="mr-2 h-4 w-4" />
-                        Export
-                    </Button> */}
-
-
+                    {/* Add any header buttons here if needed */}
                 </div>
             </div>
 
@@ -389,8 +421,6 @@ const ApplicationContents = () => {
                     </Card>
                 ))}
             </div>
-
-
 
             {/* Applications Table */}
             <Card>
@@ -447,7 +477,6 @@ const ApplicationContents = () => {
                     </div>
                 </CardHeader>
 
-
                 <CardContent>
                     {/* Status Tabs */}
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
@@ -461,19 +490,37 @@ const ApplicationContents = () => {
                         </TabsList>
                     </Tabs>
 
-                    <Table>
+
+                    {error ? (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Error loading interviews</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    ) : applications.length === 0 ? (
+                        <div className="py-16 flex flex-col text-center text-gray-600">
+                            <div className="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full text-gray-400">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-8 h-8"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M9 17v-2a4 4 0 014-4h4M9 9h.01M21 21H3a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 className="mt-4 text-lg font-medium">No interviews found</h3>
+                            <p className="mt-2">Try adjusting your filters or schedule new interviews.</p>
+                        </div>
+                    ) : (<Table>
                         <TableHeader>
                             <TableRow>
-                                {/* <TableHead className="w-12">
-                                    <input
-                                        type="checkbox"
-                                        checked={
-                                            selectedApplications.length === filteredApplications.length && filteredApplications.length > 0
-                                        }
-                                        onChange={handleSelectAll}
-                                        className="rounded"
-                                    />
-                                </TableHead> */}
                                 <TableHead>
                                     <Button
                                         variant="ghost"
@@ -507,93 +554,114 @@ const ApplicationContents = () => {
                             </TableRow>
                         </TableHeader>
 
-
                         <TableBody>
-                            {filteredApplications.map((application) => (
-                                <TableRow
-                                    key={application._id}
-                                    className={selectedApplications.includes(application._id) ? "bg-muted/50" : ""}
-                                >
-                                    {/* <TableCell>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedApplications.includes(application._id)}
-                                            onChange={() => handleSelectApplication(application._id)}
-                                            className="rounded"
-                                        />
-                                    </TableCell> */}
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage
-                                                    src={'https://img.gamdb.com/character/large/63768c4111fd25a6e6d9987465cb9f4d-ns.png'}
-                                                />
-                                                <AvatarFallback>
-                                                    {application.firstName?.charAt(0) || 'N/A'}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <p className="font-medium">{application.firstName}</p>
-                                                <p className="text-sm text-muted-foreground">{application.email}</p>
+                            {loading ? (
+                                <SkeletonTable rows={5} />
+                            ) : (
+
+                                filteredApplications.map((application) => (
+                                    <TableRow
+                                        key={application._id}
+                                        className={selectedApplications.includes(application._id) ? "bg-muted/50" : ""}
+                                    >
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage
+                                                        src={'https://img.gamdb.com/character/large/63768c4111fd25a6e6d9987465cb9f4d-ns.png'}
+                                                    />
+                                                    <AvatarFallback>
+                                                        {application.firstName?.charAt(0) || 'N/A'}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div>
+                                                    <p className="font-medium">{application.firstName}</p>
+                                                    <p className="text-sm text-muted-foreground">{application.email}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{application.positionTitle}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline">{application.department}</Badge>
-                                    </TableCell>
-                                    <TableCell>{getStatusBadge(application.status)}</TableCell>
-                                    <TableCell>{getPriorityBadge(application.priority)}</TableCell>
-                                    <TableCell>{new Date(application.appliedDate).toLocaleDateString()}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => handleViewApplication(application)}>
-                                                    <Eye className="mr-2 h-4 w-4" />
-                                                    View Details
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleScheduleInterview(application)}>
-                                                    <Calendar className="mr-2 h-4 w-4" />
-                                                    Schedule Interview
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleSendMessage(application)}>
-                                                    <Mail className="mr-2 h-4 w-4" />
-                                                    Send Message
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleUpdateStatus(application)}>
-                                                    <Edit className="mr-2 h-4 w-4" />
-                                                    Update Status
-                                                </DropdownMenuItem>
-                                                {/* <DropdownMenuItem onClick={() => handleEditApplication(application)}>
-                                                    <Edit className="mr-2 h-4 w-4" />
-                                                    Edit Application
-                                                </DropdownMenuItem> */}
-                                                <DropdownMenuItem onClick={() => handleDeleteApplication(application)} className="text-red-600">
-                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                    Delete
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                        </TableCell>
+                                        <TableCell>{application.positionTitle}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline">{application.department}</Badge>
+                                        </TableCell>
+                                        <TableCell>{getStatusBadge(application.status)}</TableCell>
+                                        <TableCell>{getPriorityBadge(application.priority)}</TableCell>
+                                        <TableCell>{new Date(application.appliedDate).toLocaleDateString()}</TableCell>
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => handleViewApplication(application)}>
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        View Details
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('schedule-interview', application)}>
+                                                        <Calendar className="mr-2 h-4 w-4" />
+                                                        Schedule Interview
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('send-message', application)}>
+                                                        <Mail className="mr-2 h-4 w-4" />
+                                                        Send Message
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('update-status', application)}>
+                                                        <Edit className="mr-2 h-4 w-4" />
+                                                        Update Status
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('delete', application)} className="text-red-600">
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody>
-                    </Table>
+                    </Table>)
+
+                    }
                 </CardContent>
             </Card>
 
+            {/* Main Application Details Modal */}
             <ApplicationDetailsModal
                 open={showDetailsModal}
                 onOpenChange={setShowDetailsModal}
                 application={selectedApplication}
+                modalTriggers={modalTriggers}
             />
 
-            <BulkActionsModal
+            {/* All Modal Components - Only render when selectedApplicationForAction exists */}
+            {selectedApplicationForAction && (
+                <>
+                    <ScheduleInterviewFromApplicationModal
+                        open={showScheduleInterviewModal}
+                        onOpenChange={handleScheduleModalClose}
+                        application={selectedApplicationForAction}
+                    />
+
+                    <UpdateStatusModal
+                        open={showUpdateStatusModal}
+                        onOpenChange={handleUpdateModalClose}
+                        application={selectedApplicationForAction}
+                        onStatusUpdate={handleStatusUpdated}
+                    />
+
+                    <SendMessageModal
+                        open={showSendMessageModal}
+                        onOpenChange={handleMessageModalClose}
+                        application={selectedApplicationForAction}
+                        onMessageSent={handleMessageSent}
+                    />
+                </>
+            )}
+
+            {/* <BulkActionsModal
                 open={showBulkModal}
                 onOpenChange={setShowBulkModal}
                 selectedCount={selectedApplications.length}
@@ -606,36 +674,16 @@ const ApplicationContents = () => {
                         description: `${action} applied to ${selectedApplications.length} applications.`,
                     })
                 }}
-            />
+            /> */}
+
             <DeleteConfirmationModal
                 open={showDeleteModal}
                 onOpenChange={setShowDeleteModal}
                 onConfirm={confirmDeleteApplication}
                 itemName={deletingApplication?.firstName}
             />
-
-            <ScheduleInterviewFromApplicationModal
-                open={showScheduleInterviewModal}
-                onOpenChange={setShowScheduleInterviewModal}
-                application={selectedApplicationForAction}
-            // onScheduled={handleInterviewScheduled}
-            />
-
-            <UpdateStatusModal
-                open={showUpdateStatusModal}
-                onOpenChange={setShowUpdateStatusModal}
-                application={selectedApplicationForAction}
-                onStatusUpdate={handleStatusUpdated}
-            />
-
-            <SendMessageModal
-                open={showSendMessageModal}
-                onOpenChange={setShowSendMessageModal}
-                application={selectedApplicationForAction}
-                onMessageSent={handleMessageSent}
-            />
         </div>
     )
 }
 
-export default ApplicationContents;
+export default ApplicationContents

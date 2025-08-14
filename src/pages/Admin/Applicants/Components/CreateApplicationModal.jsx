@@ -87,7 +87,7 @@ export function CreateApplicationModal({ open, onOpenChange, onSubmit }) {
         source: "website",
       })
       setErrors({})
-      onOpenChange(false)
+      // onOpenChange(false)
     }
   }
 

@@ -106,7 +106,7 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
         experienceLevel: "entry",
       })
       setErrors({})
-      onOpenChange(false)
+      // onOpenChange(false)
     }
     
   }

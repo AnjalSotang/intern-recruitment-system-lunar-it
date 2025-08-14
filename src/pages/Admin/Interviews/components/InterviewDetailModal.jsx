@@ -4,50 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Calendar, Clock, Video, MapPin, User, FileText, ExternalLink, Edit, Trash2 } from "lucide-react"
-import { useEffect, useState } from "react"
-import { EditInterviewModal } from "../models/EditInterviewModal"
-import RescheduleInterviewModal from "../models/RescheduleInterviewModal"
-import CandidateProfileModal from "../models/CandidareProfileModal"
-import CancelInterviewModal from "../models/CancelInterviewModal"
-import StartInterviewModal from "../models/StartInterviewModal"
-import { toast } from "react-toastify"
-import { useInterviewStore } from "../../../../store/InterviewStore"
+import { useEffect } from "react"
 
-
-export function InterviewDetailsModal({ open, onOpenChange, interview }) {
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false)
-  const [candidateProfileOpen, setCandidateProfileOpen] = useState(false)
-  const [cancelModalOpen, setCancelModalOpen] = useState(false)
-  const [startModalOpen, setStartModalOpen] = useState(false)
-
-  const updateInterview = useInterviewStore(state => state.updateInterview)
-  const loading = useInterviewStore(state => state.loading);
-    const deleteInterview = useInterviewStore(state => state.deleteInterview);
-
-  const error = useInterviewStore(state => state.error);
-  const status = useInterviewStore(state => state.status);
-  const message = useInterviewStore(state => state.message)
-
-  // Watch backend store updates for toast messages
-  useEffect(() => {
-    if (status && message) {
-      if (status >= 200 && status < 300) {
-        toast.success(message);
-      } else {
-        toast.error(message);
-      }
-    }
-  }, [status, message]);
-
-     // Show toast if error from store
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-        }
-    }, [error]);
-
-
+export function InterviewDetailsModal({ open, onOpenChange, interview, modalTriggers, fetchInterviews }) {
   if (!interview) return null
 
   const getStatusBadge = (status) => {
@@ -78,38 +37,8 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
     }
   }
 
-  const handleEditInterview = (updatedInterview) => {
-    // In a real app, this would update the interview in the backend
-    // console.log("Updated interview:", updatedInterview)
-    updateInterview(updatedInterview, updatedInterview.id)
-  }
+  useEffect(()=> {fetchInterviews()},[])
 
-  const handleRescheduleInterview = (interview, interviewId, newDate, newTime, reason) => {
-    // Find the current interview data from your state/store
-    // Prepare updated interview data
-    const updatedInterview = {
-      ...interview,
-      date: newDate,         // Updated date (ISO string or your backend's expected format)
-      time: newTime,         // Updated time
-      notes: reason || currentInterview.notes, // Add reason if provided
-    };
-
-    // Call your API function
-    updateInterview(updatedInterview, interviewId);
-  };
-
-
-  const handleCancelInterview = (interviewId, reason, notifyCandidate) => {
-    // In a real app, this would cancel the interview in the backend
-
-    console.log("Cancelled interview:", { interviewId, reason, notifyCandidate })
-    deleteInterview(interviewId, reason, notifyCandidate)
-  }
-
-  const handleStartInterview = (interviewId) => {
-    // In a real app, this would mark the interview as started
-    console.log("Started interview:", interviewId)
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -246,7 +175,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                 <Button
                   className="w-full justify-start bg-transparent"
                   variant="outline"
-                  onClick={() => setEditModalOpen(true)}
+                  onClick={modalTriggers?.openEditModal}
                 >
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Type and Status
@@ -254,7 +183,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                 <Button
                   className="w-full justify-start bg-transparent"
                   variant="outline"
-                  onClick={() => setRescheduleModalOpen(true)}
+                  onClick={modalTriggers?.openRescheduleModal}
                 >
                   <Calendar className="mr-2 h-4 w-4" />
                   Reschedule
@@ -262,7 +191,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                 {/* <Button
                     className="w-full justify-start bg-transparent"
                     variant="outline"
-                    onClick={() => setCandidateProfileOpen(true)}
+                    onClick={modalTriggers?.openCandidateProfile}
                   >
                     <User className="mr-2 h-4 w-4" />
                     View Candidate Profile
@@ -271,7 +200,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                   className="w-full justify-start bg-transparent"
                   variant="outline"
                   disabled={interview.status !== "scheduled"}
-                  onClick={() => setStartModalOpen(true)}
+                  onClick={modalTriggers?.openStartModal}
                 >
                   <Video className="mr-2 h-4 w-4" />
                   Start Interview
@@ -280,7 +209,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
                 <Button
                   className="w-full justify-start text-red-600 bg-transparent"
                   variant="outline"
-                  onClick={() => setCancelModalOpen(true)}
+                  onClick={modalTriggers?.openCancelModal}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Cancel Interview
@@ -303,43 +232,6 @@ export function InterviewDetailsModal({ open, onOpenChange, interview }) {
             )}
           </div>
         </div>
-
-
-
-        <EditInterviewModal
-          open={editModalOpen}
-          onOpenChange={setEditModalOpen}
-          interview={interview}
-          onSave={handleEditInterview}
-          loading={loading}
-        />
-
-        <RescheduleInterviewModal
-          open={rescheduleModalOpen}
-          onOpenChange={setRescheduleModalOpen}
-          interview={interview}
-          onReschedule={handleRescheduleInterview}
-        />
-
-        <CandidateProfileModal
-          open={candidateProfileOpen}
-          onOpenChange={setCandidateProfileOpen}
-          candidateName={interview.candidateName}
-        />
-
-        <CancelInterviewModal
-          open={cancelModalOpen}
-          onOpenChange={setCancelModalOpen}
-          interview={interview}
-          onCancel={handleCancelInterview}
-        />
-
-        <StartInterviewModal
-          open={startModalOpen}
-          onOpenChange={setStartModalOpen}
-          interview={interview}
-          onStart={handleStartInterview}
-        />
       </DialogContent>
     </Dialog>
   )

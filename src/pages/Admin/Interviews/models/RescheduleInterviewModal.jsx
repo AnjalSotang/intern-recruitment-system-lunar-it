@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { toast } from "react-toastify"
@@ -18,6 +18,7 @@ const RescheduleInterviewModal = ({
     onOpenChange,
     interview,
     onReschedule,
+    loading
 }) => {
     const [date, setDate] = useState()
     const [time, setTime] = useState("")
@@ -31,7 +32,7 @@ const RescheduleInterviewModal = ({
 
         onReschedule(interview, interview.id, date.toISOString(), time, reason)
 
-        onOpenChange(false)
+        // onOpenChange(false)
         setDate(undefined)
         setTime("")
         setReason("")
@@ -100,7 +101,15 @@ const RescheduleInterviewModal = ({
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
-                    <Button onClick={handleReschedule}>Reschedule Interview</Button>
+                    <Button onClick={handleReschedule}
+                    disabled={loading}> {loading ? (
+                <span className="flex items-center space-x-2">
+                  <Loader2 className="animate-spin h-4 w-4" />
+                  <span>Rescheduling Interview...</span>
+                </span>
+              ) : (
+                "Reschedule Interview"
+              )}</Button>
                 </div>
             </DialogContent>
         </Dialog>

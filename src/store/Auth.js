@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 import API from "../http/index";
 
 const authStore = (set) => ({
-    user: null,
+    user: {},
     token: '',
     loading: false,
     error: null,
@@ -34,6 +34,30 @@ const authStore = (set) => ({
             });
         }
     },
+
+    fetchAdmin: async () => {
+        set({ loading: true, error: null, status: null, message: null });
+        try {
+            const res = await API.get('auth/admin');
+
+            // Save token only if success
+            if (res.status === 200) {
+                set({
+                    user: res.data.data,
+                    loading: false,
+                    status: res.status,
+                });
+            }
+        } catch (err) {
+            set({
+                error: err.response?.data?.message || 'Error logging in',
+                loading: false,
+                status: err.response?.status || null,
+                message: null
+            });
+        }
+    },
+
 
     logout: () => {
         set({

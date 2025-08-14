@@ -21,6 +21,7 @@ import {
     CheckCircle,
     XCircle,
     AlertCircle,
+    Camera,
 } from "lucide-react"
 import { useInterviewStore } from "../../../../store/InterviewStore"
 import { toast, ToastContainer } from "react-toastify"
@@ -88,27 +89,17 @@ const mockInterviews = [
     },
 ]
 
-
-const InterviewTable = ({ handleViewInterview, interviews }) => {
+const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, interviews, modalTriggers }) => {
     // const [interviews, setInterviews] = useState(mockInterviews)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [typeFilter, setTypeFilter] = useState("all")
 
     const scheduleInterview = useInterviewStore(state => state.scheduleInterview)
-
-
-
     const loading = useInterviewStore(state => state.loading)
-
     const error = useInterviewStore(state => state.error)
-
     const status = useInterviewStore(state => state.status)
-
     const message = useInterviewStore(state => state.message)
-    // const { toast } = useToast()
-
-
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -138,16 +129,28 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
         }
     }
 
-    // useEffect(() => ("Error", error), [error])
-
-
-    // const handleDeleteInterview = (id) => {
-    //     setInterviews(interviews.filter((interview) => interview.id !== id))
-    //     toast({
-    //         title: "Interview deleted",
-    //         description: "The interview has been successfully deleted.",
-    //     })
-    // }
+    const handleDropdownAction = (action, interview) => {
+        // Set the selected interview without opening details modal
+        handleSetSelectedInterview(interview)
+        
+        // Then trigger the appropriate modal
+        switch (action) {
+            case 'edit':
+                modalTriggers?.openEditModal()
+                break
+            case 'reschedule':
+                modalTriggers?.openRescheduleModal()
+                break
+            case 'start':
+                modalTriggers?.openStartModal()
+                break
+            case 'cancel':
+                modalTriggers?.openCancelModal()
+                break
+            default:
+                break
+        }
+    }
 
     const filteredInterviews = interviews.filter((interview) => {
         const matchesSearch =
@@ -165,14 +168,13 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                 <CardTitle>
                     All Interviews
                 </CardTitle>
-                <div
-                    className='flex gap-4 items-center'>
-
+                <div className='flex gap-4 items-center'>
                     <Input
                         placeholder="Search interviews..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="max-w-sm" />
+                        className="max-w-sm" 
+                    />
 
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[180px]">
@@ -187,7 +189,6 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                         </SelectContent>
                     </Select>
 
-
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Filter by type" />
@@ -200,9 +201,7 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                         </SelectContent>
                     </Select>
                 </div>
-
             </CardHeader>
-
 
             <CardContent>
                 {error ? (
@@ -214,7 +213,6 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                 ) : interviews.length === 0 ? (
                     <div className="py-16 flex flex-col text-center text-gray-600">
                         <div className="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full text-gray-400">
-                            {/* Optional icon */}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="w-8 h-8"
@@ -230,8 +228,8 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                                 />
                             </svg>
                         </div>
-                        <h3 className="mt-4 text-lg font-medium">No positions found</h3>
-                        <p className="mt-2">Try adjusting your filters or add new positions.</p>
+                        <h3 className="mt-4 text-lg font-medium">No interviews found</h3>
+                        <p className="mt-2">Try adjusting your filters or schedule new interviews.</p>
                     </div>
                 ) : (
                     <Table>
@@ -280,11 +278,25 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                                                         <Eye className="mr-2 h-4 w-4" />
                                                         View Details
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('edit', interview)}>
                                                         <Edit className="mr-2 h-4 w-4" />
-                                                        Edit Interview
+                                                        Edit Types and Status
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem className="text-red-600">
+                                                    <DropdownMenuItem onClick={() => handleDropdownAction('reschedule', interview)}>
+                                                        <Calendar className="mr-2 h-4 w-4" />
+                                                        Reschedule Interview
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem 
+                                                        onClick={() => handleDropdownAction('start', interview)}
+                                                        disabled={interview.status !== "scheduled"}
+                                                    >
+                                                        <Camera className="mr-2 h-4 w-4" />
+                                                        Start Interview
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem 
+                                                        className="text-red-600"
+                                                        onClick={() => handleDropdownAction('cancel', interview)}
+                                                    >
                                                         <Trash2 className="mr-2 h-4 w-4" />
                                                         Delete
                                                     </DropdownMenuItem>
@@ -296,8 +308,7 @@ const InterviewTable = ({ handleViewInterview, interviews }) => {
                             )}
                         </TableBody>
                     </Table>
-                )
-                }
+                )}
             </CardContent>
         </Card>
     )

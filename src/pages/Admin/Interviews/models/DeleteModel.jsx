@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -8,26 +9,29 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, Loader } from "lucide-react"
-import { useApplicationStore } from '../../../../store/AppliactionStore'
 
 const DeleteConfirmationModal = ({
     open,
     onOpenChange,
     onConfirm,
-    title = "Delete Application",
-    description,
-    itemName,
+    item,
+    loading = false // Accept loading as prop instead of using store hook
 }) => {
 
-    const loading = useApplicationStore(state => state.loading);
+    const handleConfirm = useCallback(() => {
+        if (item?.id) {
+            onConfirm(item.id)
+            // Remove the automatic modal close timeout - let the parent handle this
+            // The parent should handle closing the modal after successful deletion
+        }
+    }, [onConfirm, item?.id])
 
-    const handleConfirm = () => {
-        onConfirm()
-        // setTimeout(() => {
-        //     onOpenChange(false)
-        // }, 3000)
+    const handleCancel = useCallback(() => {
+        onOpenChange(false)
+    }, [onOpenChange])
 
-    }
+    // Don't render if no item is provided
+    if (!item) return null
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,26 +39,31 @@ const DeleteConfirmationModal = ({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-red-600">
                         <AlertTriangle className="h-5 w-5" />
-                        {title}
+                        Delete Confirmation
                     </DialogTitle>
                     <DialogDescription className="pt-2">
-                        {description ||
-                            `Are you sure you want to delete ${itemName ? `"${itemName}"` : "this application"}? This action cannot be undone.`}
+                        Are you sure you want to delete interview schedule for <strong>{item.candidateName}</strong>? This action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button 
+                        variant="outline" 
+                        onClick={handleCancel}
+                        disabled={loading}
+                    >
                         Cancel
                     </Button>
 
-                    <Button variant="destructive"
+                    <Button 
+                        variant="destructive"
                         disabled={loading}
-                        onClick={handleConfirm}>
+                        onClick={handleConfirm}
+                    >
                         {loading ? (
                             <span className="flex items-center space-x-2">
                                 <Loader className="animate-spin h-4 w-4" />
-                                <span>XOXO...</span>
+                                <span>Deleting...</span>
                             </span>
                         ) : (
                             "Delete"
@@ -66,4 +75,4 @@ const DeleteConfirmationModal = ({
     )
 }
 
-export default DeleteConfirmationModal;
+export default DeleteConfirmationModal

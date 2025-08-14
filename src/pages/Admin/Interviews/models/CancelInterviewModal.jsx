@@ -5,10 +5,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "react-toastify"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Loader } from "lucide-react"
 
 
-const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel }) => {
+const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel, loading }) => {
   const [reason, setReason] = useState("")
   const [notifyCandidate, setNotifyCandidate] = useState(true)
 
@@ -21,7 +21,7 @@ const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel }) => {
     }
 
     onCancel(interview.id, reason, notifyCandidate)
-    onOpenChange(false)
+    // onOpenChange(false)
     setReason("")
     setNotifyCandidate(true)
   }
@@ -95,8 +95,15 @@ const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel }) => {
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Keep Interview
           </Button>
-          <Button variant="destructive" onClick={handleCancel}>
-            Cancel Interview
+          <Button variant="destructive" disabled={loading} onClick={handleCancel}>
+               {loading ? (
+                            <span className="flex items-center space-x-2">
+                                <Loader className="animate-spin h-4 w-4" />
+                                <span>Cancelling XOXO...</span>
+                            </span>
+                        ) : (
+                            "Cancel"
+                        )}
           </Button>
         </div>
       </DialogContent>

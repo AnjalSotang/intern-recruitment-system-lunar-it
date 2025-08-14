@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, FileText, Download, ExternalLink, Loader2 } from "lucide-react"
 
-const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
+const ApplicationDetailsModal = ({ open, onOpenChange, application, modalTriggers }) => {
 
   if (!application) return null
 
@@ -56,16 +56,24 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
   const safeFileName = (fileName) =>
     fileName.replace(/[^\w.-]/g, '_');
 
-
   const getStatusBadge = (status) => {
     const colors = {
       pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
       reviewing: "bg-blue-100 text-blue-800 hover:bg-blue-100",
       accepted: "bg-green-100 text-green-800 hover:bg-green-100",
       rejected: "bg-red-100 text-red-800 hover:bg-red-100",
+      "interview-scheduled": "bg-purple-100 text-purple-800 hover:bg-purple-100",
     }
 
-    return <Badge className={colors[status]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
+    const labels = {
+      pending: "Pending",
+      reviewing: "Reviewing",
+      accepted: "Accepted",
+      rejected: "Rejected",
+      "interview-scheduled": "Interview Scheduled",
+    }
+
+    return <Badge className={colors[status]}>{labels[status] || status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
   }
 
   // Helper function to get clean file name for display
@@ -75,13 +83,32 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
     return `${application.firstName} ${type}.pdf`;
   };
 
+  // Handler functions for modal triggers
+  const handleScheduleInterview = () => {
+    if (modalTriggers?.openScheduleInterviewModal) {
+      modalTriggers.openScheduleInterviewModal();
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (modalTriggers?.openSendMessageModal) {
+      modalTriggers.openSendMessageModal();
+    }
+  };
+
+  const handleUpdateStatus = () => {
+    if (modalTriggers?.openUpdateStatusModal) {
+      modalTriggers.openUpdateStatusModal();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {application.fullName}
+            {application.fullName || `${application.firstName} ${application.lastName || ''}`}
           </DialogTitle>
           <DialogDescription>Application for {application.positionTitle}</DialogDescription>
         </DialogHeader>
@@ -195,8 +222,6 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
                           <ExternalLink className="mr-2 h-4 w-4" />
                           Portfolio Link
                         </Button>
-
-
                       )}
                     </div>
                   </>
@@ -260,12 +285,27 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application }) => {
               </Card>
             )}
 
+            {/* Action buttons with modal triggers */}
             <div className="flex gap-2 pt-4">
-              <Button className="flex-1">Schedule Interview</Button>
-              <Button variant="outline" className="flex-1 bg-transparent">
+              <Button 
+                className="flex-1"
+                onClick={handleScheduleInterview}
+              >
+                Schedule Interview
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1 bg-transparent"
+                onClick={handleSendMessage}
+              >
                 Send Message
               </Button>
-              <Button variant="outline">Update Status</Button>
+              <Button 
+                variant="outline"
+                onClick={handleUpdateStatus}
+              >
+                Update Status
+              </Button>
             </div>
           </div>
         </div>

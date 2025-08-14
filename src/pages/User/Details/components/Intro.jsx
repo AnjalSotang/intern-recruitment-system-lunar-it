@@ -58,8 +58,8 @@ const Intro = ({ position }) => {
                         </div>
 
                         <div className="text-2xl font-bold text-gray-900">
-                           {/* {position.salary} */}
-                           $2,000/month
+                           {position.salary}
+                           {/* $2,000/month */}
                         </div>
                         <div className="text-gray-600 text-sm">Competitive Stipend</div>
                     </div>

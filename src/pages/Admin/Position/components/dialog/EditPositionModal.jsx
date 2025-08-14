@@ -58,7 +58,7 @@ const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
     if (validateForm()) {
       onSubmit(formData)
       setErrors({})
-      onOpenChange(false)
+      // onOpenChange(false)
     }
   }
 

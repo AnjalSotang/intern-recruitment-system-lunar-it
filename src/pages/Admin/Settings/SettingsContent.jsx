@@ -12,11 +12,12 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Building2, Bell, Shield, Users, Save, Upload, Trash2, Plus, Edit } from "lucide-react"
 
-import AddMemberModal from "./AddMemberModal"
-import EditMemberModal from "./EditMemberModal"
-import DeleteMemberModal from "./DeleteMemberModal"
-import { useMemberStore } from "../../../../store/MemberStore"
+import AddMemberModal from "./Components/AddMemberModal"
+import EditMemberModal from "./Components/EditMemberModal"
+import DeleteMemberModal from "./Components/DeleteMemberModal"
+import { useMemberStore } from "../../../store/MemberStore"
 import { toast, ToastContainer } from "react-toastify"
+import ProfileInformation from "./Components/ProfileInformation"
 
 
 export default function SettingsContent() {
@@ -112,12 +113,6 @@ export default function SettingsContent() {
   const [selectedMember, setSelectedMember] = useState(null)
 
 
-  const handleSaveProfile = () => {
-    toast({
-      title: "Profile updated",
-      description: "Your profile information has been successfully updated.",
-    })
-  }
 
   const handleSaveCompany = () => {
     toast({
@@ -181,92 +176,7 @@ export default function SettingsContent() {
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your personal information and preferences</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center gap-6">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src="/placeholder.svg?height=80&width=80" alt="Profile" />
-                  <AvatarFallback>AU</AvatarFallback>
-                </Avatar>
-                <div className="space-y-2">
-                  <Button variant="outline" size="sm">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Photo
-                  </Button>
-                  <p className="text-xs text-muted-foreground">JPG, PNG or GIF. Max size 2MB.</p>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select
-                    value={profileData.role}
-                    onValueChange={(value) => setProfileData({ ...profileData, role: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="System Administrator">System Administrator</SelectItem>
-                      <SelectItem value="HR Manager">HR Manager</SelectItem>
-                      <SelectItem value="Recruiter">Recruiter</SelectItem>
-                      <SelectItem value="Technical Interviewer">Technical Interviewer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea
-                  id="bio"
-                  value={profileData.bio}
-                  onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
-                  rows={3}
-                />
-              </div>
-
-              <Button onClick={handleSaveProfile}>
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </Button>
-            </CardContent>
-          </Card>
+          <ProfileInformation profileData={profileData}/>
         </TabsContent>
 
         <TabsContent value="company" className="space-y-6">

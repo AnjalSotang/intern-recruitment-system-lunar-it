@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { requiredSkills, niceToHaveSkills } from '../../../../constants';
 import API from "../../../../http/index"
 import { ToastContainer, toast } from 'react-toastify';
+import { useApplicationStore } from '../../../../store/AppliactionStore';
 
-const ApplicationForm = ({ id }) => {
+const ApplicationForm = ({ id, position }) => {
     // Form state
     const [formData, setFormData] = useState({
         firstName: '',
@@ -24,8 +25,17 @@ const ApplicationForm = ({ id }) => {
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [resumeFile, setResumeFile] = useState(null);
     const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
+    // const [isSubmitting, setIsSubmitting] = useState(false);
+    // const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
+    const postApplication = useApplicationStore(state => state.postApplication)
+    const loading = useApplicationStore(state => state.loading)
+    const error = useApplicationStore(state => state.error)
+    const status = useApplicationStore(state => state.status)
+
+    const requiredSkills = position.requirements || [];
+    const niceToHaveSkills = position.optional || [];
+    const [showSuccess, setShowSuccess] = useState(false);
+
 
     // Validation rules
     const validateField = (name, value) => {
@@ -184,135 +194,61 @@ const ApplicationForm = ({ id }) => {
             return;
         }
 
-        setIsSubmitting(true);
-        setSubmitStatus(null);
+        // setIsSubmitting(true);
+        // setSubmitStatus(null);
 
-        try {
-            // Create FormData for file upload
-            const submitData = new FormData();
+        // Create FormData for file upload
+        const submitData = new FormData();
 
-            // Append form data
-            Object.keys(formData).forEach(key => {
-                submitData.append(key, formData[key]);
-            });
+        // Append form data
+        Object.keys(formData).forEach(key => {
+            submitData.append(key, formData[key]);
+        });
 
-            // Append additional data
-            submitData.append('skills', JSON.stringify(selectedSkills));
-            // Remove this line - don't append 'id' as it's in the URL parameter
-            // submitData.append('id', id);
+        // Append additional data
+        submitData.append('skills', JSON.stringify(selectedSkills));
+        // Remove this line - don't append 'id' as it's in the URL parameter
+        // submitData.append('id', id);
 
-            if (resumeFile) {
-                submitData.append('resume', resumeFile);
-            }
-
-            // Debug: Print FormData contents BEFORE sending
-            // console.log('=== FormData Contents ===');
-            // for (let [key, value] of submitData.entries()) {
-            //     if (value instanceof File) {
-            //         console.log(`${key}:`, {
-            //             name: value.name,
-            //             size: value.size,
-            //             type: value.type
-            //         });
-            //     } else {
-            //         console.log(`${key}:`, value);
-            //     }
-            // }
-
-            // Fix the typo in URL: "appication" should be "application"
-            // console.log('Submitting to:', `/api/application/${id}`);
-
-            const response = await API.post(`/api/application/${id}`, submitData, {
-                headers: {
-                    // Don't manually set Content-Type for FormData - let the browser set it with boundary
-                    // "Content-Type": "multipart/form-data", // Remove this line
-                },
-            });
-
-            // console.log('API Response:', response.data);
-
-            // Axios returns response.data for successful requests, not response.ok
-            if (response.status === 201 || response.status === 200) {
-                setSubmitStatus('success');
-                toast.success(response.data.message, {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-                // console.log('Application submitted successfully!', response.data);
-
-                // Optional: Reset form after successful submission
-                // setFormData({
-                //     firstName: '', lastName: '', email: '', phone: '',
-                //     university: '', major: '', graduationYear: '', gpa: '',
-                //     portfolioUrl: '', githubUrl: '', linkedinUrl: '',
-                //     coverLetter: '', additionalInfo: ''
-                // });
-                // setSelectedSkills([]);
-                // setResumeFile(null);
-            } else {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-        } catch (error) {
-            setSubmitStatus('error');
-
-            let errorMessage = 'Something went wrong. Please try again.';
-
-            if (error.response) {
-                // Server responded with an error status
-                errorMessage = error.response.data?.error || error.response.data?.message || errorMessage;
-
-                toast.error(errorMessage, {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-
-            } else if (error.request) {
-                // No response received
-                toast.error('Network error: No response received from server.', {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-
-            } else {
-                // Something happened while setting up the request
-                toast.error(`Request error: ${error.message}`, {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-            }
+        if (resumeFile) {
+            submitData.append('resume', resumeFile);
         }
-        finally {
-            setIsSubmitting(false);
+
+        postApplication(id, submitData)
+
+
+        // Check status from store after submission
+        if (status >= 200 && status < 300) {
+            setShowSuccess(true);
+
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                university: '',
+                major: '',
+                graduationYear: '',
+                gpa: '',
+                portfolioUrl: '',
+                githubUrl: '',
+                linkedinUrl: '',
+                coverLetter: '',
+                additionalInfo: ''
+            });
+            setSelectedSkills([]);
+            setResumeFile(null);
+            setErrors({});
+            // Hide after 4 seconds
+            setTimeout(() => {
+                setShowSuccess(false);
+            }, 4000);
         }
     };
 
     return (
         <div>
-            <ToastContainer/>
+            <ToastContainer />
             <section className="mb-12">
                 <div className="bg-white rounded-xl border border-gray-200 p-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">
@@ -588,22 +524,20 @@ const ApplicationForm = ({ id }) => {
                             <p className="text-sm text-gray-600 mb-4">
                                 Select all skills that apply to you:
                             </p>
-                            <div className="flex flex-wrap gap-3">
-                                {[...requiredSkills, ...niceToHaveSkills].map(
-                                    (skill, index) => (
-                                        <button
-                                            key={index}
-                                            type="button"
-                                            onClick={() => handleSkillToggle(skill)}
-                                            className={`cursor-pointer px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedSkills.includes(skill)
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                                }`}
-                                        >
-                                            {skill}
-                                        </button>
-                                    ),
-                                )}
+                            <div className="flex flex-wrap gap-2">
+                                {[...requiredSkills, ...niceToHaveSkills].map((skill, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        onClick={() => handleSkillToggle(skill)}
+                                        className={`cursor-pointer px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedSkills.includes(skill)
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                            }`}
+                                    >
+                                        {skill}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
@@ -641,13 +575,13 @@ const ApplicationForm = ({ id }) => {
                         <div className="text-center pt-6">
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
-                                className={`!rounded-button whitespace-nowrap px-12 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${isSubmitting
+                                disabled={loading}
+                                className={`!rounded-button whitespace-nowrap px-12 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${loading
                                     ? 'bg-gray-400 cursor-not-allowed text-white'
                                     : 'cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
                                     }`}
                             >
-                                {isSubmitting ? (
+                                {loading ? (
                                     <>
                                         <i className="fas fa-spinner fa-spin mr-3"></i>
                                         Submitting...
@@ -661,9 +595,9 @@ const ApplicationForm = ({ id }) => {
                             </button>
                         </div>
                     </form>
-                    
+
                     {/* Success/Error Messages */}
-                    {submitStatus === 'success' && (
+                    {showSuccess && (
                         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                             <div className="flex items-center">
                                 <i className="fas fa-check-circle text-green-500 mr-3"></i>
@@ -674,7 +608,7 @@ const ApplicationForm = ({ id }) => {
                         </div>
                     )}
 
-                    {submitStatus === 'error' && (
+                    {error && (
                         <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                             <div className="flex items-center">
                                 <i className="fas fa-exclamation-triangle text-red-500 mr-3"></i>

@@ -19,7 +19,7 @@ const PositonContent = () => {
     const [typeFilter, setTypeFilter] = useState("all")
     const [sortField, setSortField] = useState("createdDate")
     const [sortDirection, setSortDirection] = useState("desc")
-  
+
     const [showEditModal, setShowEditModal] = useState(false)
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -186,7 +186,7 @@ const PositonContent = () => {
     }, [positions, searchTerm, statusFilter, departmentFilter, typeFilter, sortField, sortDirection]);
 
 
-    
+
 
     useEffect(() => {
         fetchPositions();
@@ -242,7 +242,7 @@ const PositonContent = () => {
                 handleDeletePosition={handleDeletePosition}
                 loading={loading}
                 error={error}
-                positions = {positions}            />
+                positions={positions} />
 
             <PositionDetailsModal
                 open={showDetailsModal}

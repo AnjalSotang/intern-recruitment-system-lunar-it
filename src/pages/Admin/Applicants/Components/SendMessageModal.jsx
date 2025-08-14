@@ -162,9 +162,9 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
         setScheduleEmail(false)
         setScheduledDate("")
         setScheduledTime("")
-        setTimeout(() => {
-            onOpenChange(false);
-        }, 8000); // 4 seconds
+        // setTimeout(() => {
+        //     onOpenChange(false);
+        // }, 8000); // 4 seconds
 
     }
 

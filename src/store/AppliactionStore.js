@@ -29,23 +29,26 @@ const applicationStore = (set) => ({
     },
 
 
-    // fetchPosition: async (id) => {
-    //     set({ loading: true, error: null, status: null, message: null});
-    //     console.log("From" + id)
-    //     try {
-    //         const res = await API.get(`api/position/${id}`);
-    //         // console.log("Fr " + res.data.data)
-    //         set({ position: res.data.data, loading: false }); // store separately
-    //     } catch (err) {
-    //         set({
-    //             error: err.response?.data?.message || 'Error fetching position',
-    //             loading: false,
-    //     status: err.response?.status || null
-    //         });
-    //     }
-    // },
-
-
+     postApplication: async (id, applicantData) => {
+        set({ loading: true, error: null, status: null, message: null });
+        try {
+            // console.log(interviewData)
+            const res = await API.post(`api/application/${id}`, applicantData);
+            set((state) => ({
+                applications: [...state.applications, res.data.data],
+                loading: false,
+                status: res.status,
+                message: res.data.message
+            }));
+        } catch (err) {
+            set({
+                error: err.response?.data?.message || 'Error during application',
+                loading: false,
+                status: err.response?.status || null,
+                message: null
+            });
+        }
+    },
 
     sendMessage: async (messageData) => {
         set({ loading: true, error: null, status: null, message: null });

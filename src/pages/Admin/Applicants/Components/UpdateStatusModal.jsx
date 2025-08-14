@@ -87,9 +87,9 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
     setNotes("")
     setSendNotification(true)
     // Delay closing modal
-  setTimeout(() => {
-    onOpenChange(false);
-  }, 8000); // 4 seconds
+  // setTimeout(() => {
+  //   onOpenChange(false);
+  // }, 8000); // 4 seconds
 
 
   }

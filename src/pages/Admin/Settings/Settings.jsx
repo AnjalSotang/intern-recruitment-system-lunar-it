@@ -1,6 +1,6 @@
 import React from 'react'
 import AdminLayout from '../../../layout/AdminLayout'
-import SettingsContent from './Components/SettingsContent'
+import SettingsContent from './SettingsContent'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

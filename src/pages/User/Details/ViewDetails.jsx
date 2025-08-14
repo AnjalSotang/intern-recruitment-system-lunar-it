@@ -137,7 +137,7 @@ const ViewDetails = () => {
                 <ApplicationProcess />
 
                 {/* Application Form */}
-                <ApplicationForm id={id} />
+                <ApplicationForm id={id} position={position}/>
 
                 {/* Additional Information */}
                 <AdditionalInfo deadline={position.applicationDeadline} />

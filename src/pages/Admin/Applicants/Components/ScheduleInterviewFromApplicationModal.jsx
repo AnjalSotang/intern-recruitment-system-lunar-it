@@ -150,9 +150,9 @@ const ScheduleInterviewFromApplicationModal = ({
             })
             setErrors({})
             // Close modal after a brief delay to allow toast to show
-            setTimeout(() => {
-                onOpenChange(false)
-            }, 3000)
+            // setTimeout(() => {
+            //     onOpenChange(false)
+            // }, 3000)
         }
     }
 
