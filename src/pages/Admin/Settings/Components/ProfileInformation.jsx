@@ -4,34 +4,51 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Save, Upload } from "lucide-react"
 import { useAuthStore } from "../../../../store/Auth"
+import { toast } from "react-toastify"
 
 const ProfileInformation = () => {
     const loading = useAuthStore(state => state.loading)
     const status = useAuthStore(state => state.status)
     const error = useAuthStore(state => state.error)
     const user = useAuthStore(state => state.user)
-    const fetchAdmin = useAuthStore(state => state.fetchAdmin)
+    const updateAdmin = useAuthStore(state => state.updateAdmin)
+    const message = useAuthStore(state => state.message)
+    // Get the clear functions from the store
+    const clearMessage = useAuthStore(state => state.clearMessage)
+    const clearError = useAuthStore(state => state.clearError)
 
-    const [preview, setPreview] = useState(user?.avatar || null)
+    const [preview, setPreview] = useState(null)
     const [file, setFile] = useState(null)
     const [editableUser, setEditableUser] = useState(user || {})
 
     useEffect(() => {
-        fetchAdmin()
-    }, [])
-
-    console.log(user)
-
-    // Keep editableUser in sync when store user changes
-    useEffect(() => {
         setEditableUser(user || {})
-        setPreview(user?.avatar || null)
+        if (user?.imageUrl) {
+            setPreview(user.imageUrl)
+        } else {
+            setPreview(null)
+        }
     }, [user])
+
+    // Handle success message and clear it after showing
+    useEffect(() => {
+        if (message) {
+            toast.success(message)
+            clearMessage() // Clear the message to prevent showing again
+        }
+    }, [message, clearMessage])
+
+    // Handle error message and clear it after showing
+    useEffect(() => {
+        if (error) {
+            toast.error(error)
+            clearError() // Clear the error to prevent showing again
+        }
+    }, [error, clearError])
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0]
@@ -50,18 +67,18 @@ const ProfileInformation = () => {
         reader.readAsDataURL(selectedFile)
     }
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = async () => {
         const formData = new FormData()
         formData.append("name", editableUser.name)
-        formData.append("email", editableUser.email) 
-        formData.append("phone", editableUser.phone)
+        formData.append("email", editableUser.email)
+        formData.append("phone", editableUser.phone || "")
         formData.append("role", editableUser.role)
-        formData.append("bio", editableUser.bio)
+        formData.append("bio", editableUser.bio || "")
         if (file) {
-            formData.append("avatar", file)
+            formData.append("image", file) // ✅ must match backend multer field
         }
-        console.log("Saving profile:", Object.fromEntries(formData))
-        // dispatch update action here
+
+        updateAdmin(formData, user._id)
     }
 
     return (
@@ -75,7 +92,7 @@ const ProfileInformation = () => {
                 {/* Avatar Upload */}
                 <div className="flex items-center gap-6">
                     <Avatar className="h-20 w-20">
-                        <AvatarImage src={preview || "/placeholder.svg?height=80&width=80"} alt="Profile" />
+                        <AvatarImage src={ preview || "/placeholder.svg"} alt="Profile" />
                         <AvatarFallback>
                             {editableUser?.name?.[0]?.toUpperCase() || "AU"}
                         </AvatarFallback>
@@ -138,8 +155,8 @@ const ProfileInformation = () => {
                         <Label htmlFor="role">Role</Label>
                         <Input
                             id="role"
-                            value={editableUser.role.toUpperCase() || ""}
-                            
+                            value={editableUser.role || ""}
+                            readOnly // ✅ role should not be editable directly
                         />
                     </div>
                 </div>
@@ -156,10 +173,14 @@ const ProfileInformation = () => {
                 </div>
 
                 {/* Save Button */}
-                <Button onClick={handleSaveProfile}>
+                <Button onClick={handleSaveProfile} disabled={loading}>
                     <Save className="mr-2 h-4 w-4" />
-                    Save Changes
+                    {loading ? "Saving..." : "Save Changes"}
                 </Button>
+
+                {error && (
+                    <p className="text-sm text-red-500 mt-2">{error}</p>
+                )}
             </CardContent>
         </Card>
     )

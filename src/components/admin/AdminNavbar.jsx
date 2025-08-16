@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,13 +14,29 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Bell, Search, Sun, Moon, User, LogOut, Settings } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useDarkMode } from "../../../contexts/DarkModeContext" // Import the hook
 import logo from "/logo.ico"
+import { useAuthStore } from "../../store/Auth"
 
 const AdminNavbar = () => {
+    const user = useAuthStore(state => state.user)
+    const fetchAdmin = useAuthStore(state => state.fetchAdmin)
+    const logout = useAuthStore(state => state.logout) // Add logout function
+    const navigate = useNavigate() // For navigation after logout
     const [notifications] = useState(3)
     const { darkMode, setDarkMode } = useDarkMode() // Use the context
+
+    useEffect(
+        () => {
+            fetchAdmin()
+        }, [])
+
+    // Handle logout functionality
+    const handleLogout = () => {
+        logout() // Call the logout function from auth store
+        navigate('/login') // Redirect to login page (adjust path as needed)
+    }
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 flex justify-between h-16 shrink-0 items-center border-b bg-background border-border px-4">
@@ -62,7 +78,7 @@ const AdminNavbar = () => {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                             <Avatar className="h-8 w-8">
-                                <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Admin" />
+                                <AvatarImage src={user.imageUrl} alt="Admin" />
                                 <AvatarFallback>AD</AvatarFallback>
                             </Avatar>
                         </Button>
@@ -70,8 +86,8 @@ const AdminNavbar = () => {
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
-                                <p className="text-sm font-medium leading-none">Admin User</p>
-                                <p className="text-xs leading-none text-muted-foreground">admin@company.com</p>
+                                <p className="text-sm font-medium leading-none">{user.name}</p>
+                                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
@@ -84,7 +100,7 @@ const AdminNavbar = () => {
                             <span>Settings</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Log out</span>
                         </DropdownMenuItem>

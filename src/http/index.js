@@ -1,17 +1,20 @@
-  import axios from 'axios';
+import axios from 'axios';
 
-  const API = axios.create({
-    baseURL: 'http://localhost:3000/', // Change to your backend URL
-  });
+const API = axios.create({
+  baseURL: 'http://localhost:3000/', // Change to your backend URL
+});
 
-  // Auto attach token from localStorage
+// Auto attach token from localStorage
 API.interceptors.request.use((config) => {
   const authStorage = localStorage.getItem('auth_storage');
 
-  
+
   const token = JSON.parse(authStorage)?.state?.token;
-  // console.log('Parsed token:', token);
-  
+  console.log('Parsed token:', token);
+
+  //   const decoded = jwt_decode(token);
+  // console.log("Decoded token payload:", decoded);
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
     // console.log('Authorization header set');
@@ -22,4 +25,4 @@ API.interceptors.request.use((config) => {
 });
 
 
-  export default API;
+export default API;

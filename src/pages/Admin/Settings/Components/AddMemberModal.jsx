@@ -21,6 +21,7 @@ export default function AddMemberModal({ open, onOpenChange, onMemberAdded }) {
     const loading = useMemberStore(state => state.loading)
     const status = useMemberStore(state => state.status)
     const message = useMemberStore(state => state.message)
+    const error = useMemberStore(state => state.error)
 
     const createMember = useMemberStore(state => state.createMember)
     const [formData, setFormData] = useState({
@@ -52,7 +53,23 @@ export default function AddMemberModal({ open, onOpenChange, onMemberAdded }) {
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 
+    useEffect(() => {
+        if (status && message) {
+            if (status >= 200 && status < 300) {
+                toast.success(message);
+            }
+            else {
+                toast.error(message);
+            }
+        }
+    }, [status, message]);
 
+    // Also handle error state separately
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
 
 
     return (

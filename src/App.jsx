@@ -19,6 +19,8 @@ import Settings from "./pages/Admin/Settings/Settings"
 import Position from "./pages/Admin/Position/Position";
 import { DarkModeProvider } from "../contexts/DarkModeContext";
 import Login from "./pages/Login/Login";
+import ForgotPassword from "./pages/Login/ForgotPassword.jsx";
+import Reset from "./pages/Login/Reset.jsx";
 
 
 
@@ -30,7 +32,10 @@ function App() {
       <BrowserRouter>
         <Toaster />
         <Routes>
-          <Route path="/admin/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<Reset />} />
+
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/Details/:id" element={<ViewDetails />} />

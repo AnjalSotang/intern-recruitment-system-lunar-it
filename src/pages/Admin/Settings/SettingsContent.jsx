@@ -18,49 +18,25 @@ import DeleteMemberModal from "./Components/DeleteMemberModal"
 import { useMemberStore } from "../../../store/MemberStore"
 import { toast, ToastContainer } from "react-toastify"
 import ProfileInformation from "./Components/ProfileInformation"
+import { useAuthStore } from "../../../store/Auth"
+import ChangePassword from "./Components/ChangePassword"
 
 
 export default function SettingsContent() {
   const loading = useMemberStore(state => state.loading)
-  const status = useMemberStore(state => state.status)
-  const error = useMemberStore(state => state.error)
   const members = useMemberStore(state => state.members)
   const fetchMembers = useMemberStore(state => state.fetchMembers)
-  const message = useMemberStore(state => state.message)
+  const fetchAdmin = useAuthStore(state => state.fetchAdmin)
+  const error = useMemberStore(state => state.error)
 
+  
   // console.log(loading)
   // console.log(members)
   // To this:
   useEffect(() => {
-    fetchMembers()
+    fetchMembers(),
+    fetchAdmin()
   }, [])
-
-  useEffect(() => {
-    if (status && message) {
-      if (status >= 200 && status < 300) {
-        toast.success(message);
-      }
-      else {
-        toast.error(message);
-      }
-    }
-  }, [status, message]);
-
-  // Also handle error state separately
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-
-  const [profileData, setProfileData] = useState({
-    name: "Admin User",
-    email: "admin@company.com",
-    phone: "+1 (555) 123-4567",
-    role: "System Administrator",
-    bio: "Experienced HR professional managing internship programs at TechCorp.",
-  })
 
   const [companyData, setCompanyData] = useState({
     name: "TechCorp Inc.",
@@ -76,36 +52,6 @@ export default function SettingsContent() {
     interviewReminders: true,
     weeklyReports: false,
   })
-
-  const [teamMembers, setTeamMembers] = useState([
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john@company.com",
-      role: "HR Manager",
-      status: "active",
-      phone: "+1 (555) 123-4567",
-      department: "Human Resources",
-    },
-    {
-      id: 2,
-      name: "Sarah Davis",
-      email: "sarah@company.com",
-      role: "Recruiter",
-      status: "active",
-      phone: "+1 (555) 234-5678",
-      department: "Human Resources",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike@company.com",
-      role: "Technical Interviewer",
-      status: "inactive",
-      phone: "+1 (555) 345-6789",
-      department: "Engineering",
-    },
-  ])
 
   const [showAddMemberModal, setShowAddMemberModal] = useState(false)
   const [showEditMemberModal, setShowEditMemberModal] = useState(false)
@@ -176,7 +122,7 @@ export default function SettingsContent() {
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
-          <ProfileInformation profileData={profileData}/>
+          <ProfileInformation/>
         </TabsContent>
 
         <TabsContent value="company" className="space-y-6">
@@ -383,68 +329,7 @@ export default function SettingsContent() {
         </TabsContent>
 
         <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your account security and privacy</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-base font-medium">Change Password</Label>
-                  <p className="text-sm text-muted-foreground mb-4">Update your password to keep your account secure</p>
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="currentPassword">Current Password</Label>
-                      <Input id="currentPassword" type="password" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="newPassword">New Password</Label>
-                      <Input id="newPassword" type="password" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                      <Input id="confirmPassword" type="password" />
-                    </div>
-                    <Button>Update Password</Button>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <Label className="text-base font-medium">Two-Factor Authentication</Label>
-                  <p className="text-sm text-muted-foreground mb-4">Add an extra layer of security to your account</p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Enable 2FA</p>
-                      <p className="text-sm text-muted-foreground">Use an authenticator app to secure your account</p>
-                    </div>
-                    <Button variant="outline">Setup 2FA</Button>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <Label className="text-base font-medium">Session Management</Label>
-                  <p className="text-sm text-muted-foreground mb-4">Manage your active sessions</p>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">Current Session</p>
-                        <p className="text-sm text-muted-foreground">Chrome on macOS • San Francisco, CA</p>
-                      </div>
-                      <Badge>Active</Badge>
-                    </div>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      Sign Out All Other Sessions
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+         <ChangePassword/>
         </TabsContent>
       </Tabs>
 

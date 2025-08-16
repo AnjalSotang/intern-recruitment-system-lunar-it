@@ -25,6 +25,8 @@ export default function EditMemberModal({ open, onOpenChange, member }) {
   const status = useMemberStore(state => state.status)
   const message = useMemberStore(state => state.message)
   const updateMember = useMemberStore(state => state.updateMember)
+  const error = useMemberStore(state => state.error)
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -49,6 +51,25 @@ export default function EditMemberModal({ open, onOpenChange, member }) {
       })
     }
   }, [member])
+
+  useEffect(() => {
+    if (status && message) {
+      if (status >= 200 && status < 300) {
+        toast.success(message);
+      }
+      else {
+        toast.error(message);
+      }
+    }
+  }, [status, message]);
+
+  // Also handle error state separately
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
 
 
 
