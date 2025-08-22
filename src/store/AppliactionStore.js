@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import API from "../http/index"
 import STATUSES from "../global/status/Statuses"
+import { useNotificationStore } from './NotificationStore'
+
 
 const applicationStore = (set) => ({
     applications: [],
@@ -29,7 +31,8 @@ const applicationStore = (set) => ({
     },
 
 
-     postApplication: async (id, applicantData) => {
+    postApplication: async (id, applicantData) => {
+        const { fetchNotifcations,fetchUnreadCount } = useNotificationStore.getState();
         set({ loading: true, error: null, status: null, message: null });
         try {
             // console.log(interviewData)
@@ -40,6 +43,7 @@ const applicationStore = (set) => ({
                 status: res.status,
                 message: res.data.message
             }));
+            
         } catch (err) {
             set({
                 error: err.response?.data?.message || 'Error during application',

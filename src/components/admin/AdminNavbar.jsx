@@ -18,6 +18,69 @@ import { Link, useNavigate } from "react-router-dom"
 import { useDarkMode } from "../../../contexts/DarkModeContext" // Import the hook
 import logo from "/logo.ico"
 import { useAuthStore } from "../../store/Auth"
+import NotificationsDropdown from "./components/NotificationDropDown"
+
+const mockNotifications = [
+  {
+    id: "1",
+    type: "application",
+    title: "New Application Received",
+    message: "Sarah Wilson applied for Frontend Developer Intern position",
+    time: "2 minutes ago",
+    read: false,
+    avatar: "/placeholder.svg?height=32&width=32",
+    actionUrl: "/applications",
+  },
+  {
+    id: "2",
+    type: "interview",
+    title: "Interview Scheduled",
+    message: "Interview with John Doe scheduled for tomorrow at 2:00 PM",
+    time: "15 minutes ago",
+    read: false,
+    avatar: "/placeholder.svg?height=32&width=32",
+    actionUrl: "/interviews",
+  },
+  {
+    id: "3",
+    type: "message",
+    title: "New Message",
+    message: "Alice Johnson sent you a message regarding the interview",
+    time: "1 hour ago",
+    read: false,
+    avatar: "/placeholder.svg?height=32&width=32",
+    actionUrl: "/messages",
+  },
+  {
+    id: "4",
+    type: "team",
+    title: "Team Member Added",
+    message: "Mike Chen has been added to the HR team",
+    time: "2 hours ago",
+    read: true,
+    avatar: "/placeholder.svg?height=32&width=32",
+    actionUrl: "/settings",
+  },
+  {
+    id: "5",
+    type: "system",
+    title: "System Update",
+    message: "Weekly report is ready for review",
+    time: "3 hours ago",
+    read: true,
+    actionUrl: "/reports",
+  },
+  {
+    id: "6",
+    type: "application",
+    title: "Application Status Updated",
+    message: 'David Kim\'s application status changed to "Interview Scheduled"',
+    time: "4 hours ago",
+    read: true,
+    avatar: "/placeholder.svg?height=32&width=32",
+    actionUrl: "/applications",
+  },
+]
 
 const AdminNavbar = () => {
     const user = useAuthStore(state => state.user)
@@ -65,14 +128,7 @@ const AdminNavbar = () => {
                     {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 </Button>
 
-                <Button variant="ghost" size="icon" className="relative text-foreground hover:bg-accent hover:text-accent-foreground">
-                    <Bell className="h-4 w-4" />
-                    {notifications > 0 && (
-                        <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                            {notifications}
-                        </Badge>
-                    )}
-                </Button>
+                <NotificationsDropdown/>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

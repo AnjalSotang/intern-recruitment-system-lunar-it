@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 
 
 const StartInterviewModal = ({ open, onOpenChange, interview, onStart }) => {
+
   const { toast } = useToast()
   const [isStarting, setIsStarting] = useState(false)
 

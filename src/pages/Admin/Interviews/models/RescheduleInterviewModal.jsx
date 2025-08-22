@@ -20,6 +20,7 @@ const RescheduleInterviewModal = ({
     onReschedule,
     loading
 }) => {
+    console.log(interview)
     const [date, setDate] = useState()
     const [time, setTime] = useState("")
     const [reason, setReason] = useState("")
@@ -31,11 +32,11 @@ const RescheduleInterviewModal = ({
         }
 
         onReschedule(interview, interview.id, date.toISOString(), time, reason)
-
-        // onOpenChange(false)
+    // onOpenChange(false)
         setDate(undefined)
         setTime("")
         setReason("")
+      
     }
 
     if (!interview) return null

@@ -64,7 +64,7 @@ const statusOptions = [
 ]
 
 export function EditInterviewModal({ open, onOpenChange, interview, onSave, loading }) {
-  console.log(interview)
+  // console.log(interview)
 
   const [formData, setFormData] = useState({
     id: interview?.id || "0",
@@ -305,7 +305,7 @@ export function EditInterviewModal({ open, onOpenChange, interview, onSave, load
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || formData.status === 'scheduled'}>
               {loading ? (
                 <span className="flex items-center space-x-2">
                   <Loader2 className="animate-spin h-4 w-4" />

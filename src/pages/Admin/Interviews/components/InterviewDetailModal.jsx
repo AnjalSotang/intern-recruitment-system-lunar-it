@@ -206,14 +206,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview, modalTrig
                   Start Interview
                 </Button>
                 <Separator />
-                <Button
-                  className="w-full justify-start text-red-600 bg-transparent"
-                  variant="outline"
-                  onClick={modalTriggers?.openCancelModal}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Cancel Interview
-                </Button>
+         
               </CardContent>
             </Card>
 

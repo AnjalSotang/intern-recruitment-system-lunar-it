@@ -73,11 +73,41 @@ const interviewStore = (set) => ({
     updateInterview: async (updatedData, id) => {
         set({ loading: true, error: null, status: null, message: null });
         try {
-            const res = await API.put(`api/interview/${id}`, updatedData);
-            // console.log(res.data.data);
+            console.log("PUT Payload:", updatedData, "ID:", id);
+            const res = await API.put(`/api/interview/${id}`, updatedData);
+            console.log("Response:", res.data);
+
             set((state) => ({
                 interviews: state.interviews.map((interview) =>
-                    interview.id === id ? res.data.data : interview  // Compare with 'id' parameter
+                    interview.id === id ? res.data.data : interview
+                ),
+                loading: false,
+                status: res.status,
+                message: res.data.message
+            }));
+        } catch (err) {
+            console.error("Update Error:", err.response?.data || err.message);
+            set({
+                error: err.response?.data?.message || 'Error updating interview',
+                loading: false,
+                status: err.response?.status || null,
+                message: null
+            });
+        }
+    },
+
+    deleteInterview: async (interviewId, reason, notifyCandidate) => {
+        set({ loading: true, error: null, status: null, message: null });
+        console.log(reason, notifyCandidate);
+
+        try {
+            const res = await API.delete(`api/interview/${interviewId}`, {
+                data: { reason, notifyCandidate }
+            });
+
+            set((state) => ({
+                interviews: state.interviews.map((interview) =>
+                    interview.id === interviewId ? res.data.data : interview
                 ),
                 loading: false,
                 status: res.status,
@@ -85,42 +115,14 @@ const interviewStore = (set) => ({
             }));
         } catch (err) {
             set({
-                error: err.response?.data?.message || 'Error updating interview',
+                error: err.response?.data?.message || 'Error deleting interview',
                 loading: false,
                 status: err.response?.status || null,
                 message: null
             });
-            console.error(err);
+            console.log(err.response?.data?.error);
         }
     },
-
-   deleteInterview: async (interviewId, reason, notifyCandidate) => {
-    set({ loading: true, error: null, status: null, message: null });
-    console.log(reason, notifyCandidate);
-
-    try {
-        const res = await API.delete(`api/interview/${interviewId}`, { 
-            data: { reason, notifyCandidate } 
-        });
-
-        set((state) => ({
-            interviews: state.interviews.map((interview) =>
-                interview.id === interviewId ? res.data.data : interview
-            ),
-            loading: false,
-            status: res.status,
-            message: res.data.message
-        }));
-    } catch (err) {
-        set({
-            error: err.response?.data?.message || 'Error deleting interview',
-            loading: false,
-            status: err.response?.status || null,
-            message: null
-        });
-        console.log(err.response?.data?.error);
-    }
-},
 
     permanentDeleteInterview: async (id) => {
         set({ loading: true, error: null, status: null, message: null });

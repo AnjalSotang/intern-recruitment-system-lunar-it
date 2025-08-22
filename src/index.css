@@ -87,3 +87,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer utilities {
+  /* Force pointer events restoration for dropdown issues */
+  body[style*="pointer-events: none"] {
+    pointer-events: auto !important;
+  }
+
+  /* Fix for Radix UI popper content wrapper */
+  [data-radix-popper-content-wrapper] {
+    pointer-events: auto !important;
+  }
+
+  /* Fix for any lingering overlays */
+  [data-radix-dropdown-menu-content] {
+    pointer-events: auto !important;
+  }
+
+  /* Ensure dropdown triggers always work */
+  [data-radix-dropdown-menu-trigger] {
+    pointer-events: auto !important;
+  }
+}

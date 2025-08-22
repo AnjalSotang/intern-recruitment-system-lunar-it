@@ -105,6 +105,7 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
     const handleRescheduleInterview = useCallback((interview, interviewId, newDate, newTime, reason) => {
         const updatedInterview = {
             ...interview,
+            status: 'scheduled',
             date: newDate,
             time: newTime,
             notes: reason || interview.notes,
