@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
 const ProtectedAdmin = ({ children }) => {
+  
   const authStorage = localStorage.getItem('auth_storage');
   const token = JSON.parse(authStorage)?.state?.token;
   const location = useLocation();

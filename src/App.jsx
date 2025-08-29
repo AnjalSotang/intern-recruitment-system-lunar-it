@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 // import useStore from "./store";
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import './App.css'
 import { ProtectedAdmin } from './Protected.jsx';
-import HomePage from "./pages/User/Home/HomePage";
+// import HomePage from "./pages/User/Home/HomePage";
+const HomePage = lazy(() => import("./pages/User/Home/HomePage"))
 import About from "./pages/User/About/About";
 import ViewDetails from "./pages/User/Details/ViewDetails";
 import ContactUs from "./pages/User/Contact/ContactUs";
@@ -22,10 +23,14 @@ import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/Login/ForgotPassword.jsx";
 import Reset from "./pages/Login/Reset.jsx";
 import NotificationsPageContent from "./pages/Admin/notification/Notification.jsx";
+// import LoutPage from "./pages/logout.jsx";
+const LoutPage = lazy(() => import("./pages/logout.jsx"))
 
 
 
 function App() {
+
+
 
 
   return (
@@ -33,11 +38,15 @@ function App() {
       <BrowserRouter>
         <Toaster />
         <Routes>
+          <Route path="/logout" element={<ProtectedAdmin><LoutPage /></ProtectedAdmin>} />
+
           <Route path="/login" element={<ProtectedAdmin><Login /></ProtectedAdmin>} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<Reset />} />
 
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Suspense fallback={<div>load...</div>}>
+            <HomePage />
+          </Suspense>} />
           <Route path="/about" element={<About />} />
           <Route path="/Details/:id" element={<ViewDetails />} />
           <Route path="/contact" element={<ContactUs />} />
@@ -50,7 +59,7 @@ function App() {
           <Route path="/admin/interviews" element={<ProtectedAdmin><Interview /></ProtectedAdmin>} />
           <Route path="/admin/settings" element={<ProtectedAdmin><Settings /></ProtectedAdmin>} />
           <Route path="/admin/positions" element={<ProtectedAdmin><Position /></ProtectedAdmin>} />
-             <Route path="/notifications" element={<ProtectedAdmin><NotificationsPageContent   /></ProtectedAdmin>} />
+          <Route path="/notifications" element={<ProtectedAdmin><NotificationsPageContent /></ProtectedAdmin>} />
           {/* <Route path="/Internship" element={<Internship/>}></Route> */}
 
           {/* <Route path="/Login" element={<Login/>} /> */}

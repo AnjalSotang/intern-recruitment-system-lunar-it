@@ -7,11 +7,18 @@ import { useNotificationStore } from './NotificationStore'
 
 const applicationStore = (set) => ({
     applications: [],
+    applicationSummary: null,
     application: null,
     loading: false,
     error: null,
     status: null,
     message: null,
+
+    
+    summaryLoading: false,
+    summaryError: null,
+    summaryStatus: null,
+    summaryMessage: null,
 
     fetchApplications: async () => {
         set({ loading: true, error: null, status: null, message: null });
@@ -121,7 +128,28 @@ const applicationStore = (set) => ({
             });
             console.log(err.response.data.error)
         }
+    },
+
+        fetchApplicationSummary: async () => {
+        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        try {
+            const res = await API.get("api/positionSummary");
+            set({
+                applicationSummary: res.data.data, // merge new summary data
+                summaryLoading: false,
+                summaryStatus: res.status,
+                summaryMessage: res.data.message
+            });
+        } catch (err) {
+            set({
+                summaryError: err.response?.data?.message || 'Error fetching summary',
+                summaryLoading: false,
+                summaryStatus: err.response?.status || null,
+                summaryMessage: null
+            });
+        }
     }
+
 })
 
 export const useApplicationStore = create(devtools(applicationStore))

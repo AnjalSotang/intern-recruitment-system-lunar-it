@@ -5,11 +5,17 @@ import STATUSES from "../global/status/Statuses"
 
 const positionStore = (set) => ({
     positions: [],
+    card: null,
     position: null,
     loading: false,
     error: null,
     status: null,
     message: null,
+
+    summaryLoading: false,
+    summaryError: null,
+    summaryStatus: null,
+    summaryMessage: null,
 
     fetchPositions: async () => {
         set({ loading: true, error: null, status: null, message: null });
@@ -30,7 +36,7 @@ const positionStore = (set) => ({
 
 
     fetchPosition: async (id) => {
-        set({ loading: true, error: null, status: null, message: null});
+        set({ loading: true, error: null, status: null, message: null });
         console.log("From" + id)
         try {
             const res = await API.get(`api/position/${id}`);
@@ -40,7 +46,7 @@ const positionStore = (set) => ({
             set({
                 error: err.response?.data?.message || 'Error fetching position',
                 loading: false,
-        status: err.response?.status || null
+                status: err.response?.status || null
             });
         }
     },
@@ -110,7 +116,27 @@ const positionStore = (set) => ({
             });
             console.log(err.response.data.error)
         }
-    }
+    },
+
+    fetchPositionSummary: async () => {
+        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        try {
+            const res = await API.get("api/positionSummary");
+            set({
+                card: res.data.data, // merge new summary data
+                summaryLoading: false,
+                summaryStatus: res.status,
+                summaryMessage: res.data.message
+            });
+        } catch (err) {
+            set({
+                summaryError: err.response?.data?.message || 'Error fetching summary',
+                summaryLoading: false,
+                summaryStatus: err.response?.status || null,
+                summaryMessage: null
+            });
+        }
+    },
 })
 
 export const usePositionStore = create(devtools(positionStore))
