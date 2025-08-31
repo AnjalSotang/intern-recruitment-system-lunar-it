@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/Auth";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 
-export default function LoutPage () {
+export default function LoutPage() {
     const { logout } = useAuthStore()
     const redirect = useNavigate()
     useEffect(() => {

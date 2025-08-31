@@ -1,31 +1,64 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import API from "../http/index"
-import STATUSES from "../global/status/Statuses"
-import { useNotificationStore } from './NotificationStore'
 
 
 const applicationStore = (set) => ({
     applications: [],
-    applicationSummary: null,
+    applicationSummary: {
+        totalApplication: 0,
+        reviewCount: 0,
+        acceptedCount: 0,
+        rejectedCount: 0,
+    },
     application: null,
     loading: false,
     error: null,
     status: null,
     message: null,
 
-    
+
     summaryLoading: false,
     summaryError: null,
     summaryStatus: null,
     summaryMessage: null,
+
+
+    
+    fetchApplicationSummary: async (cache=true) => {
+        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        try {
+            const res = await API.get("api/applicationSummary"+"?cache="+cache);
+            const mappedData = {
+                totalApplication: res.data.data.totalApplication ?? 0,
+                reviewCount: res.data.data.reviewCount ?? 0, // <-- important
+                acceptedCount: res.data.data.acceptedCount ?? 0,
+                rejectedCount: res.data.data.rejectedCount ?? 0,
+            }
+            // console.log("---api called",mappedData)
+
+            set({
+                applicationSummary: mappedData, // merge new summary data
+                summaryLoading: false,
+                summaryStatus: res.status,
+                summaryMessage: res.data.message
+            });
+            return res
+        } catch (err) {
+            set({
+                summaryError: err.response?.data?.message || 'Error fetching summary',
+                summaryLoading: false,
+                summaryStatus: err.response?.status || null,
+                summaryMessage: null
+            });
+        }
+    },
 
     fetchApplications: async () => {
         set({ loading: true, error: null, status: null, message: null });
         try {
             const res = await API.get('api/application');
             set({ loading: false, applications: res.data.data, })
-            console.log("Applications fetched:", res.data.data);
         }
         catch (err) {
             set({
@@ -39,7 +72,7 @@ const applicationStore = (set) => ({
 
 
     postApplication: async (id, applicantData) => {
-        const { fetchNotifcations,fetchUnreadCount } = useNotificationStore.getState();
+        // const { fetchNotifcations, fetchUnreadCount } = useNotificationStore.getState();
         set({ loading: true, error: null, status: null, message: null });
         try {
             // console.log(interviewData)
@@ -50,7 +83,7 @@ const applicationStore = (set) => ({
                 status: res.status,
                 message: res.data.message
             }));
-            
+
         } catch (err) {
             set({
                 error: err.response?.data?.message || 'Error during application',
@@ -130,25 +163,6 @@ const applicationStore = (set) => ({
         }
     },
 
-        fetchApplicationSummary: async () => {
-        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
-        try {
-            const res = await API.get("api/positionSummary");
-            set({
-                applicationSummary: res.data.data, // merge new summary data
-                summaryLoading: false,
-                summaryStatus: res.status,
-                summaryMessage: res.data.message
-            });
-        } catch (err) {
-            set({
-                summaryError: err.response?.data?.message || 'Error fetching summary',
-                summaryLoading: false,
-                summaryStatus: err.response?.status || null,
-                summaryMessage: null
-            });
-        }
-    }
 
 })
 

@@ -1,74 +1,34 @@
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-    FileText,
-    Users,
-    Clock,
-    CheckCircle,
-    XCircle,
-    MoreHorizontal,
-    Eye,
-    Edit,
-    Trash2,
-    Download,
-    Filter,
     ArrowUpDown,
     Calendar,
+    Edit,
+    Eye,
     Mail,
-    Star,
-    Plus,
+    MoreHorizontal,
+    Trash2,
 } from "lucide-react"
-import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
-import BulkActionsModal from "./Components/BulkActionsModal"
-import { CreateApplicationModal } from "./Components/CreateApplicationModal"
-import DeleteConfirmationModal from "./Components/DeleteConfirmationModal"
-import ScheduleInterviewFromApplicationModal from "./Components/ScheduleInterviewFromApplicationModal"
-import UpdateStatusModal from "./Components/UpdateStatusModal"
-import SendMessageModal from "./Components/SendMessageModal"
+import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import { useApplicationStore } from '../../../store/AppliactionStore'
 import { useInterviewStore } from "../../../store/InterviewStore"
-import { toast } from "react-toastify"
-import { Skeleton } from "@/components/ui/skeleton"
+import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
+import DeleteConfirmationModal from "./Components/DeleteConfirmationModal"
+import ScheduleInterviewFromApplicationModal from "./Components/ScheduleInterviewFromApplicationModal"
+import SendMessageModal from "./Components/SendMessageModal"
 import SkeletonTable from "./Components/SkeletonTable"
+import StatsCard from "./Components/StatsCard"
+import UpdateStatusModal from "./Components/UpdateStatusModal"
 
-const applicationStats = [
-    {
-        title: "Total Applications",
-        value: "1,234",
-        change: "+12%",
-        changeType: "positive",
-        icon: FileText,
-    },
-    {
-        title: "Under Review",
-        value: "89",
-        change: "+5%",
-        changeType: "positive",
-        icon: Clock,
-    },
-    {
-        title: "Accepted",
-        value: "156",
-        change: "+8%",
-        changeType: "positive",
-        icon: CheckCircle,
-    },
-    {
-        title: "Rejected",
-        value: "234",
-        change: "-3%",
-        changeType: "negative",
-        icon: XCircle,
-    },
-]
+
 
 const ApplicationContents = () => {
     // Main modal states
@@ -80,7 +40,7 @@ const ApplicationContents = () => {
     const [sortField, setSortField] = useState("appliedDate")
     const [sortDirection, setSortDirection] = useState("desc")
     const [showDetailsModal, setShowDetailsModal] = useState(false)
-    const [showBulkModal, setShowBulkModal] = useState(false)
+    // const [showBulkModal, setShowBulkModal] = useState(false)
     const [selectedApplication, setSelectedApplication] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -105,6 +65,7 @@ const ApplicationContents = () => {
     const error = useApplicationStore(state => state.error)
     const status = useApplicationStore(state => state.status)
     const message = useApplicationStore(state => state.message)
+    const fetchApplicationSummary = useApplicationStore(state => state.fetchApplicationSummary)
 
     // SOLUTION: Sync selectedApplication and selectedApplicationForAction with store updates
     useEffect(() => {
@@ -129,6 +90,7 @@ const ApplicationContents = () => {
     useEffect(() => {
         fetchApplications()
         fetchInterviews()
+        fetchApplicationSummary()
     }, [])
 
     // Watch backend store updates for toast messages
@@ -244,10 +206,10 @@ const ApplicationContents = () => {
         )
     }
 
-    const handleDeleteApplication = (application) => {
-        setDeletingApplication(application)
-        setShowDeleteModal(true)
-    }
+    // const handleDeleteApplication = (application) => {
+    //     setDeletingApplication(application)
+    //     setShowDeleteModal(true)
+    // }
 
     const confirmDeleteApplication = () => {
         if (deletingApplication) {
@@ -256,17 +218,17 @@ const ApplicationContents = () => {
         }
     }
 
-    const handleBulkAction = (action) => {
-        if (selectedApplications.length === 0) {
-            toast({
-                title: "No applications selected",
-                description: "Please select applications to perform bulk actions.",
-                variant: "destructive",
-            })
-            return
-        }
-        setShowBulkModal(true)
-    }
+    // const handleBulkAction = (action) => {
+    //     if (selectedApplications.length === 0) {
+    //         toast({
+    //             title: "No applications selected",
+    //             description: "Please select applications to perform bulk actions.",
+    //             variant: "destructive",
+    //         })
+    //         return
+    //     }
+    //     setShowBulkModal(true)
+    // }
 
     const handleSort = (field) => {
         if (sortField === field) {
@@ -306,6 +268,7 @@ const ApplicationContents = () => {
 
     const handleStatusUpdated = (id, status, sendNotification) => {
         updateApplication(id, status, sendNotification)
+        fetchApplicationSummary(false)
     }
 
     const handleMessageSent = (messageData) => {
@@ -402,25 +365,7 @@ const ApplicationContents = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {applicationStats.map((stat) => (
-                    <Card key={stat.title}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                            <stat.icon className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground">
-                                <span className={stat.changeType === "positive" ? "text-green-600" : "text-red-600"}>
-                                    {stat.change}
-                                </span>{" "}
-                                from last month
-                            </p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+            <StatsCard />
 
             {/* Applications Table */}
             <Card>

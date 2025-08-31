@@ -11,6 +11,12 @@ const interviewStore = (set) => ({
     status: null,
     message: null,
 
+    interviewSummary:{},
+    summaryLoading: false,
+    summaryError: null,
+    summaryStatus: null,
+    summaryMessage: null,
+
     fetchInterviews: async () => {
         set({ loading: true, error: null, status: null, message: null });
         try {
@@ -75,7 +81,6 @@ const interviewStore = (set) => ({
         try {
             console.log("PUT Payload:", updatedData, "ID:", id);
             const res = await API.put(`/api/interview/${id}`, updatedData);
-            console.log("Response:", res.data);
 
             set((state) => ({
                 interviews: state.interviews.map((interview) =>
@@ -143,6 +148,27 @@ const interviewStore = (set) => ({
                 message: null
             });
             console.log(err.response.data.error)
+        }
+    },
+
+      fetchInterviewSummary: async (cache=true) => {
+        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        try {
+            const res = await API.get("api/interview-summary" + "?cache=" +cache);
+            console.log(res.data.data)
+            set({
+                interviewSummary: res.data.data, // merge new summary data
+                summaryLoading: false,
+                summaryStatus: res.status,
+                summaryMessage: res.data.message
+            });
+        } catch (err) {
+            set({
+                summaryError: err.response?.data?.message || 'Error fetching summary',
+                summaryLoading: false,
+                summaryStatus: err.response?.status || null,
+                summaryMessage: null
+            });
         }
     }
 

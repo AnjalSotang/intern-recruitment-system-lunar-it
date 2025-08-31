@@ -13,9 +13,9 @@ import StartInterviewModal from "./models/StartInterviewModal"
 import { useInterviewStore } from "../../../store/InterviewStore"
 import DeleteConfirmationModal from './models/DeleteModel'
 
-const Heading = ({ setShowModal, setSelectedApplication }) => {
+
+const Heading = () => {
     // Main modal states
-    const [showScheduleModal, setShowScheduleModal] = useState(false)
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [selectedInterview, setSelectedInterview] = useState(null)
 
@@ -38,6 +38,8 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
     const status = useInterviewStore(state => state.status)
     const message = useInterviewStore(state => state.message)
     const [detailsModal, setDetailsModal] = useState(false)
+    const fetchInterviewSummary = useInterviewStore(state => state.fetchInterviewSummary)
+
 
     // SOLUTION: Sync selectedInterview with store updates
     useEffect(() => {
@@ -100,7 +102,8 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
     // Modal handlers
     const handleEditInterview = useCallback((updatedInterview) => {
         updateInterview(updatedInterview, updatedInterview.id)
-    }, [updateInterview])
+        fetchInterviewSummary(false)
+    }, [fetchInterviewSummary, updateInterview])
 
     const handleRescheduleInterview = useCallback((interview, interviewId, newDate, newTime, reason) => {
         const updatedInterview = {
@@ -147,9 +150,12 @@ const Heading = ({ setShowModal, setSelectedApplication }) => {
         }
     }, [error])
 
+
+
     useEffect(() => {
         fetchInterviews()
-    }, [fetchInterviews])
+        fetchInterviewSummary()
+    },[])
 
     const handleEditModalClose = useCallback((open) => {
         if (!open) { // Modal is being closed

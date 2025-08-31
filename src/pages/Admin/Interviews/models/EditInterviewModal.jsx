@@ -85,7 +85,8 @@ export function EditInterviewModal({ open, onOpenChange, interview, onSave, load
       ...interview,
       ...formData,
     }
-
+    
+    console.log(updatedInterview)
     onSave(updatedInterview)
     // onOpenChange(false)
   }

@@ -81,15 +81,14 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
     onStatusUpdate(application._id, selectedStatus, sendNotification, notes)
 
 
-
     // Reset form and close modal
     setSelectedStatus("")
     setNotes("")
     setSendNotification(true)
     // Delay closing modal
-  // setTimeout(() => {
-  //   onOpenChange(false);
-  // }, 8000); // 4 seconds
+ 
+    onOpenChange(false);
+ 
 
 
   }
