@@ -35,7 +35,7 @@ const applicationStore = (set) => ({
                 acceptedCount: res.data.data.acceptedCount ?? 0,
                 rejectedCount: res.data.data.rejectedCount ?? 0,
             }
-            // console.log("---api called",mappedData)
+
 
             set({
                 applicationSummary: mappedData, // merge new summary data

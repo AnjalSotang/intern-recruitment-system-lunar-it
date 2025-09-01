@@ -42,11 +42,11 @@ const HeroSection = () => {
                             Explore Opportunities
                         </Link>
                         <Link
-                            to="/Apply"
+                            to="/contact"
                             className="inline-flex items-center justify-center px-6 py-3 bg-white text-indigo-600 border border-indigo-600 rounded-lg shadow-sm hover:bg-gray-50 transition-all whitespace-nowrap text-center"
                         >
                             <i className="fas fa-info-circle mr-2"></i>
-                            Apply Now
+                            Contact Us
                         </Link>
 
                     </div>

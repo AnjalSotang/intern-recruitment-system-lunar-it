@@ -118,10 +118,11 @@ const positionStore = (set) => ({
         }
     },
 
-    fetchPositionSummary: async () => {
+    fetchPositionSummary: async (cache=true) => {
         set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        console.log("----yo")
         try {
-            const res = await API.get("api/positionSummary");
+            const res = await API.get("api/positionSummary" + "?cache=" +cache);
             set({
                 card: res.data.data, // merge new summary data
                 summaryLoading: false,

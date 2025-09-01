@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar"
-import { LayoutDashboard, Briefcase, FileText, Calendar, Users, Settings, Building2, Bell } from "lucide-react"
+import { LayoutDashboard, Briefcase, FileText, Calendar, Users, Settings, Building2, Bell, Mail, MessageSquare } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useLocation } from "react-router-dom"
 
@@ -35,6 +35,11 @@ const menuItems = [
     title: "Interviews",
     url: "/admin/interviews",
     icon: Calendar,
+  },
+   {
+    title: "Messages",
+    url: "/admin/messages",
+    icon: MessageSquare,
   },
   {
     title: "Notifications",

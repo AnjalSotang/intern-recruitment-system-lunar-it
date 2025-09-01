@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SkeletonRows from "./SkeletonRows";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -47,9 +47,30 @@ const PositionTable = ({ searchTerm, setSearchTerm,
     positions
 
 }) => {
+      const [currentPage, setCurrentPage] = useState(1)
+      const [itemsPerPage, setItemsPerPage] = useState(5)
+
+        // Calculate pagination - FIXED: using 'applications' instead of 'allApplications'
+  const totalItems = positions.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentApplications = filteredPositions.slice(startIndex, endIndex)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(Number.parseInt(value))
+    setCurrentPage(1) // Reset to first page when changing items per page
+  }
+
+
+   
 
     return (
-        <div>
+        <div className="space-y-4">
             <Card>
                 <CardHeader>
                     <CardTitle>All Positions</CardTitle>
@@ -178,7 +199,7 @@ const PositionTable = ({ searchTerm, setSearchTerm,
                                 {loading ? (
                                     <SkeletonRows rows={5} />
                                 ) : (
-                                    filteredPositions?.map((position) => (
+                                currentApplications?.map((position) => (
                                         <TableRow key={position._id}>
                                             <TableCell>
                                                 <div>
@@ -259,7 +280,82 @@ const PositionTable = ({ searchTerm, setSearchTerm,
 
 
                 </CardContent>
+                    <CardContent>
+                           {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">Show</p>
+          <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+            <SelectTrigger className="w-[70px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-sm text-muted-foreground">of {totalItems} entries</p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} entries
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show first page, last page, current page, and pages around current page
+              if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                )
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span key={page} className="px-2 text-sm text-muted-foreground">
+                    ...
+                  </span>
+                )
+              }
+              return null
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+                    </CardContent>
             </Card>
+     
         </div>
     )
 }

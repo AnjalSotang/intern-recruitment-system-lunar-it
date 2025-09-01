@@ -8,7 +8,7 @@ import PositionDetailsModal from './components/dialog/PositionDetailModal'
 import EditPositionModal from './components/dialog/EditPositionModal'
 import DeleteConfirmationModal from './components/dialog/DeleteConfirmationModal'
 import { usePositionStore } from '../../../store/PositionStore'
-import { de } from 'date-fns/locale/de'
+// import { de } from 'date-fns/locale/de'
 import { ToastContainer, toast } from 'react-toastify';
 
 const PositonContent = () => {
@@ -38,6 +38,7 @@ const PositonContent = () => {
     const error = usePositionStore(state => state.error);
     const status = usePositionStore(state => state.status);
     const message = usePositionStore(state => state.message)
+    const fetchPositionSummary = usePositionStore(state => state.fetchPositionSummary);
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -108,6 +109,7 @@ const PositonContent = () => {
 
     const handleDeletePosition = (position) => {
         setDeletingPosition(position)
+        fetchPositionSummary(false)
         setShowDeleteModal(true)
     }
 
@@ -122,6 +124,7 @@ const PositonContent = () => {
         if (!editingPosition) return
 
         updatePosition(updatedData)
+        fetchPositionSummary(false) // Refresh summar
         setEditingPosition(null)
 
         // NEW: If edit was opened from details, go back to details
@@ -189,7 +192,9 @@ const PositonContent = () => {
 
 
     useEffect(() => {
-        fetchPositions();
+        console.log("Fetching positions and summary...")
+        fetchPositions()
+        fetchPositionSummary()
     }, [])
 
 
@@ -223,7 +228,7 @@ const PositonContent = () => {
     }, [status])
 
     return (
-        <div className='space-y-6'>
+        <div className='space-y-6 pl-6 pr-6 pb-6'>
             <ToastContainer />
             <Header setShowCreateModal={setShowCreateModal} />
             <StatsCard />

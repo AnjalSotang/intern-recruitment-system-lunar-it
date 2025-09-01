@@ -173,9 +173,9 @@ const HomePage = () => {
         </Suspense>
 
         <Testimonials />
-        <Suspense fallback={<LoadingSpinner />}>
+        {/* <Suspense fallback={<LoadingSpinner />}>
           <ApplicationFormSection />
-        </Suspense>
+        </Suspense> */}
         <Faq />
         <CTAs />
         

@@ -27,7 +27,7 @@ export default function SettingsContent() {
   const members = useMemberStore(state => state.members)
   const fetchMembers = useMemberStore(state => state.fetchMembers)
   const fetchAdmin = useAuthStore(state => state.fetchAdmin)
-  const error = useMemberStore(state => state.error)
+  // const error = useMemberStore(state => state.error)
 
   
   // console.log(loading)
@@ -86,15 +86,15 @@ export default function SettingsContent() {
     setShowDeleteMemberModal(true)
   }
 
-  const handleRemoveMember = (memberId) => {
-    setTeamMembers((prev) => prev.filter((member) => member.id !== memberId))
-  }
+  // const handleRemoveMember = (memberId) => {
+  //   setTeamMembers((prev) => prev.filter((member) => member.id !== memberId))
+  // }
 
   return (
-    <div className="space-y-6">
-      <div>
+ <div className="space-y-8 p-6">
+        <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">Manage your account and system preferences</p>
+        <p className="text-muted-foreground mt-2">Manage your account and system preferences</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">

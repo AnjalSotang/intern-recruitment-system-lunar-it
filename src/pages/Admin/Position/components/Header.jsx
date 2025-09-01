@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Briefcase, CheckCircle, Clock, Plus, Users } from 'lucide-react'
 
@@ -11,7 +11,7 @@ const Header = ({ setShowCreateModal }) => {
         <section className="flex items-center justify-between">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Internship Positions</h1>
-                <p className="text-muted-foreground">Manage and track all internship positions</p>
+                <p className="text-muted-foreground mt-2">Manage and track all internship positions</p>
             </div>
             <div className="flex items-center gap-2">
                 <Button onClick={() => setShowCreateModal(true)}>

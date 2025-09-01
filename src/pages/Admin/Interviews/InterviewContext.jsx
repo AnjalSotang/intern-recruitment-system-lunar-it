@@ -114,12 +114,14 @@ const Heading = () => {
             notes: reason || interview.notes,
         }
         updateInterview(updatedInterview, interviewId)
-    }, [updateInterview])
+        fetchInterviewSummary(false)
+    }, [updateInterview,fetchInterviewSummary])
 
     const handleCancelInterview = useCallback((interviewId, reason, notifyCandidate) => {
         console.log("Cancelled interview:", { interviewId, reason, notifyCandidate })
         deleteInterview(interviewId, reason, notifyCandidate)
-    }, [deleteInterview])
+        fetchInterviewSummary(false)
+    }, [deleteInterview, fetchInterviewSummary])
 
     const handleStartInterview = useCallback((interviewId) => {
         console.log("Started interview:", interviewId)
@@ -131,7 +133,8 @@ const Heading = () => {
             permanentDeleteInterview(id)
             console.log('bro')
         }
-    }, [deleteInterview, selectedInterview])
+        fetchInterviewSummary(false)
+    }, [permanentDeleteInterview, selectedInterview, fetchInterviewSummary])
 
     // Toast notifications
     useEffect(() => {
@@ -227,7 +230,7 @@ const Heading = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Interviews</h1>
-                    <p className="text-muted-foreground">Manage and track all candidate interviews</p>
+                    <p className="text-muted-foreground mt-2">Manage and track all candidate interviews</p>
                 </div>
                 {/* <Button onClick={() => setShowScheduleModal(true)}>
                     <Plus className="mr-2 h-4 w-4" />

@@ -1,6 +1,47 @@
-import React from 'react'
+import React, {useEffect, useState } from 'react'
+import { toast } from "react-toastify"
+import { useContactStore } from "../../../../store/MessagesStore";
 
 const Contact = () => {
+  const { postMessages, message, loading, error, status } = useContactStore();
+  const [handleContact, setHandleContact] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '' 
+  })
+
+  const handleChange = (e) => {
+    setHandleContact({...handleContact, [e.target.name]: e.target.value})
+    console.log(handleContact)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    // console.log(handleContact)
+    postMessages(handleContact);
+  } 
+
+  useEffect(() => {
+    if (status === 201) {
+        toast.success(message || "Message sent successfully!");
+        setHandleContact({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            subject: '',
+            message: '' 
+          })
+    }
+    if (error) {
+        toast.error(error || "An error occurred. Please try again.");
+    }
+}, [message, error, status])
+
   return (
     <div>
       <section className="grid lg:grid-cols-2 gap-16 mb-16">
@@ -9,7 +50,7 @@ const Contact = () => {
                         <h2 className="text-3xl font-bold text-gray-900 mb-8">
                             Send us a Message
                         </h2>
-                        <form className="space-y-6">
+                        <form className="space-y-6" onSubmit={handleSubmit}>
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div>
                                     <label
@@ -20,6 +61,8 @@ const Contact = () => {
                                     </label>
                                     <input
                                         type="text"
+                                        value={handleContact.firstName}
+                                        onChange={handleChange}
                                         id="firstName"
                                         name="firstName"
                                         required
@@ -38,6 +81,8 @@ const Contact = () => {
                                         type="text"
                                         id="lastName"
                                         name="lastName"
+                                        value={handleContact.lastName}
+                                        onChange={handleChange}
                                         required
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                         placeholder="Enter your last name"
@@ -55,6 +100,8 @@ const Contact = () => {
                                     type="email"
                                     id="email"
                                     name="email"
+                                    value={handleContact.email}
+                                    onChange={handleChange}
                                     required
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                     placeholder="Enter your email address"
@@ -71,6 +118,8 @@ const Contact = () => {
                                     type="tel"
                                     id="phone"
                                     name="phone"
+                                    value={handleContact.phone}
+                                    onChange={handleChange}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                     placeholder="Enter your phone number"
                                 />
@@ -87,6 +136,8 @@ const Contact = () => {
                                         id="subject"
                                         name="subject"
                                         required
+                                        value={handleContact.subject}
+                                        onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white cursor-pointer"
                                     >
                                         <option value="">Select a subject</option>
@@ -112,6 +163,8 @@ const Contact = () => {
                                     id="message"
                                     name="message"
                                     rows={6}
+                                    value={handleContact.message}
+                                    onChange={handleChange}
                                     required
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-vertical"
                                     placeholder="Tell us more about your inquiry..."
@@ -120,7 +173,8 @@ const Contact = () => {
                             <div className="pt-4">
                                 <button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button"
+                                    disabled={loading}
+                                    className={`w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button` + (loading ? ' opacity-50 cursor-not-allowed' : '')}
                                 >
                                     <i className="fas fa-paper-plane mr-2"></i>
                                     Send Message
@@ -131,15 +185,6 @@ const Contact = () => {
 
                     {/* Contact Information */}
                     <div className="space-y-8">
-                        {/* <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                                Get in Touch
-                            </h2>
-                            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                                We're here to help and answer any questions you might have. We
-                                look forward to hearing from you.
-                            </p>
-                        </div> */}
 
                         {/* Contact Cards */}
                         <div className="space-y-6">

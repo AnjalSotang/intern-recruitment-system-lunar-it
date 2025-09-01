@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,72 +22,74 @@ import {
     XCircle,
     AlertCircle,
     Camera,
+    ChevronRight,
+    ChevronLeft,
 } from "lucide-react"
 import { useInterviewStore } from "../../../../store/InterviewStore"
-import { toast, ToastContainer } from "react-toastify"
+// import { toast, ToastContainer } from "react-toastify"
 import SkeletonRows from "./SkeletonRows"
 
-const mockInterviews = [
-    {
-        id: "1",
-        candidateName: "Alice Johnson",
-        position: "Frontend Developer Intern",
-        interviewer: "John Smith",
-        date: "2024-01-20",
-        time: "10:00 AM",
-        type: "video",
-        status: "scheduled",
-        meetingLink: "https://meet.google.com/abc-defg-hij",
-        notes: "Technical interview focusing on React and JavaScript",
-    },
-    {
-        id: "2",
-        candidateName: "Bob Wilson",
-        position: "Backend Developer Intern",
-        interviewer: "Sarah Davis",
-        date: "2024-01-20",
-        time: "2:00 PM",
-        type: "in-person",
-        status: "scheduled",
-        location: "Conference Room A",
-        notes: "System design and coding interview",
-    },
-    {
-        id: "3",
-        candidateName: "Carol Brown",
-        position: "UI/UX Designer Intern",
-        interviewer: "Mike Johnson",
-        date: "2024-01-19",
-        time: "11:00 AM",
-        type: "video",
-        status: "completed",
-        meetingLink: "https://meet.google.com/xyz-uvwx-yz",
-        notes: "Portfolio review and design thinking discussion",
-    },
-    {
-        id: "4",
-        candidateName: "David Lee",
-        position: "Data Science Intern",
-        interviewer: "Emily Chen",
-        date: "2024-01-19",
-        time: "3:30 PM",
-        type: "phone",
-        status: "no-show",
-        notes: "Initial screening call",
-    },
-    {
-        id: "5",
-        candidateName: "Eva Martinez",
-        position: "DevOps Intern",
-        interviewer: "Tom Anderson",
-        date: "2024-01-18",
-        time: "1:00 PM",
-        type: "video",
-        status: "cancelled",
-        meetingLink: "https://meet.google.com/def-ghij-klm",
-        notes: "Cancelled due to candidate scheduling conflict",
-    },
-]
+// const mockInterviews = [
+//     {
+//         id: "1",
+//         candidateName: "Alice Johnson",
+//         position: "Frontend Developer Intern",
+//         interviewer: "John Smith",
+//         date: "2024-01-20",
+//         time: "10:00 AM",
+//         type: "video",
+//         status: "scheduled",
+//         meetingLink: "https://meet.google.com/abc-defg-hij",
+//         notes: "Technical interview focusing on React and JavaScript",
+//     },
+//     {
+//         id: "2",
+//         candidateName: "Bob Wilson",
+//         position: "Backend Developer Intern",
+//         interviewer: "Sarah Davis",
+//         date: "2024-01-20",
+//         time: "2:00 PM",
+//         type: "in-person",
+//         status: "scheduled",
+//         location: "Conference Room A",
+//         notes: "System design and coding interview",
+//     },
+//     {
+//         id: "3",
+//         candidateName: "Carol Brown",
+//         position: "UI/UX Designer Intern",
+//         interviewer: "Mike Johnson",
+//         date: "2024-01-19",
+//         time: "11:00 AM",
+//         type: "video",
+//         status: "completed",
+//         meetingLink: "https://meet.google.com/xyz-uvwx-yz",
+//         notes: "Portfolio review and design thinking discussion",
+//     },
+//     {
+//         id: "4",
+//         candidateName: "David Lee",
+//         position: "Data Science Intern",
+//         interviewer: "Emily Chen",
+//         date: "2024-01-19",
+//         time: "3:30 PM",
+//         type: "phone",
+//         status: "no-show",
+//         notes: "Initial screening call",
+//     },
+//     {
+//         id: "5",
+//         candidateName: "Eva Martinez",
+//         position: "DevOps Intern",
+//         interviewer: "Tom Anderson",
+//         date: "2024-01-18",
+//         time: "1:00 PM",
+//         type: "video",
+//         status: "cancelled",
+//         meetingLink: "https://meet.google.com/def-ghij-klm",
+//         notes: "Cancelled due to candidate scheduling conflict",
+//     },
+// ]
 
 const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, interviews, modalTriggers }) => {
     // const [interviews, setInterviews] = useState(mockInterviews)
@@ -95,11 +97,15 @@ const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, inter
     const [statusFilter, setStatusFilter] = useState("all")
     const [typeFilter, setTypeFilter] = useState("all")
 
-    const scheduleInterview = useInterviewStore(state => state.scheduleInterview)
+    
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
+
+//    const scheduleInterview = useInterviewStore(state => state.scheduleInterview)
     const loading = useInterviewStore(state => state.loading)
     const error = useInterviewStore(state => state.error)
-    const status = useInterviewStore(state => state.status)
-    const message = useInterviewStore(state => state.message)
+    // const status = useInterviewStore(state => state.status)
+    // const message = useInterviewStore(state => state.message)
 
     const getStatusBadge = (status) => {
         const colors = {
@@ -162,8 +168,31 @@ const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, inter
         return matchesSearch && matchesStatus && matchesType
     })
 
+
+  // Calculate pagination - FIXED: using 'applications' instead of 'allApplications'
+  const totalItems = interviews.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentApplications = filteredInterviews.slice(startIndex, endIndex)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(Number.parseInt(value))
+    setCurrentPage(1) // Reset to first page when changing items per page
+  }
+
+
+   
+
+
+
     return (
-        <Card>
+    <div className="space-y-4">
+         <Card>
             <CardHeader>
                 <CardTitle>
                     All Interviews
@@ -248,7 +277,7 @@ const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, inter
                             {loading ? (
                                 <SkeletonRows rows={5} />
                             ) : (
-                                filteredInterviews.map((interview) => (
+                                currentApplications.map((interview) => (
                                     <TableRow key={interview.id}>
                                         <TableCell className="font-medium">{interview.candidateName}</TableCell>
                                         <TableCell>{interview.position}</TableCell>
@@ -310,7 +339,85 @@ const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, inter
                     </Table>
                 )}
             </CardContent>
+            <CardContent>
+                  {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">Show</p>
+          <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+            <SelectTrigger className="w-[70px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-sm text-muted-foreground">of {totalItems} entries</p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} entries
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show first page, last page, current page, and pages around current page
+              if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                )
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span key={page} className="px-2 text-sm text-muted-foreground">
+                    ...
+                  </span>
+                )
+              }
+              return null
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+            </CardContent>
         </Card>
+
+      
+    </div>
+       
     )
 }
 

@@ -1,22 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    ArrowUpDown,
-    Calendar,
-    Edit,
-    Eye,
-    Mail,
-    MoreHorizontal,
-    Trash2,
-} from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
 import { useApplicationStore } from '../../../store/AppliactionStore'
 import { useInterviewStore } from "../../../store/InterviewStore"
@@ -24,11 +6,9 @@ import ApplicationDetailsModal from "./Components/ApplicationDetailModel"
 import DeleteConfirmationModal from "./Components/DeleteConfirmationModal"
 import ScheduleInterviewFromApplicationModal from "./Components/ScheduleInterviewFromApplicationModal"
 import SendMessageModal from "./Components/SendMessageModal"
-import SkeletonTable from "./Components/SkeletonTable"
 import StatsCard from "./Components/StatsCard"
 import UpdateStatusModal from "./Components/UpdateStatusModal"
-
-
+import ApplicationTable from "./Components/ApplicationTable"
 
 const ApplicationContents = () => {
     // Main modal states
@@ -40,7 +20,6 @@ const ApplicationContents = () => {
     const [sortField, setSortField] = useState("appliedDate")
     const [sortDirection, setSortDirection] = useState("desc")
     const [showDetailsModal, setShowDetailsModal] = useState(false)
-    // const [showBulkModal, setShowBulkModal] = useState(false)
     const [selectedApplication, setSelectedApplication] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -51,7 +30,6 @@ const ApplicationContents = () => {
     const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false)
     const [showSendMessageModal, setShowSendMessageModal] = useState(false)
     const [selectedApplicationForAction, setSelectedApplicationForAction] = useState(null)
-
     const [scheduleOpenedFromDetails, setScheduleOpenedFromDetails] = useState(false)
 
     // Store hooks
@@ -165,70 +143,19 @@ const ApplicationContents = () => {
             case 'delete':
                 setDeletingApplication(application)
                 setShowDeleteModal(true)
-                // setScheduleOpenedFromDetails(false)
                 break
             default:
                 break
         }
     }
 
-    const getStatusBadge = (status) => {
-        const colors = {
-            pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-            reviewing: "bg-blue-100 text-blue-800 hover:bg-blue-100",
-            accepted: "bg-green-100 text-green-800 hover:bg-green-100",
-            rejected: "bg-red-100 text-red-800 hover:bg-red-100",
-            "interview-scheduled": "bg-purple-100 text-purple-800 hover:bg-purple-100",
-        }
-
-        const labels = {
-            pending: "Pending",
-            reviewing: "Reviewing",
-            accepted: "Accepted",
-            rejected: "Rejected",
-            "interview-scheduled": "Interview Scheduled",
-        }
-
-        return <Badge className={colors[status]}>{labels[status]}</Badge>
-    }
-
-    const getPriorityBadge = (priority) => {
-        const colors = {
-            high: "bg-red-100 text-red-800 hover:bg-red-100",
-            medium: "bg-orange-100 text-orange-800 hover:bg-orange-100",
-            low: "bg-gray-100 text-gray-800 hover:bg-gray-100",
-        }
-
-        return (
-            <Badge variant="outline" className={colors[priority]}>
-                {priority.charAt(0).toUpperCase() + priority.slice(1)}
-            </Badge>
-        )
-    }
-
-    // const handleDeleteApplication = (application) => {
-    //     setDeletingApplication(application)
-    //     setShowDeleteModal(true)
-    // }
-
     const confirmDeleteApplication = () => {
         if (deletingApplication) {
             deleteApplication(deletingApplication._id)
+            fetchApplicationSummary(false)
             setDeletingApplication(null)
         }
     }
-
-    // const handleBulkAction = (action) => {
-    //     if (selectedApplications.length === 0) {
-    //         toast({
-    //             title: "No applications selected",
-    //             description: "Please select applications to perform bulk actions.",
-    //             variant: "destructive",
-    //         })
-    //         return
-    //     }
-    //     setShowBulkModal(true)
-    // }
 
     const handleSort = (field) => {
         if (sortField === field) {
@@ -238,33 +165,6 @@ const ApplicationContents = () => {
             setSortDirection("asc")
         }
     }
-
-    // const handleSelectApplication = (id) => {
-    //     setSelectedApplications((prev) => (prev.includes(id) ? prev.filter((appId) => appId !== id) : [...prev, id]))
-    // }
-
-    // const handleSelectAll = () => {
-    //     if (selectedApplications.length === filteredApplications.length) {
-    //         setSelectedApplications([])
-    //     } else {
-    //         setSelectedApplications(filteredApplications.map((app) => app.id))
-    //     }
-    // }
-
-    // const handleScheduleInterview = (application) => {
-    //     setSelectedApplicationForAction(application)
-    //     setShowScheduleInterviewModal(true)
-    // }
-
-    // const handleUpdateStatus = (application) => {
-    //     setSelectedApplicationForAction(application)
-    //     setShowUpdateStatusModal(true)
-    // }
-
-    // const handleSendMessage = (application) => {
-    //     setSelectedApplicationForAction(application)
-    //     setShowSendMessageModal(true)
-    // }
 
     const handleStatusUpdated = (id, status, sendNotification) => {
         updateApplication(id, status, sendNotification)
@@ -352,13 +252,12 @@ const ApplicationContents = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 p-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
-                    <p className="text-muted-foreground">Manage and review all candidate applications</p>
+                    <p className="text-muted-foreground mt-2">Manage and review all candidate applications</p>
                 </div>
-
                 <div className="flex items-center gap-2">
                     {/* Add any header buttons here if needed */}
                 </div>
@@ -368,210 +267,29 @@ const ApplicationContents = () => {
             <StatsCard />
 
             {/* Applications Table */}
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <CardTitle>All Applications</CardTitle>
-                    </div>
-
-                    {/* Filters */}
-                    <div className="flex flex-wrap gap-4 items-center">
-                        <Input
-                            placeholder="Search applications..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="max-w-sm"
-                        />
-                        <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Statuses</SelectItem>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="reviewing">Reviewing</SelectItem>
-                                <SelectItem value="accepted">Accepted</SelectItem>
-                                <SelectItem value="rejected">Rejected</SelectItem>
-                                <SelectItem value="interview-scheduled">Interview Scheduled</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Departments</SelectItem>
-                                <SelectItem value="Engineering">Engineering</SelectItem>
-                                <SelectItem value="Design">Design</SelectItem>
-                                <SelectItem value="Marketing">Marketing</SelectItem>
-                                <SelectItem value="Analytics">Analytics</SelectItem>
-                                <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by priority" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Priorities</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="low">Low</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </CardHeader>
-
-                <CardContent>
-                    {/* Status Tabs */}
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-                        <TabsList>
-                            <TabsTrigger value="all">All ({getTabCount("all")})</TabsTrigger>
-                            <TabsTrigger value="pending">Pending ({getTabCount("pending")})</TabsTrigger>
-                            <TabsTrigger value="reviewing">Reviewing ({getTabCount("reviewing")})</TabsTrigger>
-                            <TabsTrigger value="interview-scheduled">Interviews ({getTabCount("interview-scheduled")})</TabsTrigger>
-                            <TabsTrigger value="accepted">Accepted ({getTabCount("accepted")})</TabsTrigger>
-                            <TabsTrigger value="rejected">Rejected ({getTabCount("rejected")})</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-
-
-                    {error ? (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Error loading interviews</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    ) : applications.length === 0 ? (
-                        <div className="py-16 flex flex-col text-center text-gray-600">
-                            <div className="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full text-gray-400">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="w-8 h-8"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M9 17v-2a4 4 0 014-4h4M9 9h.01M21 21H3a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z"
-                                    />
-                                </svg>
-                            </div>
-                            <h3 className="mt-4 text-lg font-medium">No interviews found</h3>
-                            <p className="mt-2">Try adjusting your filters or schedule new interviews.</p>
-                        </div>
-                    ) : (<Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>
-                                    <Button
-                                        variant="ghost"
-                                        onClick={() => handleSort("firstName")}
-                                        className="h-auto p-0 font-semibold"
-                                    >
-                                        Candidate
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead>Position</TableHead>
-                                <TableHead>Department</TableHead>
-                                <TableHead>
-                                    <Button variant="ghost" onClick={() => handleSort("status")} className="h-auto p-0 font-semibold">
-                                        Status
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead>Priority</TableHead>
-                                <TableHead>
-                                    <Button
-                                        variant="ghost"
-                                        onClick={() => handleSort("appliedDate")}
-                                        className="h-auto p-0 font-semibold"
-                                    >
-                                        Applied Date
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="text-right text-red-600">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            {loading ? (
-                                <SkeletonTable rows={5} />
-                            ) : (
-
-                                filteredApplications.map((application) => (
-                                    <TableRow
-                                        key={application._id}
-                                        className={selectedApplications.includes(application._id) ? "bg-muted/50" : ""}
-                                    >
-                                        <TableCell>
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-8 w-8">
-                                                    <AvatarImage
-                                                        src={'https://img.gamdb.com/character/large/63768c4111fd25a6e6d9987465cb9f4d-ns.png'}
-                                                    />
-                                                    <AvatarFallback>
-                                                        {application.firstName?.charAt(0) || 'N/A'}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div>
-                                                    <p className="font-medium">{application.firstName}</p>
-                                                    <p className="text-sm text-muted-foreground">{application.email}</p>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>{application.positionTitle}</TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline">{application.department}</Badge>
-                                        </TableCell>
-                                        <TableCell>{getStatusBadge(application.status)}</TableCell>
-                                        <TableCell>{getPriorityBadge(application.priority)}</TableCell>
-                                        <TableCell>{new Date(application.appliedDate).toLocaleDateString()}</TableCell>
-                                        <TableCell className="text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => handleViewApplication(application)}>
-                                                        <Eye className="mr-2 h-4 w-4" />
-                                                        View Details
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDropdownAction('schedule-interview', application)}>
-                                                        <Calendar className="mr-2 h-4 w-4" />
-                                                        Schedule Interview
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDropdownAction('send-message', application)}>
-                                                        <Mail className="mr-2 h-4 w-4" />
-                                                        Send Message
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDropdownAction('update-status', application)}>
-                                                        <Edit className="mr-2 h-4 w-4" />
-                                                        Update Status
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDropdownAction('delete', application)} className="text-red-600">
-                                                        <Trash2 className="mr-2 h-4 w-4" />
-                                                        Delete
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>)
-
-                    }
-                </CardContent>
-            </Card>
+            <ApplicationTable
+                applications={applications}
+                loading={loading}
+                error={error}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                departmentFilter={departmentFilter}
+                setDepartmentFilter={setDepartmentFilter}
+                priorityFilter={priorityFilter}
+                setPriorityFilter={setPriorityFilter}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                selectedApplications={selectedApplications}
+                filteredApplications={filteredApplications}
+                handleSort={handleSort}
+                handleViewApplication={handleViewApplication}
+                handleDropdownAction={handleDropdownAction}
+                getTabCount={getTabCount}
+            />
 
             {/* Main Application Details Modal */}
             <ApplicationDetailsModal
@@ -605,21 +323,6 @@ const ApplicationContents = () => {
                     />
                 </>
             )}
-
-            {/* <BulkActionsModal
-                open={showBulkModal}
-                onOpenChange={setShowBulkModal}
-                selectedCount={selectedApplications.length}
-                onAction={(action) => {
-                    console.log("Bulk action:", action, selectedApplications)
-                    setSelectedApplications([])
-                    setShowBulkModal(false)
-                    toast({
-                        title: "Bulk action completed",
-                        description: `${action} applied to ${selectedApplications.length} applications.`,
-                    })
-                }}
-            /> */}
 
             <DeleteConfirmationModal
                 open={showDeleteModal}

@@ -274,12 +274,11 @@ const NotificationsPageContent = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        {/* Header */}
+ <div className="space-y-8 p-6">        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
-            <p className="text-muted-foreground">Stay updated with all your recruitment activities</p>
+            <p className="text-muted-foreground mt-2">Stay updated with all your recruitment activities</p>
           </div>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (

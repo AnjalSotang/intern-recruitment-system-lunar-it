@@ -1,228 +1,226 @@
 import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Eye, MoreHorizontal, ChevronLeft, ChevronRight } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Edit, Trash2, MoreHorizontal, ArrowUpDown } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-
-const mockApplications = [
-  {
-    id: "1",
-    candidateName: "Alice Johnson",
-    email: "alice@email.com",
-    position: "Frontend Developer Intern",
-    status: "reviewing",
-    appliedDate: "2024-01-15",
-    experience: "2 years",
-  },
-  {
-    id: "2",
-    candidateName: "Bob Smith",
-    email: "bob@email.com",
-    position: "Backend Developer Intern",
-    status: "pending",
-    appliedDate: "2024-01-14",
-    experience: "1 year",
-  },
-  {
-    id: "3",
-    candidateName: "Carol Davis",
-    email: "carol@email.com",
-    position: "UI/UX Designer Intern",
-    status: "accepted",
-    appliedDate: "2024-01-13",
-    experience: "3 years",
-  },
-  {
-    id: "4",
-    candidateName: "David Wilson",
-    email: "david@email.com",
-    position: "Data Science Intern",
-    status: "rejected",
-    appliedDate: "2024-01-12",
-    experience: "1.5 years",
-  },
-  {
-    id: "5",
-    candidateName: "Eva Brown",
-    email: "eva@email.com",
-    position: "DevOps Intern",
-    status: "reviewing",
-    appliedDate: "2024-01-11",
-    experience: "2.5 years",
-  },
-]
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
-export function ApplicationsTable({ onViewApplication }) {
-  const [applications, setApplications] = useState(mockApplications)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [sortField, setSortField] = useState("appliedDate")
-  const [sortDirection, setSortDirection] = useState("desc")
-  const { toast } = useToast()
+const getStatusColor = (status) => {
+  switch (status) {
+    case "Under Review":
+      return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+    case "Interview Scheduled":
+      return "bg-blue-100 text-blue-800 hover:bg-blue-200"
+    case "Interviewed":
+      return "bg-purple-100 text-purple-800 hover:bg-purple-200"
+    case "Accepted":
+      return "bg-green-100 text-green-800 hover:bg-green-200"
+    case "Rejected":
+      return "bg-red-100 text-red-800 hover:bg-red-200"
+    default:
+      return "bg-gray-100 text-gray-800 hover:bg-gray-200"
+  }
+}
 
-  const getStatusBadge = (status) => {
-    const variants = {
-      pending: "secondary",
-      reviewing: "default",
-      accepted: "default",
-      rejected: "destructive",
-    }
+export function ApplicationsTable({ onViewApplication, applications }) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
 
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-      reviewing: "bg-blue-100 text-blue-800 hover:bg-blue-100",
-      accepted: "bg-green-100 text-green-800 hover:bg-green-100",
-      rejected: "bg-red-100 text-red-800 hover:bg-red-100",
-    }
+  // Calculate pagination - FIXED: using 'applications' instead of 'allApplications'
+  const totalItems = applications.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentApplications = applications.slice(startIndex, endIndex)
 
-    return (
-      <Badge variant={variants[status]} className={colors[status]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    )
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(Number.parseInt(value))
+    setCurrentPage(1) // Reset to first page when changing items per page
   }
-
-  const handleDelete = (id) => {
-    setApplications(applications.filter((app) => app.id !== id))
-    toast({
-      title: "Application deleted",
-      description: "The application has been successfully deleted.",
-    })
-  }
-
-  const filteredAndSortedApplications = applications
-    .filter((app) => {
-      const matchesSearch =
-        app.candidateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.position.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || app.status === statusFilter
-      return matchesSearch && matchesStatus
-    })
-    .sort((a, b) => {
-      const aValue = a[sortField]
-      const bValue = b[sortField]
-      const direction = sortDirection === "asc" ? 1 : -1
-
-      if (aValue < bValue) return -1 * direction
-      if (aValue > bValue) return 1 * direction
-      return 0
-    })
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Applications</CardTitle>
-        <div className="flex gap-4 items-center">
-          <Input
-            placeholder="Search applications..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="reviewing">Reviewing</SelectItem>
-              <SelectItem value="accepted">Accepted</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-4">
+      <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  onClick={() => handleSort("candidateName")}
-                  className="h-auto p-0 font-semibold"
-                >
-                  Candidate Name
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("position")} className="h-auto p-0 font-semibold">
-                  Position
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("status")} className="h-auto p-0 font-semibold">
-                  Status
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort("appliedDate")} className="h-auto p-0 font-semibold">
-                  Applied Date
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead>Experience</TableHead>
+              <TableHead className="w-[250px] sm:w-[300px]">Candidate</TableHead>
+              <TableHead className="hidden sm:table-cell">Position</TableHead>
+              <TableHead className="hidden md:table-cell">Department</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="hidden lg:table-cell">Applied Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAndSortedApplications.map((application) => (
-              <TableRow key={application.id}>
-                <TableCell className="font-medium">{application.candidateName}</TableCell>
-                <TableCell>{application.email}</TableCell>
-                <TableCell>{application.position}</TableCell>
-                <TableCell>{getStatusBadge(application.status)}</TableCell>
-                <TableCell>{new Date(application.appliedDate).toLocaleDateString()}</TableCell>
-                <TableCell>{application.experience}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
+            {/* FIXED: using 'currentApplications' instead of 'applications' */}
+            {currentApplications.map((application) => {
+              // Combine firstName and lastName safely
+              const fullName =
+                [application.firstName, application.lastName].filter(Boolean).join(" ") ||
+                application.name ||
+                "Unknown";
+
+              return (
+                <TableRow key={application.id} className="hover:bg-muted/50">
+                  <TableCell className="font-medium">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                        <AvatarImage
+                          src={application.avatar || "/placeholder.svg"}
+                          alt={fullName}
+                        />
+                        <AvatarFallback>
+                          {[application.firstName, application.lastName]
+                            .filter(Boolean)
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase() || "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-gray-900 truncate">
+                          {fullName}
+                        </div>
+                        <div className="text-sm text-gray-500 truncate">{application.email}</div>
+                        <div className="sm:hidden text-xs text-gray-400 mt-1 truncate">
+                          {application.positionTitle}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <div className="text-sm text-gray-900 max-w-[200px] truncate">
+                      {application.positionTitle}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant="outline" className="text-xs">
+                      {application.department}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={`${getStatusColor(application.status)} text-xs`}>
+                      {application.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell text-sm text-gray-500">
+                    {new Date(application.appliedDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onViewApplication(application)}
+                        className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <Eye className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onViewApplication(application)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(application.id)} className="text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
+                      {/* <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => onViewApplication(application)}>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>Edit Application</DropdownMenuItem>
+                          <DropdownMenuItem>Schedule Interview</DropdownMenuItem>
+                          <DropdownMenuItem>Update Status</DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600">Delete Application</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu> */}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">Show</p>
+          <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+            <SelectTrigger className="w-[70px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-sm text-muted-foreground">of {totalItems} entries</p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} entries
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show first page, last page, current page, and pages around current page
+              if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                )
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span key={page} className="px-2 text-sm text-muted-foreground">
+                    ...
+                  </span>
+                )
+              }
+              return null
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   )
-}
+} 

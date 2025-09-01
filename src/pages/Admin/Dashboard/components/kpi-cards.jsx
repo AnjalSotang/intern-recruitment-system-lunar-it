@@ -1,65 +1,55 @@
-import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-import {
-    FileText,
-    Users,
-    Clock,
-    CheckCircle,
-    XCircle,
-    MoreHorizontal,
-    Eye,
-    Edit,
-    Trash2,
-    Download,
-    Filter,
-    ArrowUpDown,
-    Calendar,
-    Mail,
-    Star,
-    Plus,
-} from "lucide-react"
-import { useApplicationStore } from '../../../../store/AppliactionStore'
+import { Badge } from "@/components/ui/badge"
+import { Users, FileText, Calendar, CheckCircle, TrendingUp, TrendingDown } from "lucide-react"
 
 
-const StatsCard = () => {
-    const { applicationSummary } = useApplicationStore()
-  const stats = [
-    {
-      title: "Total Applications",
-      value: applicationSummary.totalApplication ?? 0,
-      icon: FileText,
-         description: "From the last tweleve months",
+
+export function KPICards({summary}) {
+console.log("hjk " + JSON.stringify(summary));
+
+const kpiData = [
+  {
+    title: "Total Applications",
+    value: summary.totalApplication ?? "0",
+    change: "+12.5%",
+    trend: "up",
+    icon: FileText,
+    description: "This month",
     color: "bg-blue-500",
-    },
-    {
-      title: "Under Review",
-      value: applicationSummary.reviewCount ?? 0,
-      icon: Clock,
-          description: "All time",
-    color: "bg-orange-500",
-    },
-    {
-      title: "Accepted",
-      value: applicationSummary.acceptedCount ?? 0,
-      icon: CheckCircle,
-          description: "All time",
+  },
+  {
+    title: "Active Positions",
+    value: summary.position ?? "0",
+    change: "+3",
+    trend: "up",
+    icon: Users,
+    description: "Currently open",
     color: "bg-green-500",
-
-    },
-    {
-      title: "Rejected",
-      value: applicationSummary.rejectedCount ?? 0,
-      icon: XCircle,
-        description: "All time",
-    color: "bg-red-500",
-    },
-  ]
-
-    return (
-       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {stats.map((kpi, index) => {
+  },
+  {
+    title: "Interviews Scheduled",
+     value: summary.interviewScheduled ?? "0",
+    change: "-5.2%",
+    trend: "down",
+    icon: Calendar,
+      description: "Currently open",
+    color: "bg-green-500",
+  },
+  {
+    title: "Accepted Applicants",
+    value: summary.applicationAccepted ?? "0",
+    change: "+8.1%",
+    trend: "up",
+    icon: CheckCircle,
+    description: "This quarter",
+    color: "bg-purple-500",
+  },
+]
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {kpiData.map((kpi, index) => {
         const Icon = kpi.icon
+        const TrendIcon = kpi.trend === "up" ? TrendingUp : TrendingDown
 
         return (
           <Card
@@ -96,7 +86,5 @@ const StatsCard = () => {
         )
       })}
     </div>
-    )
+  )
 }
-
-export default StatsCard

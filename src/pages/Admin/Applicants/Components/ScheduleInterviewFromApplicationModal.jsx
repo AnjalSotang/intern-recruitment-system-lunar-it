@@ -21,6 +21,7 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useMemberStore } from "../../../../store/MemberStore"
 import { useInterviewStore } from "../../../../store/InterviewStore"
+import { useApplicationStore } from "../../../../store/AppliactionStore"
 import { toast, ToastContainer } from "react-toastify"
 
 
@@ -44,6 +45,8 @@ const ScheduleInterviewFromApplicationModal = ({
     const status = useInterviewStore(state => state.status)
 
     const message = useInterviewStore(state => state.message)
+
+    const { fetchApplicationSummary } = useApplicationStore()
 
     // console.log(loading)
     // console.log(members)
@@ -130,6 +133,7 @@ const ScheduleInterviewFromApplicationModal = ({
 
             console.log("lets", interviewData) // ✅ Recommended
             scheduleInterview(interviewData)
+            fetchApplicationSummary(true)
 
             // toast({
             //     title: "Interview scheduled",

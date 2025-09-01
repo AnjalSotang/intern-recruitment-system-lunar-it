@@ -16,14 +16,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { X, Plus } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
 import { usePositionStore } from "../../../../../store/PositionStore"
-import { useNavigate } from "react-router-dom"
+import { useDashboardStore } from "../../../../../store/Dashboard"
+
 
 const  CreatePositionModal = ({ open, onOpenChange }) => {
-  const navigate = useNavigate()
+
   // const {createPositions, fetchPositions, deletePosition, loading, error } = usePositionStore();
-    const createPosition = usePositionStore(state => state.createPosition);
+    const {createPosition, fetchPositionSummary} = usePositionStore();
+    const {fetchDashboardSummary} = useDashboardStore();
 
 
   const [formData, setFormData] = useState({
@@ -55,7 +56,6 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
   const [newOptional, setNewOptional] = useState("")
   const [newTag, setNewTag] = useState("")
   const [errors, setErrors] = useState({})
-  const { toast } = useToast()
 
   
   const validateForm = () => {
@@ -82,8 +82,9 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
 
       // console.log(formData)
       await createPosition(formData)
-      // await fetchPositions()           // ✅ Refresh list from backend
 
+      fetchPositionSummary(false)   // ✅ Refresh summary from backend cache=false
+      fetchDashboardSummary(false)  // ✅ Refresh dashboard summary from backend cache=false
 
       setFormData({
         title: "",

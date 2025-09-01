@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 // import useStore from "./store";
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import './App.css'
 import { ProtectedAdmin } from './Protected.jsx';
 // import HomePage from "./pages/User/Home/HomePage";
@@ -23,6 +23,7 @@ import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/Login/ForgotPassword.jsx";
 import Reset from "./pages/Login/Reset.jsx";
 import NotificationsPageContent from "./pages/Admin/notification/Notification.jsx";
+import Messages from "./pages/Admin/Messages/Messages.jsx";
 // import LoutPage from "./pages/logout.jsx";
 const LoutPage = lazy(() => import("./pages/logout.jsx"))
 
@@ -60,6 +61,7 @@ function App() {
           <Route path="/admin/interviews" element={<ProtectedAdmin><Interview /></ProtectedAdmin>} />
           <Route path="/admin/settings" element={<ProtectedAdmin><Settings /></ProtectedAdmin>} />
           <Route path="/admin/positions" element={<ProtectedAdmin><Position /></ProtectedAdmin>} />
+          <Route path="/admin/messages" element={<ProtectedAdmin><Messages /></ProtectedAdmin>} />
           <Route path="/notifications" element={<ProtectedAdmin><NotificationsPageContent /></ProtectedAdmin>} />
           {/* <Route path="/Internship" element={<Internship/>}></Route> */}
 
