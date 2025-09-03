@@ -41,9 +41,10 @@ function App() {
         <Routes>
           <Route path="/logout" element={<ProtectedAdmin><LoutPage /></ProtectedAdmin>} />
 
-          <Route path="/login" element={<ProtectedAdmin><Login /></ProtectedAdmin>} />
-          <Route path="/forgot" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<Reset />} />
+        <Route path="/login" element={<Login />} />
+<Route path="/forgot" element={<ForgotPassword />} />
+<Route path="/reset-password/:token" element={<Reset />} />
+
 
           <Route path="/" element={<Suspense fallback={<div>load...</div>}>
             <HomePage />
