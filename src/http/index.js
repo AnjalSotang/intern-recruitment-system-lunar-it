@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:3000/', // Change to your backend URL
+  baseURL: 'https://server-intern-recruitment-system-lunar-it.onrender.com', // Change to your backend URL
 });
 
 const AUTH_KEY = "auth_storage"
