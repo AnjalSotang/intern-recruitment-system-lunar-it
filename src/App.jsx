@@ -22,7 +22,7 @@ import { DarkModeProvider } from "../contexts/DarkModeContext";
 import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/Login/ForgotPassword.jsx";
 import Reset from "./pages/Login/Reset.jsx";
-import NotificationsPageContent from "./pages/Admin/notification/Notification.jsx";
+import NotificationsPageContent from "./pages/Admin/Notification/Notification.jsx";
 import Messages from "./pages/Admin/Messages/Messages.jsx";
 // import LoutPage from "./pages/logout.jsx";
 const LoutPage = lazy(() => import("./pages/logout.jsx"))
