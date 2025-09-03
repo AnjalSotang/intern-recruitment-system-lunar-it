@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, MapPin, ArrowLeft, Menu, X, Filter, ChevronDown, ArrowDownUp } from 'lucide-react';
 import Layout from '../../../layout/MainLayout';
-import FilterDropdown from './components/FilterDropDown';
+import FilterDropdown from './components/FilterDropdown';
 import InternshipCard from './components/InternshipCard';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import { usePositionStore } from '../../../store/PositionStore';
