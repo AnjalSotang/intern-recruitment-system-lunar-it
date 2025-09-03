@@ -1,4 +1,3 @@
-Poimport React from 'react'
 import AdminLayout from '../../../layout/AdminLayout'
 import PositonContent from './PositonContent'
 
