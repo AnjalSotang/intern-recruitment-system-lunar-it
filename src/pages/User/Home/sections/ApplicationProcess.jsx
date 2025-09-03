@@ -1,4 +1,8 @@
 import React from 'react'
+import step1 from '../../../../assets/step1.png'
+import step2 from '../../../../assets/step2.png'
+import step3 from '../../../../assets/step3.png'
+import step4 from '../../../../assets/step4.png'
 
 const ApplicationProcess = () => {
   return (
@@ -46,9 +50,9 @@ const ApplicationProcess = () => {
                     <span className="text-primary font-bold">1</span>
                   </div>
                   <img
-                    src="https://readdy.ai/api/search-image?query=person%20browsing%20job%20listings%20on%20a%20laptop%2C%20modern%20office%20setting%2C%20purple%20accent%20lighting%2C%20professional%20environment%2C%20clean%20workspace%2C%20high-quality%20corporate%20setting&width=600&height=400&seq=lunar02&orientation=landscape"
+                    src={step1}
                     alt="Browse opportunities"
-                    className="w-full h-48 object-cover object-top"
+                    className="w-full h-60 object-cover object-top"
                   />
                 </div>
               </div>
@@ -82,9 +86,9 @@ const ApplicationProcess = () => {
                     <span className="text-primary font-bold">2</span>
                   </div>
                   <img
-                    src="https://readdy.ai/api/search-image?query=person%20filling%20out%20online%20application%20form%20on%20computer%2C%20focused%20expression%2C%20modern%20home%20office%2C%20clean%20desk%20setup%2C%20natural%20lighting%2C%20professional%20environment&width=600&height=400&seq=lunar03&orientation=landscape"
+                    src={step2}
                     alt="Submit application"
-                    className="w-full h-48 object-cover object-top"
+                    className="w-full h-60 object-cover object-top"
                   />
                 </div>
               </div>
@@ -118,9 +122,9 @@ const ApplicationProcess = () => {
                     <span className="text-primary font-bold">3</span>
                   </div>
                   <img
-                    src="https://readdy.ai/api/search-image?query=professional%20job%20interview%20in%20modern%20office%2C%20two%20people%20talking%20across%20desk%2C%20purple%20and%20teal%20office%20decor%2C%20bright%20clean%20space%2C%20professional%20attire%2C%20friendly%20atmosphere&width=600&height=400&seq=lunar04&orientation=landscape"
+                    src={step3}
                     alt="Interview process"
-                    className="w-full h-48 object-cover object-top"
+                    className="w-full h-60 object-cover object-top"
                   />
                 </div>
               </div>
@@ -154,9 +158,9 @@ const ApplicationProcess = () => {
                     <span className="text-primary font-bold">4</span>
                   </div>
                   <img
-                    src="https://readdy.ai/api/search-image?query=new%20employee%20onboarding%20session%2C%20team%20meeting%20in%20modern%20office%2C%20people%20at%20conference%20table%20with%20laptops%2C%20bright%20spacious%20room%2C%20professional%20corporate%20environment%2C%20purple%20accent%20lighting&width=600&height=400&seq=lunar05&orientation=landscape"
+                    src={step4}
                     alt="Onboarding"
-                    className="w-full h-48 object-cover object-top"
+                    className="w-full h-60 object-cover object-top"
                   />
                 </div>
               </div>

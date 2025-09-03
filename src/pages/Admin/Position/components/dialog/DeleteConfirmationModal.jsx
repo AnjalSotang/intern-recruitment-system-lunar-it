@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
+import { usePositionStore } from "../../../../../store/PositionStore"
+import { useEffect } from "react"
+
 
 const DeleteConfirmationModal = ({
   open,
@@ -17,10 +20,20 @@ const DeleteConfirmationModal = ({
   description,
   itemName,
 }) => {
+
+  const { fetchPositionSummary, status } = usePositionStore();
   
+  useEffect(() => {
+    if(status >= 200 && status < 300){
+    fetchPositionSummary()  // ✅ Refresh positions from backend cache=true
+    onOpenChange(false)
+    }
+  }
+  ,[status]);
+
   const handleConfirm = () => {
     onConfirm()
-    // onOpenChange(false)
+
   }
 
   return (

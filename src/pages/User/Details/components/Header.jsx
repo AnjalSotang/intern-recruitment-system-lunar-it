@@ -8,7 +8,7 @@ const Header = () => {
                     <div className="flex items-center justify-between h-20">
                         {/* Back Button */}
                         <Link
-                            to="/"
+                            to="/Internship"
                             data-readdy="true"
                             className="cursor-pointer flex items-center text-gray-600 hover:text-blue-600 transition-colors duration-300"
                         >
@@ -28,10 +28,10 @@ const Header = () => {
                         </div>
 
                         {/* Contact Button */}
-                        {/* <button className="!rounded-button whitespace-nowrap cursor-pointer bg-blue-600 text-white px-6 py-2 font-medium hover:bg-blue-700 transition-colors duration-300">
+                        <Link to={'/contact'} className="!rounded-button whitespace-nowrap cursor-pointer bg-blue-600 text-white px-6 py-2 font-medium hover:bg-blue-700 transition-colors duration-300">
                             <i className="fas fa-envelope mr-2"></i>
                             Contact HR
-                        </button> */}
+                        </Link>
                     </div>
                 </div>
             </header>

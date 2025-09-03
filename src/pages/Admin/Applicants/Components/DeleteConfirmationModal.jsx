@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, Loader } from "lucide-react"
 import { useApplicationStore } from '../../../../store/AppliactionStore'
+import { useEffect } from "react"
 
 const DeleteConfirmationModal = ({
     open,
@@ -19,13 +20,15 @@ const DeleteConfirmationModal = ({
     itemName,
 }) => {
 
-    const loading = useApplicationStore(state => state.loading);
+    const {loading, status} = useApplicationStore();
 
+    useEffect(() => {
+        if (status >= 200 && status < 300) {
+            onOpenChange(false);
+        }
+    }, [status, onOpenChange]);
     const handleConfirm = () => {
         onConfirm()
-        // setTimeout(() => {
-        //     onOpenChange(false)
-        // }, 3000)
 
     }
 

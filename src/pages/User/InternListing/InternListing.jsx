@@ -1,100 +1,139 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, MapPin, ArrowLeft, Menu, X, Filter, ChevronDown, ArrowDownUp } from 'lucide-react';
 import Layout from '../../../layout/MainLayout';
 import FilterDropdown from './components/FilterDropDown';
 import InternshipCard from './components/InternshipCard';
 import LoadingSkeleton from './components/LoadingSkeleton';
-import { filterOptions } from '../../../constants';
-import { usePositionStore } from '../../../store/PositionStore'
-
+import { usePositionStore } from '../../../store/PositionStore';
 
 const InternshipListings = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRoles, setSelectedRoles] = useState([]);
+    const [selectedDepartments, setSelectedDepartments] = useState([]);
     const [selectedDurations, setSelectedDurations] = useState([]);
-    const [selectedLocations, setSelectedLocations] = useState([]);
+    const [selectedTypes, setSelectedTypes] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
-
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
+
     const positions = usePositionStore(state => state.positions);
     const fetchPositions = usePositionStore(state => state.fetchPositions);
     const loading = usePositionStore(state => state.loading);
     const error = usePositionStore(state => state.error);
-    const status = usePositionStore(state => state.status);
-    const message = usePositionStore(state => state.message)
+    const message = usePositionStore(state => state.message);
 
+    // Filter options based on your model
+    const filterOptions = {
+        departments: [
+            { value: 'frontend', label: 'Frontend' },
+            { value: 'backend', label: 'Backend' },
+            { value: 'fullstack', label: 'Full Stack' },
+            { value: 'data', label: 'Data' },
+            { value: 'design', label: 'Design' },
+            { value: 'product', label: 'Product' },
+            { value: 'devops', label: 'DevOps' }
+        ],
+        types: [
+            { value: 'Full-time', label: 'Full-time' },
+            { value: 'Part-time', label: 'Part-time' },
+            { value: 'Remote', label: 'Remote' },
+            { value: 'Hybrid', label: 'Hybrid' }
+        ],
+        durations: [
+            { value: '1 month', label: '1 Month' },
+            { value: '2 months', label: '2 Months' },
+            { value: '3 months', label: '3 Months' },
+            { value: '4 months', label: '4 Months' },
+            { value: '5 months', label: '5 Months' },
+            { value: '6 months', label: '6 Months' },
+            { value: '1 year', label: '1 Year' }
+        ]
+    };
 
     useEffect(() => {
         fetchPositions();
-    }, [])
+    }, []);
 
-
-
-    // Filter internships
-    const filteredInternships = positions.filter(internship => {
-        const matchesSearch = searchTerm === '' ||
-            internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            internship.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(internship.role);
-        const matchesDuration = selectedDurations.length === 0 || selectedDurations.includes(internship.duration);
-        const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(internship.location);
-
-        return matchesSearch && matchesRole && matchesDuration && matchesLocation;
-    });
-
-    // Sort internships
-    const sortedInternships = [...filteredInternships].sort((a, b) => {
-        switch (sortBy) {
-            case 'duration-asc':
-                return parseInt(a.duration) - parseInt(b.duration);
-            case 'duration-desc':
-                return parseInt(b.duration) - parseInt(a.duration);
-            case 'alphabetical':
-                return a.title.localeCompare(b.title);
-            default:
-                return 0;
-        }
-    });
-
-    const handleFilterChange = (filterType, value) => {
+    const handleFilterChange = useCallback((filterType, value) => {
         const setters = {
-            role: setSelectedRoles,
+            department: setSelectedDepartments,
             duration: setSelectedDurations,
-            location: setSelectedLocations
+            type: setSelectedTypes
         };
 
         const currentValues = {
-            role: selectedRoles,
+            department: selectedDepartments,
             duration: selectedDurations,
-            location: selectedLocations
+            type: selectedTypes
         }[filterType];
 
         const setter = setters[filterType];
+
+        if (!setter) {
+            console.error(`No setter found for filterType: ${filterType}`);
+            return;
+        }
 
         if (currentValues.includes(value)) {
             setter(currentValues.filter(item => item !== value));
         } else {
             setter([...currentValues, value]);
         }
-    };
+    }, [selectedDepartments, selectedDurations, selectedTypes]);
+
+    // Filter internships based on model fields: department, duration, type
+    const filteredInternships = positions.filter(internship => {
+        if (!internship) return false;
+
+        const matchesSearch = searchTerm === '' ||
+            (internship.title && internship.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (internship.description && internship.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const matchesDepartment = selectedDepartments.length === 0 || 
+            (internship.department && selectedDepartments.includes(internship.department));
+        
+        const matchesDuration = selectedDurations.length === 0 || 
+            (internship.duration && selectedDurations.includes(internship.duration));
+        
+        const matchesType = selectedTypes.length === 0 || 
+            (internship.type && selectedTypes.includes(internship.type));
+
+        return matchesSearch && matchesDepartment && matchesDuration && matchesType;
+    });
+
+    // Sort internships
+    const sortedInternships = [...filteredInternships].sort((a, b) => {
+        switch (sortBy) {
+            case 'duration-asc':
+                return (a.duration || '').localeCompare(b.duration || '');
+            case 'duration-desc':
+                return (b.duration || '').localeCompare(a.duration || '');
+            case 'alphabetical':
+                return (a.title || '').localeCompare(b.title || '');
+            case 'department':
+                return (a.department || '').localeCompare(b.department || '');
+            default:
+                return new Date(b.createdAt || 0) - new Date(a.createdAt || 0); // newest first
+        }
+    });
 
     const clearAllFilters = () => {
         setSearchTerm('');
-        setSelectedRoles([]);
+        setSelectedDepartments([]);
         setSelectedDurations([]);
-        setSelectedLocations([]);
+        setSelectedTypes([]);
+        setOpenDropdown(null);
     };
 
-    const toggleDropdown = (dropdownName) => {
+    const toggleDropdown = useCallback((dropdownName) => {
         setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
-    };
+    }, [openDropdown]);
+
+    const handleOutsideClick = useCallback(() => {
+        setOpenDropdown(null);
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-
-
             <Layout>
                 <div className="text-center mt-10 pt-24 mb-12">
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -122,10 +161,10 @@ const InternshipListings = () => {
 
                             <div className="hidden md:flex items-center gap-3">
                                 <FilterDropdown
-                                    title="Role Type"
-                                    options={filterOptions.roles}
-                                    selectedValues={selectedRoles}
-                                    filterType="role"
+                                    title="Department"
+                                    options={filterOptions.departments}
+                                    selectedValues={selectedDepartments}
+                                    filterType="department"
                                     openDropdown={openDropdown}
                                     toggleDropdown={toggleDropdown}
                                     handleFilterChange={handleFilterChange}
@@ -140,10 +179,10 @@ const InternshipListings = () => {
                                     handleFilterChange={handleFilterChange}
                                 />
                                 <FilterDropdown
-                                    title="Location"
-                                    options={filterOptions.locations}
-                                    selectedValues={selectedLocations}
-                                    filterType="location"
+                                    title="Type"
+                                    options={filterOptions.types}
+                                    selectedValues={selectedTypes}
+                                    filterType="type"
                                     openDropdown={openDropdown}
                                     toggleDropdown={toggleDropdown}
                                     handleFilterChange={handleFilterChange}
@@ -186,23 +225,25 @@ const InternshipListings = () => {
                                         </button>
                                     </div>
                                     <div className="divide-y divide-gray-200 px-4 py-6 space-y-6">
-                                        {/* Mobile filter content */}
+                                        {/* Mobile Department Filter */}
                                         <div>
-                                            <h3 className="text-base font-medium text-gray-900 mb-3">Role Type</h3>
+                                            <h3 className="text-base font-medium text-gray-900 mb-3">Department</h3>
                                             <div className="space-y-2">
-                                                {filterOptions.roles.map(option => (
+                                                {filterOptions.departments.map(option => (
                                                     <label key={option.value} className="flex items-center">
                                                         <input
                                                             type="checkbox"
                                                             className="h-4 w-4 text-violet-700 border-gray-300 rounded"
-                                                            checked={selectedRoles.includes(option.value)}
-                                                            onChange={() => handleFilterChange('role', option.value)}
+                                                            checked={selectedDepartments.includes(option.value)}
+                                                            onChange={() => handleFilterChange('department', option.value)}
                                                         />
                                                         <span className="ml-2 text-sm text-gray-700">{option.label}</span>
                                                     </label>
                                                 ))}
                                             </div>
                                         </div>
+                                        
+                                        {/* Mobile Duration Filter */}
                                         <div className="pt-6">
                                             <h3 className="text-base font-medium text-gray-900 mb-3">Duration</h3>
                                             <div className="space-y-2">
@@ -219,16 +260,18 @@ const InternshipListings = () => {
                                                 ))}
                                             </div>
                                         </div>
+                                        
+                                        {/* Mobile Type Filter */}
                                         <div className="pt-6">
-                                            <h3 className="text-base font-medium text-gray-900 mb-3">Location</h3>
+                                            <h3 className="text-base font-medium text-gray-900 mb-3">Type</h3>
                                             <div className="space-y-2">
-                                                {filterOptions.locations.map(option => (
+                                                {filterOptions.types.map(option => (
                                                     <label key={option.value} className="flex items-center">
                                                         <input
                                                             type="checkbox"
                                                             className="h-4 w-4 text-violet-700 border-gray-300 rounded"
-                                                            checked={selectedLocations.includes(option.value)}
-                                                            onChange={() => handleFilterChange('location', option.value)}
+                                                            checked={selectedTypes.includes(option.value)}
+                                                            onChange={() => handleFilterChange('type', option.value)}
                                                         />
                                                         <span className="ml-2 text-sm text-gray-700">{option.label}</span>
                                                     </label>
@@ -274,14 +317,15 @@ const InternshipListings = () => {
                                         className="appearance-none bg-white border border-gray-300 rounded pl-3 pr-8 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-700 focus:border-violet-700 cursor-pointer"
                                     >
                                         <option value="newest">Newest</option>
-                                        <option value="duration-asc">Duration (Shortest first)</option>
-                                        <option value="duration-desc">Duration (Longest first)</option>
-                                        <option value="alphabetical">Alphabetical (A-Z)</option>
+                                        <option value="duration-asc">Duration (A-Z)</option>
+                                        <option value="duration-desc">Duration (Z-A)</option>
+                                        <option value="alphabetical">Title (A-Z)</option>
+                                        <option value="department">Department (A-Z)</option>
                                     </select>
-                                    {/* Icon container */}
                                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                         <ChevronDown className="w-4 h-4 text-gray-500" />
-                                    </div>                                </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -295,7 +339,6 @@ const InternshipListings = () => {
                         ) : error ? (
                             <div className="py-16 text-center">
                                 <div className="w-16 h-16 mx-auto flex items-center justify-center bg-red-100 rounded-full text-red-500">
-                                    {/* You can use an error icon here if you have one */}
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -303,7 +346,7 @@ const InternshipListings = () => {
                                 <h3 className="mt-4 text-lg font-medium text-red-600">Failed to load positions</h3>
                                 <p className="mt-2 text-gray-600">{message || "Please try again later."}</p>
                                 <button
-                                    onClick={fetchPositions} // or your retry function
+                                    onClick={fetchPositions}
                                     className="mt-4 px-4 py-2 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 transition-colors"
                                 >
                                     Retry
@@ -359,18 +402,15 @@ const InternshipListings = () => {
                         )}
                     </div>
                 </div>
-
             </Layout>
 
             {/* Click outside to close dropdowns */}
             {openDropdown && (
                 <div
                     className="fixed inset-0 z-30"
-                    onClick={() => setOpenDropdown(null)}
+                    onClick={handleOutsideClick}
                 />
             )}
-
-
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -15,8 +15,15 @@ const DeleteConfirmationModal = ({
     onOpenChange,
     onConfirm,
     item,
-    loading = false // Accept loading as prop instead of using store hook
+    loading,
+    status
 }) => {
+
+    useEffect(() => {
+        if (status >= 200 && status < 300) {
+            onOpenChange(false)
+        }
+    }, [status])
 
     const handleConfirm = useCallback(() => {
         if (item?.id) {

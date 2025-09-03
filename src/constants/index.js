@@ -431,8 +431,9 @@ export const internPositions = [
             { value: '6', label: '6 Months' }
         ],
         locations: [
-            { value: 'remote', label: 'Remote' },
-            { value: 'hybrid', label: 'Hybrid' },
-            { value: 'onsite', label: 'On-site' }
+            { value: 'Full-time', label: 'Full Time' },
+            { value: 'Part-time', label: 'Part-time' },
+            { value: 'Remote', label: 'Remote' },
+            { value: 'Hybrid', label: 'Hybrid' },
         ]
     };

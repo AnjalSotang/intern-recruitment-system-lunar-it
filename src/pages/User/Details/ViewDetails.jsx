@@ -1,6 +1,6 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { Link, useParams } from "react-router-dom";
 // import {
 //     requiredSkills, niceToHaveSkills, responsibilities,

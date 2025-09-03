@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import { useState } from "react"
 import {
@@ -16,7 +16,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { User, Mail, Briefcase, FileText, Clock, Calendar, Loader } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
 import { useApplicationStore } from '../../../../store/AppliactionStore'
 
 const emailTemplates = [
@@ -96,9 +95,22 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
     const [scheduleEmail, setScheduleEmail] = useState(false)
     const [scheduledDate, setScheduledDate] = useState("")
     const [scheduledTime, setScheduledTime] = useState("")
-    const loading = useApplicationStore(state => state.loading);
+    const {loading, status} = useApplicationStore();
 
-    // const { toast } = useToast()
+    useEffect(() => {
+        if (status >= 200 && status < 300) {
+            // Reset form and close modal
+        setSelectedTemplate("custom")
+        setSubject("")
+        setMessage("")
+        setPriority("normal")
+        setCopyToTeam(false)
+        setScheduleEmail(false)
+        setScheduledDate("")
+        setScheduledTime("")
+            onOpenChange(false);
+        }
+    }, [status]);
 
     const handleTemplateChange = (templateId) => {
         setSelectedTemplate(templateId)
@@ -119,15 +131,6 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if (!subject.trim() || !message.trim() || !application) {
-            toast({
-                title: "Missing information",
-                description: "Please fill in both subject and message fields.",
-                variant: "destructive",
-            })
-            return
-        }
-
         const messageData = {
             applicationId: application._id,
             candidateName: application.firstName,
@@ -146,25 +149,8 @@ const SendMessageModal = ({ open, onOpenChange, application, onMessageSent }) =>
 
         onMessageSent(messageData)
 
-        // toast({
-        //     title: scheduleEmail ? "Email scheduled" : "Message sent",
-        //     description: scheduleEmail
-        //         ? `Email scheduled to be sent to ${application.candidateName} on ${scheduledDate} at ${scheduledTime}.`
-        //         : `Message sent successfully to ${application.candidateName}.`,
-        // })
 
-        // Reset form and close modal
-        setSelectedTemplate("custom")
-        setSubject("")
-        setMessage("")
-        setPriority("normal")
-        setCopyToTeam(false)
-        setScheduleEmail(false)
-        setScheduledDate("")
-        setScheduledTime("")
-        // setTimeout(() => {
-        //     onOpenChange(false);
-        // }, 8000); // 4 seconds
+       
 
     }
 

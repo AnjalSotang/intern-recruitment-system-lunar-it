@@ -32,7 +32,7 @@ const kpiData = [
     change: "-5.2%",
     trend: "down",
     icon: Calendar,
-      description: "Currently open",
+      description: "This Week",
     color: "bg-green-500",
   },
   {
@@ -52,10 +52,11 @@ const kpiData = [
         const TrendIcon = kpi.trend === "up" ? TrendingUp : TrendingDown
 
         return (
-          <Card
-            key={index}
-            className="shadow-lg hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 hover:scale-[1.02] group"
-          >
+        <Card
+         key={index}
+         className="shadow-lg hover:shadow-xl transition-all duration-300 border-0 
+                    bg-gradient-to-br from-card to-muted hover:scale-[1.02] group"
+       >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                 {kpi.title}

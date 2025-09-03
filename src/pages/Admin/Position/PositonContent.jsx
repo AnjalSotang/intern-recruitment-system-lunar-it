@@ -200,7 +200,6 @@ const PositonContent = () => {
 
 
     useEffect(() => {
-        // console.log("Jdsj " + message)
         if (status === 201 || status === 200) {
             toast.success(message, {
                 position: "top-right",
@@ -232,7 +231,7 @@ const PositonContent = () => {
             <ToastContainer />
             <Header setShowCreateModal={setShowCreateModal} />
             <StatsCard />
-            <CreatePositionModal open={showCreateModal} onOpenChange={setShowCreateModal} />
+            <CreatePositionModal open={showCreateModal} onOpenChange={setShowCreateModal}/>
 
             <PositionTable
                 searchTerm={searchTerm} setSearchTerm={setSearchTerm}

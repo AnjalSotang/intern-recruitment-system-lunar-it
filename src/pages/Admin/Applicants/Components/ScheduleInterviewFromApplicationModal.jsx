@@ -28,8 +28,7 @@ import { toast, ToastContainer } from "react-toastify"
 const ScheduleInterviewFromApplicationModal = ({
     open,
     onOpenChange,
-    application,
-    onScheduled,
+    application
 }) => {
 
     const members = useMemberStore(state => state.members)
@@ -71,6 +70,27 @@ const ScheduleInterviewFromApplicationModal = ({
             toast.error(error);
         }
     }, [error]);
+
+    useEffect(() => {
+        if (status >= 200 && status < 300) {
+            // Reset form and close modal
+                fetchApplicationSummary(true)
+            // Reset form and close modal
+            setFormData({
+                interviewer: "",
+                date: undefined,
+                time: "",
+                type: "",
+                location: "",
+                meetingLink: "",
+                duration: "60",
+                notes: "",
+                sendNotification: true,
+            })
+            setErrors({})
+            onOpenChange(false);
+        }
+    }, [status]);
 
 
 
@@ -131,32 +151,8 @@ const ScheduleInterviewFromApplicationModal = ({
                 sendNotification: formData.sendNotification
             }
 
-            console.log("lets", interviewData) // ✅ Recommended
+            // console.log("lets", interviewData) // ✅ Recommended
             scheduleInterview(interviewData)
-            fetchApplicationSummary(true)
-
-            // toast({
-            //     title: "Interview scheduled",
-            //     description: `Interview scheduled with ${application.candidateName} for ${format(formData.date, "PPP")} at ${formData.time}.`,
-            // })
-
-            // Reset form and close modal
-            setFormData({
-                interviewer: "",
-                date: undefined,
-                time: "",
-                type: "",
-                location: "",
-                meetingLink: "",
-                duration: "60",
-                notes: "",
-                sendNotification: true,
-            })
-            setErrors({})
-            // Close modal after a brief delay to allow toast to show
-            // setTimeout(() => {
-            //     onOpenChange(false)
-            // }, 3000)
         }
     }
 

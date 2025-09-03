@@ -7,6 +7,8 @@ import { Calendar, Clock, Video, MapPin, User, FileText, ExternalLink, Edit, Tra
 import { useEffect } from "react"
 
 export function InterviewDetailsModal({ open, onOpenChange, interview, modalTriggers, fetchInterviews }) {
+  useEffect(()=> {fetchInterviews()},[])
+
   if (!interview) return null
 
   const getStatusBadge = (status) => {
@@ -37,7 +39,6 @@ export function InterviewDetailsModal({ open, onOpenChange, interview, modalTrig
     }
   }
 
-  useEffect(()=> {fetchInterviews()},[])
 
 
   return (
@@ -188,6 +189,14 @@ export function InterviewDetailsModal({ open, onOpenChange, interview, modalTrig
                   <Calendar className="mr-2 h-4 w-4" />
                   Reschedule
                 </Button>
+                   <Button
+                  className="w-full justify-start bg-red-600 text-white hover:bg-red-700 hover:text-white focus:bg-red-700 focus:text-white"
+                  variant="outline"
+                  onClick={modalTriggers?.openCancelModal}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Cancel Interview
+                </Button>
                 {/* <Button
                     className="w-full justify-start bg-transparent"
                     variant="outline"
@@ -196,7 +205,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview, modalTrig
                     <User className="mr-2 h-4 w-4" />
                     View Candidate Profile
                   </Button> */}
-                <Button
+                {/* <Button
                   className="w-full justify-start bg-transparent"
                   variant="outline"
                   disabled={interview.status !== "scheduled"}
@@ -204,7 +213,7 @@ export function InterviewDetailsModal({ open, onOpenChange, interview, modalTrig
                 >
                   <Video className="mr-2 h-4 w-4" />
                   Start Interview
-                </Button>
+                </Button> */}
                 <Separator />
          
               </CardContent>

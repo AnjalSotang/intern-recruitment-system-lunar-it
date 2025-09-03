@@ -7,9 +7,7 @@ import InterviewTable from './components/InterviewTable'
 import { InterviewDetailsModal } from './components/InterviewDetailModal'
 import { EditInterviewModal } from "./models/EditInterviewModal"
 import RescheduleInterviewModal from "./models/RescheduleInterviewModal"
-import CandidateProfileModal from "./models/CandidareProfileModal"
 import CancelInterviewModal from "./models/CancelInterviewModal"
-import StartInterviewModal from "./models/StartInterviewModal"
 import { useInterviewStore } from "../../../store/InterviewStore"
 import DeleteConfirmationModal from './models/DeleteModel'
 
@@ -22,10 +20,8 @@ const Heading = () => {
     // Modal states moved from InterviewDetailsModal
     const [editModalOpen, setEditModalOpen] = useState(false)
     const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false)
-    const [candidateProfileOpen, setCandidateProfileOpen] = useState(false)
     const [cancelModalOpen, setCancelModalOpen] = useState(false)
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-    const [startModalOpen, setStartModalOpen] = useState(false)
 
     // Store hooks
     const fetchInterviews = useInterviewStore(state => state.fetchInterviews)
@@ -66,9 +62,7 @@ const Heading = () => {
     const simpleModalTriggers = {
         openEditModal: () => { setDetailsModal(false); setEditModalOpen(true) },
         openRescheduleModal: () => { setDetailsModal(false); setRescheduleModalOpen(true) },
-        openCandidateProfile: () => { setDetailsModal(false); setCandidateProfileOpen(true) },
         openCancelModal: () => { setDetailsModal(false); setDeleteModalOpen(true) },
-        openStartModal: () => { setDetailsModal(false); setStartModalOpen(true) }
     }
 
     const modalTriggers = {
@@ -82,20 +76,10 @@ const Heading = () => {
             setDetailsModal(true);
             setRescheduleModalOpen(true);
         },
-        openCandidateProfile: () => {
-            setShowDetailsModal(false)
-            setDetailsModal(true);
-            setCandidateProfileOpen(true);
-        },
         openCancelModal: () => {
             setShowDetailsModal(false)
             setDetailsModal(true);
             setCancelModalOpen(true);
-        },
-        openStartModal: () => {
-            setShowDetailsModal(false)
-            setDetailsModal(true);
-            setStartModalOpen(true);
         }
     };
 
@@ -123,9 +107,7 @@ const Heading = () => {
         fetchInterviewSummary(false)
     }, [deleteInterview, fetchInterviewSummary])
 
-    const handleStartInterview = useCallback((interviewId) => {
-        console.log("Started interview:", interviewId)
-    }, [])
+
 
     // FIXED: Use deleteInterview instead of deleteApplication
     const confirmDeleteInterview = useCallback((id) => {
@@ -205,21 +187,6 @@ const Heading = () => {
         }
     }, [detailsModal])
 
-    const handleStartInterviewModalClose = useCallback((open) => {
-        if (!open) { // Modal is being closed
-            setStartModalOpen(false)
-            setShowDetailsModal(false);
-
-            // If edit was opened from details, go back to details
-            if (detailsModal) {
-                setStartModalOpen(false)
-                setShowDetailsModal(true);
-            }
-        } else {
-            setStartModalOpen(open)
-        }
-    }, [detailsModal])
-
     const handleDeleteModalClose = useCallback((open) => {
         setDeleteModalOpen(open)
     }, [])
@@ -264,6 +231,7 @@ const Heading = () => {
                         interview={selectedInterview}
                         onSave={handleEditInterview}
                         loading={loading}
+                        status={status}
                     />
 
                     <RescheduleInterviewModal
@@ -272,12 +240,7 @@ const Heading = () => {
                         interview={selectedInterview}
                         onReschedule={handleRescheduleInterview}
                         loading={loading}
-                    />
-
-                    <CandidateProfileModal
-                        open={candidateProfileOpen}
-                        onOpenChange={setCandidateProfileOpen}
-                        candidateName={selectedInterview.candidateName}
+                        status={status}
                     />
 
                     <CancelInterviewModal
@@ -286,20 +249,17 @@ const Heading = () => {
                         interview={selectedInterview}
                         onCancel={handleCancelInterview}
                         loading={loading}
+                        status={status}
                     />
 
-                    <StartInterviewModal
-                        open={startModalOpen}
-                        onOpenChange={handleStartInterviewModalClose}
-                        interview={selectedInterview}
-                        onStart={handleStartInterview}
-                    />
 
                     <DeleteConfirmationModal
                         open={deleteModalOpen}
                         onOpenChange={handleDeleteModalClose}
                         onConfirm={confirmDeleteInterview}
                         item={selectedInterview}
+                        loading={loading}
+                        status={status}
                     />
                 </>
             )}

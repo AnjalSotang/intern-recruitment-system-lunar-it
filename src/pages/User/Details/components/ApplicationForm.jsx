@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { requiredSkills, niceToHaveSkills } from '../../../../constants';
+import React, { useEffect, useState } from 'react';
 import API from "../../../../http/index"
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { useApplicationStore } from '../../../../store/AppliactionStore';
 
 const ApplicationForm = ({ id, position }) => {
@@ -44,14 +43,15 @@ const ApplicationForm = ({ id, position }) => {
             case 'lastName':
                 return value.trim().length < 2 ? 'Must be at least 2 characters long' : '';
 
-            case 'email':
+            case 'email': {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return !emailRegex.test(value) ? 'Please enter a valid email address' : '';
+            }
 
             case 'phone':
                 if (value && value.trim()) {
-                    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-                    return !phoneRegex.test(value.replace(/[\s\-\(\)]/g, '')) ? 'Please enter a valid phone number' : '';
+                    const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
+                    return !phoneRegex.test(value.replace(/[\s\-()]/g, '')) ? 'Please enter a valid phone number' : '';
                 }
                 return '';
 
@@ -69,9 +69,10 @@ const ApplicationForm = ({ id, position }) => {
                 }
                 return '';
 
-            case 'portfolioUrl':
+            case 'portfolioUrl': {
                 const urlRegex = /^https?:\/\/.+\..+/;
                 return !urlRegex.test(value) ? 'Please enter a valid URL starting with http:// or https://' : '';
+            }
 
             case 'githubUrl':
             case 'linkedinUrl':
@@ -217,7 +218,11 @@ const ApplicationForm = ({ id, position }) => {
         postApplication(id, submitData)
 
 
-        // Check status from store after submission
+       
+    };
+
+    useEffect(()=>{
+         // Check status from store after submission
         if (status >= 200 && status < 300) {
             setShowSuccess(true);
 
@@ -244,7 +249,7 @@ const ApplicationForm = ({ id, position }) => {
                 setShowSuccess(false);
             }, 4000);
         }
-    };
+    }, [status])
 
     return (
         <div>

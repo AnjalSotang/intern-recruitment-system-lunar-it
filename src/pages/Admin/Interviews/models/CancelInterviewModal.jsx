@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -8,9 +8,17 @@ import { toast } from "react-toastify"
 import { AlertTriangle, Loader } from "lucide-react"
 
 
-const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel, loading }) => {
+const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel, loading, status }) => {
   const [reason, setReason] = useState("")
   const [notifyCandidate, setNotifyCandidate] = useState(true)
+
+  useEffect(() => {
+    if (status >= 200 && status < 300) {
+      onOpenChange(false)
+      setReason("")
+      setNotifyCandidate(true)
+    }
+  }, [status])
 
   const handleCancel = () => {
     if (!interview) return
@@ -21,9 +29,6 @@ const CancelInterviewModal = ({ open, onOpenChange, interview, onCancel, loading
     }
 
     onCancel(interview.id, reason, notifyCandidate)
-    // onOpenChange(false)
-    setReason("")
-    setNotifyCandidate(true)
   }
 
   if (!interview) return null

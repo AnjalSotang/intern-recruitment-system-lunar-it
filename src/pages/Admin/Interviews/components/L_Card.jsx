@@ -10,7 +10,7 @@ const L_Card = () => {
 
   const stat = [
          {
-        title: "Total Interviews",
+        title: "Interviews Completed",
         value: interviewSummary.totalInterview ?? 0,
         change: "+5",
         changeType: "positive",
@@ -29,7 +29,7 @@ const L_Card = () => {
     
       },
       {
-        title: "Completed This Week",
+        title: "Interviews Completed",
         value: interviewSummary.completedCount ?? 0,
         change: "+12%",
         changeType: "positive",
@@ -58,9 +58,10 @@ const L_Card = () => {
 
         return (
           <Card
-            key={index}
-            className="shadow-lg hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 hover:scale-[1.02] group"
-          >
+           key={index}
+           className="shadow-lg hover:shadow-xl transition-all duration-300 border-0 
+                      bg-gradient-to-br from-card to-muted hover:scale-[1.02] group"
+         >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                 {kpi.title}

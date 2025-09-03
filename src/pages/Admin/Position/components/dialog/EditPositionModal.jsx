@@ -16,9 +16,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { X, Plus } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { usePositionStore } from "../../../../../store/PositionStore"
+
+
 
 const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
+  const { status } = usePositionStore();
   const [formData, setFormData] = useState({})
   const [newRequirement, setNewRequirement] = useState("")
   const [newResponsibility, setNewResponsibility] = useState("")
@@ -26,7 +29,13 @@ const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
   const [newBenefit, setNewBenefit] = useState("")
   const [newTag, setNewTag] = useState("")
   const [errors, setErrors] = useState({})
-  const { toast } = useToast()
+ 
+  useEffect(() => {
+    if (status >= 200 && status < 300) {
+      setErrors({})
+      onOpenChange(false)
+    }
+  }, [status])
 
   useEffect(() => {
     if (position) {
@@ -57,8 +66,7 @@ const EditPositionModal = ({ open, onOpenChange, position, onSubmit }) => {
 
     if (validateForm()) {
       onSubmit(formData)
-      setErrors({})
-      // onOpenChange(false)
+    
     }
   }
 

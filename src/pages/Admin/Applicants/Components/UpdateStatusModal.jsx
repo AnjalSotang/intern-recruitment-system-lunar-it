@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import { useState } from "react"
 import {
@@ -59,11 +59,22 @@ import { Loader2 } from "lucide-react"; // lucide spinner icon
 
 
 const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) => {
-  const loading = useApplicationStore(state => state.loading);
+  const {loading, status} = useApplicationStore();
   const [selectedStatus, setSelectedStatus] = useState("")
   const [notes, setNotes] = useState("")
   const [sendNotification, setSendNotification] = useState(true)
   const { toast } = useToast()
+
+  useEffect(() => {
+    if (status >= 200 && status < 300) {
+        // Reset form and close modal
+        setSelectedStatus("")
+        setNotes("")  
+        setSendNotification(true)
+        onOpenChange(false);
+    }
+}, [status]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -79,18 +90,6 @@ const UpdateStatusModal = ({ open, onOpenChange, application, onStatusUpdate }) 
     }
 
     onStatusUpdate(application._id, selectedStatus, sendNotification, notes)
-
-
-    // Reset form and close modal
-    setSelectedStatus("")
-    setNotes("")
-    setSendNotification(true)
-    // Delay closing modal
- 
-    onOpenChange(false);
- 
-
-
   }
 
   const getCurrentStatusInfo = () => {

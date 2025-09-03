@@ -13,6 +13,8 @@ import { ArrowRight, Users, Target, Award, MapPin, Clock, DollarSign } from "luc
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import { Card, CardContent } from "@/components/ui/card"
 import { Suspense } from 'react'
+import image from "../../../assets/mission.png";  
+
 import ApplicationFormSection from './sections/ApplicationFormSection'
 
 
@@ -59,7 +61,7 @@ const HomePage = () => {
                   Transform your passion for technology into real-world experience.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/internships">
+                  <Link to="/internship">
                     <Button
                       size="lg"
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg"
@@ -68,13 +70,14 @@ const HomePage = () => {
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <Button
+                  <Link
+                   to={'/about'}
                     size="lg"
                     variant="outline"
-                    className="px-8 py-4 text-lg rounded-2xl hover:scale-105 transition-all duration-300 border-2 border-gray-300 hover:border-blue-500 bg-transparent"
+                    className="px-8 py-1 text-lg rounded-2xl hover:scale-105 transition-all duration-300 border-2 border-gray-300 hover:border-blue-500 bg-transparent"
                   >
                     Learn More
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -117,7 +120,7 @@ const HomePage = () => {
                   We're committed to creating an inclusive environment where interns can learn, grow, and contribute to
                   meaningful projects that impact millions of users worldwide.
                 </p>
-                <Link href="/internships">
+                <Link to="/internship">
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl hover:scale-105 transition-all duration-300">
                     Start Your Journey
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -125,10 +128,12 @@ const HomePage = () => {
                 </Link>
               </div>
               <div className="relative">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-1">
+                {/* <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-1"> */}
+                <div className="bg-gradient-to-r rounded-3xl p-1">
+
                   <div className="bg-white rounded-3xl p-8">
                     <img
-                      src="/placeholder.svg"
+                      src={image}
                       alt="Team collaboration"
                       width={500}
                       height={400}

@@ -8,22 +8,25 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Under Review":
-      return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-    case "Interview Scheduled":
-      return "bg-blue-100 text-blue-800 hover:bg-blue-200"
-    case "Interviewed":
-      return "bg-purple-100 text-purple-800 hover:bg-purple-200"
-    case "Accepted":
-      return "bg-green-100 text-green-800 hover:bg-green-200"
-    case "Rejected":
-      return "bg-red-100 text-red-800 hover:bg-red-200"
-    default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-200"
-  }
-}
+  const getStatusBadge = (status) => {
+        const colors = {
+            pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+            reviewing: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+            accepted: "bg-green-100 text-green-800 hover:bg-green-100",
+            rejected: "bg-red-100 text-red-800 hover:bg-red-100",
+            "interview-scheduled": "bg-purple-100 text-purple-800 hover:bg-purple-100",
+        }
+
+        const labels = {
+            pending: "Pending",
+            reviewing: "Reviewing",
+            accepted: "Accepted",
+            rejected: "Rejected",
+            "interview-scheduled": "Interview Scheduled",
+        }
+
+        return <Badge className={colors[status]}>{labels[status]}</Badge>
+    }
 
 export function ApplicationsTable({ onViewApplication, applications }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -69,7 +72,7 @@ export function ApplicationsTable({ onViewApplication, applications }) {
                 "Unknown";
 
               return (
-                <TableRow key={application.id} className="hover:bg-muted/50">
+                <TableRow key={application._id} className="hover:bg-muted/50">
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
@@ -86,7 +89,7 @@ export function ApplicationsTable({ onViewApplication, applications }) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <div className="text-sm font-medium text-gray-900 truncate">
+                        <div className="text-sm font-medium truncate">
                           {fullName}
                         </div>
                         <div className="text-sm text-gray-500 truncate">{application.email}</div>
@@ -97,7 +100,7 @@ export function ApplicationsTable({ onViewApplication, applications }) {
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <div className="text-sm text-gray-900 max-w-[200px] truncate">
+                    <div className="text-sm max-w-[200px] truncate">
                       {application.positionTitle}
                     </div>
                   </TableCell>
@@ -106,11 +109,8 @@ export function ApplicationsTable({ onViewApplication, applications }) {
                       {application.department}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={`${getStatusColor(application.status)} text-xs`}>
-                      {application.status}
-                    </Badge>
-                  </TableCell>
+                  <TableCell>{getStatusBadge(application.status)}</TableCell>
+
                   <TableCell className="hidden lg:table-cell text-sm text-gray-500">
                     {new Date(application.appliedDate).toLocaleDateString()}
                   </TableCell>
@@ -124,22 +124,6 @@ export function ApplicationsTable({ onViewApplication, applications }) {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {/* <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onViewApplication(application)}>
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>Edit Application</DropdownMenuItem>
-                          <DropdownMenuItem>Schedule Interview</DropdownMenuItem>
-                          <DropdownMenuItem>Update Status</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">Delete Application</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu> */}
                     </div>
                   </TableCell>
                 </TableRow>

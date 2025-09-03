@@ -64,6 +64,7 @@ const positionStore = (set) => ({
                 status: res.status,
                 message: res.data.message
             }));
+            console.log(res.status)
         } catch (err) {
             set({
                 error: err.response?.data?.message || 'Error creating position',

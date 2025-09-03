@@ -14,6 +14,7 @@ const dashboardStore = (set) => ({
 
     summary: {},
     statusSummary: {},
+    messagesChart: {},
     summaryLoading: false,
     summaryError: null,
     summaryStatus: null,
@@ -63,6 +64,28 @@ const dashboardStore = (set) => ({
             });
         }
     },
+
+        fetchMessagesChart: async () => {
+        set({ summaryLoading: true, summaryError: null, summaryStatus: null, summaryMessage: null });
+        try {
+            const res = await API.get("api/messagesSummary");
+            set({
+                messagesChart: res.data.data, // merge new summary data
+                summaryLoading: false,
+                summaryStatus: res.status,  
+                summaryMessage: res.data.message
+            });
+            return res
+        } catch (err) {
+            set({
+                summaryError: err.response?.data?.message || 'Error fetching summary',
+                summaryLoading: false,
+                summaryStatus: err.response?.status || null,
+                summaryMessage: null
+            });
+        }
+    },
+
 
 
     fetchApplications: async () => {

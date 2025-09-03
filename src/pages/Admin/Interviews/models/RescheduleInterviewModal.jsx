@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,12 +18,23 @@ const RescheduleInterviewModal = ({
     onOpenChange,
     interview,
     onReschedule,
-    loading
+    loading,
+    status
 }) => {
     console.log(interview)
     const [date, setDate] = useState()
     const [time, setTime] = useState("")
     const [reason, setReason] = useState("")
+
+    useEffect(() => {
+        if(status>= 200 && status < 300){
+           onOpenChange(false)
+        setDate(undefined)
+        setTime("")
+        setReason("")
+            }
+         }, [status])
+
 
     const handleReschedule = () => {
         if (!interview || !date || !time) {
@@ -32,11 +43,7 @@ const RescheduleInterviewModal = ({
         }
 
         onReschedule(interview, interview.id, date.toISOString(), time, reason)
-    // onOpenChange(false)
-        setDate(undefined)
-        setTime("")
-        setReason("")
-      
+    
     }
 
     if (!interview) return null

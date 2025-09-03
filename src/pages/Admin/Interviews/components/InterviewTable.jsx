@@ -315,13 +315,13 @@ const InterviewTable = ({ handleViewInterview, handleSetSelectedInterview, inter
                                                         <Calendar className="mr-2 h-4 w-4" />
                                                         Reschedule Interview
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem 
+                                                    {/* <DropdownMenuItem 
                                                         onClick={() => handleDropdownAction('start', interview)}
                                                         disabled={interview.status !== "scheduled"}
                                                     >
                                                         <Camera className="mr-2 h-4 w-4" />
                                                         Start Interview
-                                                    </DropdownMenuItem>
+                                                    </DropdownMenuItem> */}
                                                     <DropdownMenuItem 
                                                         className="text-red-600"
                                                         onClick={() => handleDropdownAction('cancel', interview)}

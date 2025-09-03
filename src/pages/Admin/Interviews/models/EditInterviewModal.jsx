@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -63,9 +63,15 @@ const statusOptions = [
   },
 ]
 
-export function EditInterviewModal({ open, onOpenChange, interview, onSave, loading }) {
+export function EditInterviewModal({ open, onOpenChange, interview, onSave, loading, status }) {
   // console.log(interview)
+  useEffect(() => {
+    if(status>= 200 && status < 300){
+      onOpenChange(false)
+    }
+  }, [status])
 
+  
   const [formData, setFormData] = useState({
     id: interview?.id || "0",
     time: interview?.time || "",
@@ -306,7 +312,7 @@ export function EditInterviewModal({ open, onOpenChange, interview, onSave, load
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || formData.status === 'scheduled'}>
+            <Button type="submit" disabled={loading}>
               {loading ? (
                 <span className="flex items-center space-x-2">
                   <Loader2 className="animate-spin h-4 w-4" />

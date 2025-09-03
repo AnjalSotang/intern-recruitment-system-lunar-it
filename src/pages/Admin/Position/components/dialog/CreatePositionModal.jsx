@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import { useState } from "react"
 import {
@@ -23,7 +23,7 @@ import { useDashboardStore } from "../../../../../store/Dashboard"
 const  CreatePositionModal = ({ open, onOpenChange }) => {
 
   // const {createPositions, fetchPositions, deletePosition, loading, error } = usePositionStore();
-    const {createPosition, fetchPositionSummary} = usePositionStore();
+    const {createPosition, fetchPositionSummary, fetchPositions, status} = usePositionStore();
     const {fetchDashboardSummary} = useDashboardStore();
 
 
@@ -47,6 +47,40 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
     priority: "high",
     experienceLevel: "entry",
   })
+
+  useEffect(() => {
+  if (status >= 200 && status < 300) {
+      fetchPositions()  // ✅ Refresh positions from backend cache=true
+      fetchPositionSummary(false)   // ✅ Refresh summary from backend cache=false
+      fetchDashboardSummary(false)  // ✅ Refresh dashboard summary from backend cache=false
+      onOpenChange(false)  // Close modal only if creation was successfu
+      resetForm()
+    }
+    },[status])
+
+      const resetForm = () => {
+    setFormData({
+      title: "",
+      department: "",
+      location: "",
+      type: "",
+      description: "",
+      requirements: [],
+      responsibilities: [],
+      qualifications: [],
+      optional: [],
+      salary: "",
+      duration: "",
+      startDate: "",
+      endDate: "",
+      applicationDeadline: "",
+      maxApplications: 0,
+      tags: [],
+      priority: "high",
+      experienceLevel: "entry",
+    })
+    setErrors({})
+  }
 
 
 
@@ -82,33 +116,7 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
 
       // console.log(formData)
       await createPosition(formData)
-
-      fetchPositionSummary(false)   // ✅ Refresh summary from backend cache=false
-      fetchDashboardSummary(false)  // ✅ Refresh dashboard summary from backend cache=false
-
-      setFormData({
-        title: "",
-        department: "",
-        location: "",
-        type: "",
-        description: "",
-        requirements: [],
-        responsibilities: [],
-        qualifications: [],
-        optional: [],
-        salary: "",
-        duration: "",
-        startDate: "",
-        endDate: "",
-        applicationDeadline: "",
-        maxApplications: 0,
-        tags: [],
-        priority: "high",
-        experienceLevel: "entry",
-      })
-      setErrors({})
-      // onOpenChange(false)
-    }
+  }
     
   }
 
@@ -198,13 +206,13 @@ const  CreatePositionModal = ({ open, onOpenChange }) => {
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Engineering">Engineering</SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Analytics">Analytics</SelectItem>
-                    <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                    <SelectItem value="Product">Product</SelectItem>
-                    <SelectItem value="Sales">Sales</SelectItem>
+                  <SelectItem value="fontend">Frontend</SelectItem>
+                    <SelectItem value="backend">Backend</SelectItem>
+                    <SelectItem value="fullstack">Fullstack</SelectItem>
+                    <SelectItem value="data">Data</SelectItem>
+                    <SelectItem value="design">Design</SelectItem>
+                    <SelectItem value="product">Product</SelectItem>
+                    <SelectItem value="devops">Devops</SelectItem>
                     <SelectItem value="HR">Human Resources</SelectItem>
                   </SelectContent>
                 </Select>
