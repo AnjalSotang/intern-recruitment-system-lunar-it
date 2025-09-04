@@ -60,13 +60,13 @@ const Navbar = () => {
               <Link to="/Internship" onClick={() => setMobileMenuOpen(false)} className={underlineClass("/Internship")}>Internships</Link>
               <Link to="/about" onClick={() => setMobileMenuOpen(false)} className={underlineClass("/about")}>About Us</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className={underlineClass("/contact")}>Contact Us</Link>
-              <Link
+              {/* <Link
                 to="/admin"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block text-left font-small bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-md hover:from-blue-700 hover:to-purple-700"
               >
                 Admin Login
-              </Link>
+              </Link> */}
             </div>
           </div>
         )}
