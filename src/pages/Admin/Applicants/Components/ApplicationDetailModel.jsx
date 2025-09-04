@@ -7,10 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, FileText, Download, ExternalLink, Loader2 } from "lucide-react"
 
 const ApplicationDetailsModal = ({ open, onOpenChange, application, modalTriggers }) => {
+    const [downloading, setDownloading] = useState({});
 
+    
   if (!application) return null
 
-  const [downloading, setDownloading] = useState({});
 
   // Function to handle file downloads
   const handleDownload = async (type, applicationId, fileName) => {
@@ -19,7 +20,7 @@ const ApplicationDetailsModal = ({ open, onOpenChange, application, modalTrigger
 
       console.log(applicationId)
 
-      const response = await fetch(`http://localhost:3000/api/application/${applicationId}/resume`, {
+      const response = await fetch(`https://server-intern-recruitment-system-lunar-it.onrender.com/api/application/${applicationId}/resume`, {
         method: 'GET',
         headers: {
           'Accept': 'application/pdf'
