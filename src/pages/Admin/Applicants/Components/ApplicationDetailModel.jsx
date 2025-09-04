@@ -7,9 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, FileText, Download, ExternalLink, Loader2 } from "lucide-react"
 
 const ApplicationDetailsModal = ({ open, onOpenChange, application, modalTriggers }) => {
-    const [downloading, setDownloading] = useState({});
 
-    
+  const [downloading, setDownloading] = useState({});
+
   if (!application) return null
 
 
