@@ -32,7 +32,7 @@ export function DashboardContent() {
   const [scheduleOpenedFromDetails, setScheduleOpenedFromDetails] = useState(false)
 
   // Store hooks
-  const { fetchDashboardSummary, fetchStatusSummary, statusSummary, summary, fetchMessagesChart, messagesChart } = useDashboardStore()
+  const { fetchDashboardSummary, fetchStatusSummary, statusSummary, summary, fetchMessagesChart, messagesChart, fetchDepartmentChart, departmentChart } = useDashboardStore()
   const {
     fetchApplications,
     applications,
@@ -44,6 +44,7 @@ export function DashboardContent() {
     status,
     message,
     fetchApplicationSummary
+
   } = useApplicationStore()
   const fetchInterviews = useInterviewStore(state => state.fetchInterviews)
 
@@ -74,6 +75,7 @@ export function DashboardContent() {
     fetchInterviews()
     fetchApplicationSummary()
     fetchMessagesChart()
+    fetchDepartmentChart()
   }, [])
 
   // Watch backend store updates for toast messages
@@ -240,7 +242,7 @@ export function DashboardContent() {
 
       {/* Charts Section */}
       <div className="mb-8">
-        <DashboardCharts statusSummary={statusSummary} messagesChart={messagesChart} />
+        <DashboardCharts statusSummary={statusSummary} messagesChart={messagesChart} departmentChart={departmentChart} />
       </div>
 
       {/* Recent Applications Table */}

@@ -15,17 +15,21 @@ import {
 import { Users, Calendar, Target, MessageSquare } from "lucide-react"
 
 
+
+
+export function   DashboardCharts({statusSummary, messagesChart, departmentChart}) {
+
+  
 const departmentData = [
-  { department: "Engineering", applications: 145 },
-  { department: "Product", applications: 89 },
-  { department: "Design", applications: 67 },
-  { department: "Marketing", applications: 43 },
-  { department: "Sales", applications: 32 },
-]
+  { department: "Frontend", applications: departmentChart?.frontendCount ?? 0 },
+  { department: "Backend", applications: departmentChart?.backendCount ?? 0 },
+  { department: "Fullstack", applications: departmentChart?.fullstackCount ?? 0 },
+  { department: "Data", applications: departmentChart?.dataCount ?? 0 },
+  { department: "Design", applications: departmentChart?.designCount ?? 0 },
+  { department: "Product", applications: departmentChart?.productCount ?? 0 },
+  { department: "DevOps", applications: departmentChart?.devopsCount ?? 0 },
+];
 
-
-
-export function   DashboardCharts({statusSummary, messagesChart}) {
 
   const statusData = [
   { status: "Under Review", count: statusSummary?.reviewing??0, fill: "hsl(var(--chart-1))" },
