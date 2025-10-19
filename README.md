@@ -8,7 +8,7 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 ## Live Demo
-Check out the live demo [here](https://your-live-demo-link.com](https://intern-recruitment-system-lunar-it.vercel.app))
+Check out the live demo [here](https://intern-recruitment-system-lunar-it.vercel.app)
 
 ## Admin Panel Access
 You can access the admin panel at:  
