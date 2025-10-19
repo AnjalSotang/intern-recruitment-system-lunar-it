@@ -1,38 +1,47 @@
-# React + Vite
+# Intern Recruitment System (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the **frontend repository** for the Intern Recruitment System, built with **React** and **Vite**. The project provides a fully functional interface for both users and admins, connected to a separate backend repository.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
 ## Live Demo
-Check out the live demo [here](https://intern-recruitment-system-lunar-it.vercel.app)
+Check out the full working app here:  
+[https://intern-recruitment-system-lunar-it.vercel.app](https://intern-recruitment-system-lunar-it.vercel.app)
+
+---
 
 ## Admin Panel Access
 You can access the admin panel at:  
-[(https://intern-recruitment-system-lunar-it.vercel.app/login)](https://intern-recruitment-system-lunar-it.vercel.app/login) 
+[https://intern-recruitment-system-lunar-it.vercel.app/login](https://intern-recruitment-system-lunar-it.vercel.app/login)
 
-Use the following credentials:  
+**Credentials:**  
 - **Email:** raianjal555@gmail.com  
-- **Password:** password  
+- **Password:** password
 
-> ⚠️ Note: This is for demo purposes only. Do not use these credentials in production.
+> ⚠️ The frontend is connected to the deployed backend, so all features work out of the box.
+
+---
 
 ## Features
-- Fast Refresh with Vite
-- ESLint setup for cleaner code
-- Minimal, production-ready React template
-- Admin panel for managing data
+- User registration and login  
+- Admin dashboard for managing interns and recruitment processes  
+- Responsive design for desktop and mobile  
+- Fully interactive frontend connected to backend APIs
+
+---
 
 ## Tech Stack
-- React
-- Vite
-- ESLint
-- Babel / SWC
+- **Frontend:** React, Vite, Tailwind CSS  
+- **State Management:** Redux (if used)  
+- **Linting:** ESLint  
 
-## Installation
+---
+
+## Installation (Local Setup)
+To run the frontend locally:
+
 ```bash
+git clone https://github.com/AnjalSotang/intern-recruitment-system-lunar-it.git
+cd frontend-repo
 npm install
 npm run dev
